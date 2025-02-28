@@ -1,9 +1,8 @@
 
-#mainMenuPane {
-    -fx-background-color: #ffaaff;
-}
-
-#exitButton{
+.vbox Button{
     -fx-background-color: #c7bdb3;
-    -fx-font-family: "Book Antiqua";
+    -fx-font-family: Calibri, sans-serif;
+    -fx-border-color: #5c3c23;
+    -fx-border-width: 2px;
+    -fx-fit-to-height: true;
 }

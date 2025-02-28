@@ -2,6 +2,7 @@ package application;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -14,12 +15,13 @@ import java.util.Objects;
 public class PCHub extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(PCHubController.class.getResource("PCHubMainMenu.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FXMLs/MainMenu.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("css/images/icon.png")));
+        Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("images/icon.png")));
         primaryStage.getIcons().add(icon);
         primaryStage.setTitle("PCHub");
         primaryStage.setScene(scene);
+
         String css = Objects.requireNonNull(getClass().getResource("css/main.css")).toExternalForm();
         scene.getStylesheets().add(css);
         primaryStage.show();

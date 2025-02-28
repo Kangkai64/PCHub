@@ -12,4 +12,6 @@ module PCHub.PCHub {
 
     opens application to javafx.fxml;
     exports application;
+    exports application.Controllers;
+    opens application.Controllers to javafx.fxml;
 }

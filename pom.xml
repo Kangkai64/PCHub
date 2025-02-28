@@ -118,7 +118,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                PCHub.PCHub/application.PCHubController
+                                PCHub.PCHub/application.Controllers.MainMenuController
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
