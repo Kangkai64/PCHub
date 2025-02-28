@@ -1,0 +1,9 @@
+
+#mainMenuPane {
+    -fx-background-color: #ffaaff;
+}
+
+#exitButton{
+    -fx-background-color: #c7bdb3;
+    -fx-font-family: "Book Antiqua";
+}
