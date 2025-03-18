@@ -1,8 +1,27 @@
 
-.vbox Button{
-    -fx-background-color: #c7bdb3;
-    -fx-font-family: Calibri, sans-serif;
-    -fx-border-color: #5c3c23;
-    -fx-border-width: 2px;
-    -fx-fit-to-height: true;
+.leftPanel {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #875d39, #b08c6c);
 }
+
+.leftPanel .title {
+    -fx-font-size: 2em;
+    -fx-font-family: "Palatino Linotype", "Times New Roman", Times, serif;
+}
+
+.leftPanel .button {
+    -fx-background-color: #d4a524;
+    -fx-font-family: "FangSong";
+    -fx-font-size: 1.5em;
+}
+
+.leftPanel .copyright {
+    -fx-font-size: 1em;
+    -fx-font-family: "Palatino Linotype", "Times New Roman", Times, serif;
+}
+
+.topPanel{
+    -fx-background-color: #2d9ac2;
+}
+
+
+
