@@ -1,0 +1,6 @@
+INSERT INTO admin (adminID, userID, department, accessLevel) VALUES
+('ADM001', 'A0001', 'IT', 'Super Admin'),
+('ADM002', 'A0002', 'Customer Service', 'Admin'),
+('ADM003', 'A0003', 'Inventory', 'Manager'),
+('ADM004', 'A0004', 'Sales', 'Admin'),
+('ADM005', 'A0005', 'Marketing', 'Manager');

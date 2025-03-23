@@ -1,16 +1,17 @@
 package application.Controllers;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.util.Objects;
 
@@ -23,27 +24,41 @@ public class MainController {
     @FXML
     private BorderPane mainPane;
 
-    public void switchScene(String fxmlPath, ActionEvent event) throws IOException {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            setFxmlLoader(loader);
+    @FXML
+    private AnchorPane logo, cartPageButton, loginPageButton, helpPageButton;
 
+    @FXML
+    private ImageView exitButton;
+
+    public void switchScene(String fxmlPath, MouseEvent event) throws IOException {
+        try {
             Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
             setPrimaryStage(stage);
 
-            // Store current stage properties before loading new scene
+            // Store current stage properties
             boolean isFullScreen = stage.isFullScreen();
             double width = stage.getWidth();
             double height = stage.getHeight();
 
-            Scene scene = new Scene(loader.load());
-            setScene(scene);
+            // Always load a fresh copy of the FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            setFxmlLoader(loader);
 
-            applyStylesheet(scene);
+            // Load the root node
+            Parent root = loader.load();
 
-            stage.setScene(scene);
+            // Create scene with explicit dimensions
+            Scene newScene = new Scene(root);
+            setScene(newScene);
+            applyStylesheet(newScene);
 
-            // Restore stage properties after setting new scene
+            // Pre-process layout before showing
+            root.applyCss();
+            root.layout();
+
+            stage.setScene(newScene);
+
+            // Restore stage properties
             stage.setFullScreen(isFullScreen);
             if (!isFullScreen) {
                 stage.setWidth(width);
@@ -51,7 +66,6 @@ public class MainController {
             }
 
             stage.show();
-
             System.out.println("Successfully switched to: " + fxmlPath);
         } catch (Exception exception) {
             System.err.println("Failed to switch scene to: " + fxmlPath);
@@ -74,6 +88,22 @@ public class MainController {
             primaryStage = (Stage) mainPane.getScene().getWindow();
             primaryStage.close();
         }
+    }
+
+    public void switchToMainMenu(MouseEvent actionEvent) throws IOException {
+        switchScene("/application/FXMLs/MainMenu.fxml", actionEvent);
+    }
+
+    public void switchToCart(MouseEvent actionEvent) throws IOException {
+        switchScene("/application/FXMLs/Cart.fxml", actionEvent);
+    }
+
+    public void switchToLogin(MouseEvent actionEvent) throws IOException {
+        switchScene("/application/FXMLs/Login.fxml", actionEvent);
+    }
+
+    public void switchToHelp(MouseEvent actionEvent) throws IOException {
+        switchScene("/application/FXMLs/Help.fxml", actionEvent);
     }
 
     public Stage getPrimaryStage(){

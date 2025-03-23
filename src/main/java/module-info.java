@@ -9,9 +9,12 @@ module PCHub.PCHub {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires java.sql;
 
     opens application to javafx.fxml;
     exports application;
     exports application.Controllers;
     opens application.Controllers to javafx.fxml;
+    exports application.Utils;
+    opens application.Utils to javafx.fxml;
 }

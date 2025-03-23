@@ -1,27 +1,65 @@
 
-.leftPanel {
+.topPanel {
     -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #875d39, #b08c6c);
 }
 
-.leftPanel .title {
+.topPanel .title {
     -fx-font-size: 2em;
     -fx-font-family: "Palatino Linotype", "Times New Roman", Times, serif;
+    -fx-fill: white;
 }
 
-.leftPanel .button {
-    -fx-background-color: #d4a524;
-    -fx-font-family: "FangSong";
-    -fx-font-size: 1.5em;
+.button {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 100%;
 }
 
-.leftPanel .copyright {
-    -fx-font-size: 1em;
-    -fx-font-family: "Palatino Linotype", "Times New Roman", Times, serif;
+.topPanel .searchBar {
+    -fx-background-color: #ffffff;
 }
 
-.topPanel{
+.buttonPanel {
+    -fx-spacing: 1em;
+}
+
+.buttonPanel .button {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 100%;
+}
+
+.centerPanel .dashboard{
+
+}
+
+.centerPanel .productGrid{
+    -fx-hgap: 2em;
+}
+
+.bottomPanel{
     -fx-background-color: #2d9ac2;
 }
 
+.bottomPanel .copyright {
+    -fx-font-size: 1em;
+    -fx-font-family: "Palatino Linotype", "Times New Roman", Times, serif;
+    -fx-fill: white;
+}
 
+.loginPane .textFieldLabel {
+    -fx-font-size: 1.5em;
+    -fx-font-family: "Palatino Linotype", "Times New Roman", Times, serif;
+}
 
+.loginPane .submitButtonBar Button{
+    -fx-background-color: #2d9ac2;
+    -fx-background-radius: 0%;
+    -fx-text-fill: #fffff0;
+}
+
+.loginPane .loginButton {
+
+}
+
+.loginPane .loginButton:hover {
+
+}
