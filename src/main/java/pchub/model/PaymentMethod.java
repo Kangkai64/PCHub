@@ -2,27 +2,30 @@ package pchub.model;
 
 import pchub.model.enums.PaymentType;
 
+import java.time.LocalDate;
+
 public class PaymentMethod {
-    private int id;
-    private int userId;
+    private String paymentMethodId;
+    private String name;
     private PaymentType type;
-    private String details;
+    private String description;
+    private LocalDate addedDate;
 
     // Getters and setters
-    public int getId() {
-        return id;
+    public String getPaymentMethodId() {
+        return paymentMethodId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setPaymentMethodId(String paymentMethodId) {
+        this.paymentMethodId = paymentMethodId;
+    }
+    
+    public String getName() {
+        return name;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public PaymentType getType() {
@@ -33,17 +36,28 @@ public class PaymentMethod {
         this.type = type;
     }
 
+    public String getDescription() {
+        return description;
+    }
 
-    public void setDetails(String details) {
-        this.details = details;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDate getAddedDate() {
+        return addedDate;
+    }
+
+    public void setAddedDate(LocalDate addedDate) {
+        this.addedDate = addedDate;
     }
 
     public String getDisplayName() {
         switch (type) {
             case CREDIT_CARD:
-                return "Credit Card: " + details;
+                return "Credit Card: " + description;
             case PAYPAL:
-                return "PayPal: " + details;
+                return "PayPal: " + description;
             case BANK_TRANSFER:
                 return "Bank Transfer";
             default:

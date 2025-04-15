@@ -648,7 +648,7 @@ public class CallableStatementRegressionTest extends BaseTestCase {
     public void testBug25379() throws Exception {
         createTable("testBug25379", "(col char(40))");
 
-        createProcedure("sp_testBug25379", "(INOUT invalue char(255))\nBEGIN" + "\ninsert into testBug25379(col) values(invalue);\nEND");
+        createProcedure("sp_testBug25379", "(INOUT invalue char(255))\nBEGIN" + "\ninsertUser into testBug25379(col) values(invalue);\nEND");
 
         CallableStatement cstmt = this.conn.prepareCall("{call sp_testBug25379(?)}");
         cstmt.setString(1, "'john'");
@@ -1038,11 +1038,11 @@ public class CallableStatementRegressionTest extends BaseTestCase {
         //String sMaxBooleanVal = "1";
         // sMaxBooleanVal = "true";
         //Boolean bool = Boolean.valueOf("true");
-        String Min_Insert = "insert into Bit_Tab values(1,0,null)";
-        // System.out.println("Value to insert=" + extractVal(Min_Insert,1));
+        String Min_Insert = "insertUser into Bit_Tab values(1,0,null)";
+        // System.out.println("Value to insertUser=" + extractVal(Min_Insert,1));
         CallableStatement cstmt;
 
-        this.stmt.executeUpdate("delete from Bit_Tab");
+        this.stmt.executeUpdate("deleteOrder from Bit_Tab");
         this.stmt.executeUpdate(Min_Insert);
         cstmt = this.conn.prepareCall("{call Bit_Proc(?,?,?)}");
 
@@ -1108,7 +1108,7 @@ public class CallableStatementRegressionTest extends BaseTestCase {
     public void testBug49831() throws Exception {
         createTable("testBug49831", "(val varchar(32))");
 
-        createProcedure("pTestBug49831", "(testval varchar(32)) BEGIN insert into testBug49831 (val) values (testval);END;");
+        createProcedure("pTestBug49831", "(testval varchar(32)) BEGIN insertUser into testBug49831 (val) values (testval);END;");
 
         execProcBug49831(this.conn);
         this.stmt.execute("TRUNCATE TABLE testBug49831");

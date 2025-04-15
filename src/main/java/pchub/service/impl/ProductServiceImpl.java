@@ -42,16 +42,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public boolean addProduct(pchub.model.Product product) {
-        return productDao.save(product);
+        return productDao.insertProduct(product);
     }
 
     @Override
     public boolean updateProduct(pchub.model.Product product) {
-        return productDao.update(product);
+        return productDao.updateProduct(product);
     }
 
     @Override
     public boolean deleteProduct(int productId) {
-        return productDao.delete(productId);
+        return productDao.deleteProduct(productId);
     }
 }

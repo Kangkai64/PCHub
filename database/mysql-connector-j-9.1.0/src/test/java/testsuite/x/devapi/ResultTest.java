@@ -61,7 +61,7 @@ public class ResultTest extends DevApiBaseTestCase {
         try {
             sqlUpdate("drop table if exists testx");
             sqlUpdate("create table testx (x int)");
-            sqlUpdate("insert into testx values (1), (2), (3)");
+            sqlUpdate("insertUser into testx values (1), (2), (3)");
             Table table = this.schema.getTable("testx");
             RowResult rows = table.select("x/0 as bad_x").execute();
             // get warnings IMMEDIATELY
@@ -87,7 +87,7 @@ public class ResultTest extends DevApiBaseTestCase {
         try {
             sqlUpdate("drop table if exists testx");
             sqlUpdate("create table testx (x int)");
-            sqlUpdate("insert into testx values (1), (2), (3)");
+            sqlUpdate("insertUser into testx values (1), (2), (3)");
             Table table = this.schema.getTable("testx");
             RowResult rows = table.select("x").orderBy("x").execute();
             int i = 1;
@@ -106,7 +106,7 @@ public class ResultTest extends DevApiBaseTestCase {
         try {
             sqlUpdate("drop table if exists testx");
             sqlUpdate("create table testx (x int)");
-            sqlUpdate("insert into testx values (1), (2), (3)");
+            sqlUpdate("insertUser into testx values (1), (2), (3)");
             Table table = this.schema.getTable("testx");
             RowResult rows = table.select("x").orderBy("x").execute();
             Row r = rows.next();

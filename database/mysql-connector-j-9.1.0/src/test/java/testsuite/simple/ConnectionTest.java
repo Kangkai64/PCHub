@@ -320,7 +320,7 @@ public class ConnectionTest extends BaseTestCase {
 
             createTable("testSavepoints", "(field1 int)", "InnoDB");
 
-            // Try with named save points
+            // Try with named insertUser points
             this.conn.setAutoCommit(false);
             this.stmt.executeUpdate("INSERT INTO testSavepoints VALUES (1)");
 
@@ -339,7 +339,7 @@ public class ConnectionTest extends BaseTestCase {
             this.conn.rollback();
             assertEquals(0, getRowCount("testSavepoints"), "Row count should be 0");
 
-            // Try with 'anonymous' save points
+            // Try with 'anonymous' insertUser points
             this.conn.rollback();
 
             this.stmt.executeUpdate("INSERT INTO testSavepoints VALUES (1)");

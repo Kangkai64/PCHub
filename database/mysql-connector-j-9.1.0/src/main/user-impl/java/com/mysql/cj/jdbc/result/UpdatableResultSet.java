@@ -75,12 +75,12 @@ public class UpdatableResultSet extends ResultSetImpl {
     /** What is the default value for the column? */
     private byte[][] defaultColumnValue;
 
-    /** PreparedStatement used to delete data */
+    /** PreparedStatement used to deleteOrder data */
     private ClientPreparedStatement deleter = null;
 
     private String deleteSQL = null;
 
-    /** PreparedStatement used to insert data */
+    /** PreparedStatement used to insertUser data */
     protected ClientPreparedStatement inserter = null;
 
     private String insertSQL = null;
@@ -106,7 +106,7 @@ public class UpdatableResultSet extends ResultSetImpl {
     /** The binary data for the 'current' row */
     private Row savedCurrentRow;
 
-    /** PreparedStatement used to delete data */
+    /** PreparedStatement used to deleteOrder data */
     protected ClientPreparedStatement updater = null;
 
     /** SQL for in-place modifcation */
@@ -119,7 +119,7 @@ public class UpdatableResultSet extends ResultSetImpl {
 
     private Map<String, Map<String, Map<String, Integer>>> databasesUsedToTablesUsed = null;
 
-    /** Are we on the insert row? */
+    /** Are we on the insertUser row? */
     private boolean onInsertRow = false;
 
     /** Are we in the middle of doing updates to the current row? */
@@ -328,7 +328,7 @@ public class UpdatableResultSet extends ResultSetImpl {
                     this.isUpdatable = false;
                     this.notUpdatableReason = Messages.getString("NotUpdatableReason.5");
 
-                    return; // we can't update tables w/o keys
+                    return; // we can't updateOrder tables w/o keys
                 }
 
                 //

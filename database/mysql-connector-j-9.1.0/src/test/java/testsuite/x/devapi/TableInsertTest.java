@@ -69,25 +69,25 @@ public class TableInsertTest extends BaseTableTestCase {
             sqlUpdate("create view basicInsertView as select * from basicInsert");
 
             Table table = this.schema.getTable("basicInsert");
-            // insert with fields and values separately
+            // insertUser with fields and values separately
             table.insert("_id", "birthday", "age").values(1, "2015-01-01", 1).execute();
-            // insert all fields with values
+            // insertUser all fields with values
             table.insert().values(2, "Orlando", "2014-01-01", 2).execute();
             Map<String, Object> row = new HashMap<>();
             row.put("_id", 3);
             row.put("age", 3);
-            // insert a row in k/v pair form
+            // insertUser a row in k/v pair form
             table.insert(row).execute();
 
             Table view = this.schema.getTable("basicInsertView");
-            // insert with fields and values separately
+            // insertUser with fields and values separately
             view.insert("_id", "birthday", "age").values(4, "2015-01-01", 1).execute();
-            // insert all fields with values
+            // insertUser all fields with values
             view.insert().values(5, "Orlando", "2014-01-01", 2).execute();
             row = new HashMap<>();
             row.put("_id", 6);
             row.put("age", 3);
-            // insert a row in k/v pair form
+            // insertUser a row in k/v pair form
             view.insert(row).execute();
 
             RowResult rows = table.select("_id, name, birthday, age").orderBy("_id").execute();
@@ -178,38 +178,38 @@ public class TableInsertTest extends BaseTableTestCase {
             res = this.session.sql("create table mytab (x bigint auto_increment primary key,y int)").executeAsync().get();
             res = this.session.sql("drop table if exists mytabtmp").executeAsync().get();
             res = this.session.sql("create table mytabtmp (x bigint,y int)").executeAsync().get();
-            res = this.session.sql("insert into mytabtmp values(NULL,8)").executeAsync().get();
-            res = this.session.sql("insert into mytabtmp values(1111,9)").executeAsync().get();
+            res = this.session.sql("insertUser into mytabtmp values(NULL,8)").executeAsync().get();
+            res = this.session.sql("insertUser into mytabtmp values(1111,9)").executeAsync().get();
 
             res = this.session.sql("ALTER TABLE mytab AUTO_INCREMENT = 111").executeAsync().get();
-            res = this.session.sql("insert into mytab values(NULL,1)").executeAsync().get();
+            res = this.session.sql("insertUser into mytab values(NULL,1)").executeAsync().get();
             assertEquals((long) 111, (long) res.getAutoIncrementValue());
 
-            res = this.session.sql("insert into mytab values(-100,2)").executeAsync().get();
+            res = this.session.sql("insertUser into mytab values(-100,2)").executeAsync().get();
             assertEquals((long) -100, (long) res.getAutoIncrementValue());
 
-            res = this.session.sql("insert into mytab (y)values(3)").executeAsync().get();
+            res = this.session.sql("insertUser into mytab (y)values(3)").executeAsync().get();
             assertEquals((long) 112, (long) res.getAutoIncrementValue());
 
-            res = this.session.sql("insert into mytab values(NULL,4),(NULL,5),(887,6),(NULL,7)").executeAsync().get();
+            res = this.session.sql("insertUser into mytab values(NULL,4),(NULL,5),(887,6),(NULL,7)").executeAsync().get();
             assertEquals((long) 113, (long) res.getAutoIncrementValue());
 
-            res = this.session.sql("insert into mytab select * from mytabtmp").executeAsync().get();
+            res = this.session.sql("insertUser into mytab select * from mytabtmp").executeAsync().get();
             assertEquals((long) 889, (long) res.getAutoIncrementValue());
 
-            res = this.session.sql("insert into mytab (y) select (y+1) from mytabtmp").executeAsync().get();
+            res = this.session.sql("insertUser into mytab (y) select (y+1) from mytabtmp").executeAsync().get();
             assertEquals((long) 1112, (long) res.getAutoIncrementValue());
 
             //Ignore duplicate
-            res = this.session.sql("insert IGNORE  mytab select * from mytabtmp").executeAsync().get();
+            res = this.session.sql("insertUser IGNORE  mytab select * from mytabtmp").executeAsync().get();
             assertEquals((long) 1115, (long) res.getAutoIncrementValue());
 
             // ON DUPLICATE KEY
-            res = this.session.sql("insert into mytab values(-100,2) ON DUPLICATE KEY UPDATE Y=Y*-1").executeAsync().get();
+            res = this.session.sql("insertUser into mytab values(-100,2) ON DUPLICATE KEY UPDATE Y=Y*-1").executeAsync().get();
             assertEquals((long) -100, (long) res.getAutoIncrementValue());
 
             // ON DUPLICATE KEY
-            res = this.session.sql("insert into mytab values(-100,2) ON DUPLICATE KEY UPDATE X=X*-2").executeAsync().get();
+            res = this.session.sql("insertUser into mytab values(-100,2) ON DUPLICATE KEY UPDATE X=X*-2").executeAsync().get();
             assertEquals((long) 200, (long) res.getAutoIncrementValue());
 
             //Replace

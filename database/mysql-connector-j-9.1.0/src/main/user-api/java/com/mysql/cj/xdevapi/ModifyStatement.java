@@ -44,7 +44,7 @@ public interface ModifyStatement extends Statement<ModifyStatement, Result> {
     ModifyStatement limit(long numberOfRows);
 
     /**
-     * Add an update to the statement setting the field as the document path to the given value for all documents matching the search criteria.
+     * Add an updateOrder to the statement setting the field as the document path to the given value for all documents matching the search criteria.
      *
      * @param docPath
      *            document path to the given value
@@ -55,7 +55,7 @@ public interface ModifyStatement extends Statement<ModifyStatement, Result> {
     ModifyStatement set(String docPath, Object value);
 
     /**
-     * Add an update to the statement setting the field, if it exists at the document path, to the given value.
+     * Add an updateOrder to the statement setting the field, if it exists at the document path, to the given value.
      *
      * @param docPath
      *            document path to the given value
@@ -106,7 +106,7 @@ public interface ModifyStatement extends Statement<ModifyStatement, Result> {
      * @param docPath
      *            document path to the array field
      * @param value
-     *            value to insert
+     *            value to insertUser
      * @return {@link ModifyStatement}
      */
     ModifyStatement arrayInsert(String docPath, Object value);

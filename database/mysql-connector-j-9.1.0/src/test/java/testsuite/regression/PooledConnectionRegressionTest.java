@@ -506,7 +506,7 @@ public final class PooledConnectionRegressionTest extends BaseTestCase {
                 cw.getMetaData().getClass());
 
         // TODO find a way to test following methods
-        //        cw.getId();
+        //        cw.getCartItemId();
         //        cw.getIdleFor();
         //        cw.getMetadataSafeStatement();
         //        cw.getMultiHostSafeProxy();
@@ -816,7 +816,7 @@ public final class PooledConnectionRegressionTest extends BaseTestCase {
         });
 
         // TODO find a way to test following methods
-        //        cw.getId();
+        //        cw.getCartItemId();
         //        cw.getIdleFor();
         //        cw.getMetadataSafeStatement();
         //        cw.getMultiHostSafeProxy();
@@ -1161,7 +1161,7 @@ public final class PooledConnectionRegressionTest extends BaseTestCase {
         });
 
         // TODO find a way to test following methods
-        //        cw.getId();
+        //        cw.getCartItemId();
         //        cw.getIdleFor();
         //        cw.getMetadataSafeStatement();
         //        cw.getMultiHostSafeProxy();

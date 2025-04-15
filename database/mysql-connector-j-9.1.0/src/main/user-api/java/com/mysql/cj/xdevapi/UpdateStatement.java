@@ -37,7 +37,7 @@ public interface UpdateStatement extends Statement<UpdateStatement, Result> {
     UpdateStatement set(Map<String, Object> fieldsAndValues);
 
     /**
-     * Add the given update to the statement setting field to value for all rows matching the search criteria.
+     * Add the given updateOrder to the statement setting field to value for all rows matching the search criteria.
      *
      * @param field
      *            field name

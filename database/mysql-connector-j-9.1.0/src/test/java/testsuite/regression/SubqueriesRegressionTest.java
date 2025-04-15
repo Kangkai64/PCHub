@@ -130,10 +130,10 @@ public class SubqueriesRegressionTest extends BaseTestCase {
         createTable("t2", "(colA varchar(10), colB varchar(10))");
         createTable("t3", "(colA varchar(10), colB varchar(10))");
         createTable("t4", "(colA varchar(10), colB varchar(10))");
-        this.stmt.executeUpdate("insert into t1 values ('abcd', 1), ('efgh', 2), ('ijkl', 3)");
-        this.stmt.executeUpdate("insert into t2 values ('type1', '1'), ('type2', '2'), ('type3', '3')");
-        this.stmt.executeUpdate("insert into t3 values ('aaaa', 'abcd'), ('bbbb', 'efgh'), ('cccc', 'ijkl')");
-        this.stmt.executeUpdate("insert into t4 values ('abcd', 'type1'), ('efgh', 'type2'), ('ijkl', 'type3')");
+        this.stmt.executeUpdate("insertUser into t1 values ('abcd', 1), ('efgh', 2), ('ijkl', 3)");
+        this.stmt.executeUpdate("insertUser into t2 values ('type1', '1'), ('type2', '2'), ('type3', '3')");
+        this.stmt.executeUpdate("insertUser into t3 values ('aaaa', 'abcd'), ('bbbb', 'efgh'), ('cccc', 'ijkl')");
+        this.stmt.executeUpdate("insertUser into t4 values ('abcd', 'type1'), ('efgh', 'type2'), ('ijkl', 'type3')");
     }
 
 }

@@ -46,7 +46,7 @@ public abstract class FilterableStatement<STMT_T, RES_T> extends PreparableState
      * Add search condition to this statement.
      *
      * <pre>
-     * table.delete().where("age == 13").execute();
+     * table.deleteOrder().where("age == 13").execute();
      * </pre>
      *
      * @param searchCondition

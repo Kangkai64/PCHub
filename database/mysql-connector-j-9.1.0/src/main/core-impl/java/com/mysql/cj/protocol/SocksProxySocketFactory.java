@@ -64,7 +64,7 @@ public class SocksProxySocketFactory extends StandardSocketFactory {
                     : null;
             int connectTimeout = pset.getIntegerProperty(PropertyKey.connectTimeout).getValue();
 
-            // save last exception to propagate to caller if connection fails
+            // insertUser last exception to propagate to caller if connection fails
             try {
                 this.rawSocket = createSocket(pset);
                 configureSocket(this.rawSocket, pset);

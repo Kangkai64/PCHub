@@ -160,12 +160,12 @@ public class StringInspectorTest extends BaseTestCase {
         /*
          * Searching and matching the same sub-strings in different variations of the same generic string structure.
          */
-        checkIndexOfAndMatches("select on duplicate key update and more", -1, 7, 30, -1, 31, 34);
-        checkIndexOfAndMatches("on duplicate key update and more", 23, 0, 23, -1, 24, 27);
-        checkIndexOfAndMatches("select on duplicate key update", -1, 7, 30, -1, -1, -1);
-        checkIndexOfAndMatches("select on duplicate key update/* and more */", -1, 7, 30, -1, -1, -1);
+        checkIndexOfAndMatches("select on duplicate key updateOrder and more", -1, 7, 30, -1, 31, 34);
+        checkIndexOfAndMatches("on duplicate key updateOrder and more", 23, 0, 23, -1, 24, 27);
+        checkIndexOfAndMatches("select on duplicate key updateOrder", -1, 7, 30, -1, -1, -1);
+        checkIndexOfAndMatches("select on duplicate key updateOrder/* and more */", -1, 7, 30, -1, -1, -1);
         checkIndexOfAndMatches("selecton duplicate key updateandmore", -1, 6, 29, 32, 29, 32);
-        checkIndexOfAndMatches("select on-- \n duplicate/* */key   update and more", -1, 7, 40, -1, 41, 44);
+        checkIndexOfAndMatches("select on-- \n duplicate/* */key   updateOrder and more", -1, 7, 40, -1, 41, 44);
     }
 
     private void checkIndexOfAndMatches(String str, int m1, int i1, int m2, int m3, int i2, int m4) {

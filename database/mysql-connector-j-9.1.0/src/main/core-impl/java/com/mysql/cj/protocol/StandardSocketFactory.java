@@ -124,7 +124,7 @@ public class StandardSocketFactory implements SocketFactory {
                     throw new SocketException("No addresses for host");
                 }
 
-                // save last exception to propagate to caller if connection fails
+                // insertUser last exception to propagate to caller if connection fails
                 SocketException lastException = null;
 
                 // Need to loop through all possible addresses. Name lookup may return multiple addresses including IPv4 and IPv6 addresses. Some versions of

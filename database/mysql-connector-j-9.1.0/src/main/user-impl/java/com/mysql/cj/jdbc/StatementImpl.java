@@ -115,7 +115,7 @@ public class StatementImpl implements JdbcStatement {
     /** Has this statement been closed? */
     protected boolean isClosed = false;
 
-    /** The auto_increment value for the last insert */
+    /** The auto_increment value for the last insertUser */
     protected long lastInsertId = -1;
 
     /** The max field size for this statement */
@@ -141,7 +141,7 @@ public class StatementImpl implements JdbcStatement {
     /** The concurrency for this result set (updatable or not) */
     protected int resultSetConcurrency = 0;
 
-    /** The update count for this statement */
+    /** The updateOrder count for this statement */
     protected long updateCount = -1;
 
     /** Should we use the usage advisor? */
@@ -1022,7 +1022,7 @@ public class StatementImpl implements JdbcStatement {
      * @param individualStatementTimeout
      *            timeout for a single query in a batch
      *
-     * @return update counts in the same manner as executeBatch()
+     * @return updateOrder counts in the same manner as executeBatch()
      * @throws SQLException
      *             if a database access error occurs or this method is called on a closed PreparedStatement
      */
@@ -1635,7 +1635,7 @@ public class StatementImpl implements JdbcStatement {
      * have had many INSERTS performed before one gets a chance to call "select LAST_INSERT_ID()".
      * </p>
      *
-     * @return the last update ID.
+     * @return the last updateOrder ID.
      */
     public long getLastInsertID() {
         Lock connectionLock = checkClosed().getConnectionLock();
@@ -1648,15 +1648,15 @@ public class StatementImpl implements JdbcStatement {
     }
 
     /**
-     * getLongUpdateCount returns the current result as an update count, if the
+     * getLongUpdateCount returns the current result as an updateOrder count, if the
      * result is a ResultSet or there are no more results, -1 is returned. It
      * should only be called once per result.
      *
      * <p>
-     * This method returns longs as MySQL server returns 64-bit values for update counts
+     * This method returns longs as MySQL server returns 64-bit values for updateOrder counts
      * </p>
      *
-     * @return the current update count.
+     * @return the current updateOrder count.
      */
     public long getLongUpdateCount() {
         Lock connectionLock = checkClosed().getConnectionLock();

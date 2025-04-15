@@ -244,13 +244,13 @@ public class StringRegressionTest extends BaseTestCase {
      */
     @Test
     public void testBug25047() throws Exception {
-        assertEquals(26, StringUtils.indexOfIgnoreCase(0, "insert into Test (TestID) values (?)", "VALUES", "`", "`", SearchMode.__MRK_COM_MYM_HNT_WS));
-        assertEquals(26, StringUtils.indexOfIgnoreCase(0, "insert into Test (TestID) VALUES (?)", "values", "`", "`", SearchMode.__MRK_COM_MYM_HNT_WS));
+        assertEquals(26, StringUtils.indexOfIgnoreCase(0, "insertUser into Test (TestID) values (?)", "VALUES", "`", "`", SearchMode.__MRK_COM_MYM_HNT_WS));
+        assertEquals(26, StringUtils.indexOfIgnoreCase(0, "insertUser into Test (TestID) VALUES (?)", "values", "`", "`", SearchMode.__MRK_COM_MYM_HNT_WS));
 
-        assertEquals(StringUtils.indexOfIgnoreCase(0, "insert into Test (TestID) values (?)", "VALUES", "`", "`", SearchMode.__MRK_COM_MYM_HNT_WS),
-                StringUtils.indexOfIgnoreCase(0, "insert into Test (TestID) VALUES (?)", "VALUES", "`", "`", SearchMode.__MRK_COM_MYM_HNT_WS));
-        assertEquals(StringUtils.indexOfIgnoreCase(0, "insert into Test (TestID) values (?)", "values", "`", "`", SearchMode.__MRK_COM_MYM_HNT_WS),
-                StringUtils.indexOfIgnoreCase(0, "insert into Test (TestID) VALUES (?)", "values", "`", "`", SearchMode.__MRK_COM_MYM_HNT_WS));
+        assertEquals(StringUtils.indexOfIgnoreCase(0, "insertUser into Test (TestID) values (?)", "VALUES", "`", "`", SearchMode.__MRK_COM_MYM_HNT_WS),
+                StringUtils.indexOfIgnoreCase(0, "insertUser into Test (TestID) VALUES (?)", "VALUES", "`", "`", SearchMode.__MRK_COM_MYM_HNT_WS));
+        assertEquals(StringUtils.indexOfIgnoreCase(0, "insertUser into Test (TestID) values (?)", "values", "`", "`", SearchMode.__MRK_COM_MYM_HNT_WS),
+                StringUtils.indexOfIgnoreCase(0, "insertUser into Test (TestID) VALUES (?)", "values", "`", "`", SearchMode.__MRK_COM_MYM_HNT_WS));
     }
 
     /**

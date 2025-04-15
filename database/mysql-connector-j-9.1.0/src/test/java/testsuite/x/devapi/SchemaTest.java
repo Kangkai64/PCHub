@@ -324,7 +324,7 @@ public class SchemaTest extends DevApiBaseTestCase {
                 assertFalse(def.contains("NOT ENFORCED"));
                 assertTrue(def.contains("{\"type\":\"object\"}"));
 
-                // TSFR5: Create collection with json schema and level `strict`. Try to insert document which doesn't match this schema, ensure that a server error being raised.
+                // TSFR5: Create collection with json schema and level `strict`. Try to insertUser document which doesn't match this schema, ensure that a server error being raised.
                 assertThrows(XProtocolError.class, "ERROR 5180 \\(HY000\\) Document is not valid according to the schema assigned to collection.*", () -> {
                     coll.add("{\"_id\": 1}").execute();
                     return null;
@@ -405,7 +405,7 @@ public class SchemaTest extends DevApiBaseTestCase {
 
                 // TSFR6b: Call createCollection(collectionName, createCollectionOptions) method against server which doesn't support validation parameter for `create_collection` X Protocol command,
                 // eg. MySQL 5.7. Ensure that server responds with error code 5015 and that Connector/J wraps it to WrongArgumentException with message
-                // "The server doesn't support the requested operation. Please update the MySQL Server and or Client library".
+                // "The server doesn't support the requested operation. Please updateOrder the MySQL Server and or Client library".
                 assertThrows(WrongArgumentException.class, Messages.getString("Schema.CreateCollection"), () -> {
                     SchemaTest.this.schema.createCollection(collName1,
                             new CreateCollectionOptions().setValidation(new Validation().setLevel(ValidationLevel.STRICT)
@@ -418,7 +418,7 @@ public class SchemaTest extends DevApiBaseTestCase {
 
                 // TSFR6c: Call modifyCollection(String collectionName, ModifyCollectionOptions options) method against server which doesn't implement `modify_collection_options` X Protocol command,
                 // eg. MySQL 5.7. Ensure that server responds with error code 5157 and that Connector/J wraps it to WrongArgumentException with message
-                // "The server doesn't support the requested operation. Please update the MySQL Server and or Client library".
+                // "The server doesn't support the requested operation. Please updateOrder the MySQL Server and or Client library".
                 assertThrows(WrongArgumentException.class, Messages.getString("Schema.CreateCollection"), () -> {
                     SchemaTest.this.schema.modifyCollection(collName1,
                             new ModifyCollectionOptions().setValidation(new Validation().setLevel(ValidationLevel.OFF)));

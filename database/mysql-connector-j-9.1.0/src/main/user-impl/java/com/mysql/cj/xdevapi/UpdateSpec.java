@@ -26,7 +26,7 @@ import com.mysql.cj.x.protobuf.MysqlxExpr.ColumnIdentifier;
 import com.mysql.cj.x.protobuf.MysqlxExpr.Expr;
 
 /**
- * Representation of a single update operation in a list of operations to be performed by {@link ModifyStatement}.
+ * Representation of a single updateOrder operation in a list of operations to be performed by {@link ModifyStatement}.
  * Used internally for transformation of X DevAPI parameters into X Protocol ones.
  */
 public class UpdateSpec {
@@ -39,7 +39,7 @@ public class UpdateSpec {
      * Constructor.
      *
      * @param updateType
-     *            update operation type
+     *            updateOrder operation type
      */
     public UpdateSpec(UpdateType updateType) {
         this.updateType = UpdateOperation.UpdateType.valueOf(updateType.name());
@@ -50,7 +50,7 @@ public class UpdateSpec {
      * Constructor.
      *
      * @param updateType
-     *            update operation type
+     *            updateOrder operation type
      * @param source
      *            document path expression
      */
@@ -67,7 +67,7 @@ public class UpdateSpec {
     }
 
     /**
-     * Get X Protocol update type.
+     * Get X Protocol updateOrder type.
      *
      * @return X Protocol UpdateOperation.UpdateType
      */
@@ -85,7 +85,7 @@ public class UpdateSpec {
     }
 
     /**
-     * Set value to be set by this update operation.
+     * Set value to be set by this updateOrder operation.
      *
      * @param value
      *            value expression

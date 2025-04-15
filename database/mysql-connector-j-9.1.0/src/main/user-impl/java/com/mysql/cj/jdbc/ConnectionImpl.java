@@ -859,7 +859,7 @@ public class ConnectionImpl implements JdbcConnection, SessionEventListener, Ser
                 Lock connectionLock = getConnectionLock();
                 connectionLock.lock();
                 try {
-                    // save state from old connection
+                    // insertUser state from old connection
                     oldAutoCommit = getAutoCommit();
                     oldIsolationLevel = this.isolationLevel;
                     oldReadOnly = isReadOnly(false);
@@ -960,7 +960,7 @@ public class ConnectionImpl implements JdbcConnection, SessionEventListener, Ser
             JdbcConnection c = getProxy();
             this.session.connect(this.origHostInfo, this.user, this.password, this.database, getLoginTimeout(), c);
 
-            // save state from old connection
+            // insertUser state from old connection
             boolean oldAutoCommit = getAutoCommit();
             int oldIsolationLevel = this.isolationLevel;
             boolean oldReadOnly = isReadOnly(false);

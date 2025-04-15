@@ -163,7 +163,7 @@ public class BinaryBufferRow extends AbstractBufferRow {
     }
 
     /**
-     * Check whether a column is NULL and update the 'wasNull' status.
+     * Check whether a column is NULL and updateOrder the 'wasNull' status.
      */
     @Override
     public boolean getNull(int columnIndex) {

@@ -1,58 +1,90 @@
 package pchub.model;
 
-
-import pchub.CartItem;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 public class ShoppingCart {
-    private int id;
-    private int userId;
-    private List<CartItem> items;
+    private String cartId;
+    private String customerId;
+    private LocalDateTime createdDate;
+    private LocalDateTime lastUpdated;
+    private int itemCount = 0;
+    private double subtotal = 0.0;
+    private CartItem[] items;
 
     public ShoppingCart() {
-        this.items = new ArrayList<>();
+        this.items = new CartItem[20];
+        this.createdDate = LocalDateTime.now();
+        this.lastUpdated = LocalDateTime.now();
     }
 
     // Getters and setters
-    public int getId() {
-        return id;
+    public String getCartId() {
+        return cartId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCartId(String cartId) {
+        this.cartId = cartId;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
-    public List<CartItem> getItems() {
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public int getItemCount() {
+        return itemCount;
+    }
+
+    public void setItemCount(int itemCount) {
+        this.itemCount = itemCount;
+    }
+
+    public double getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(double subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public CartItem[] getItems() {
         return items;
     }
 
-    public void setItems(List<CartItem> items) {
+    public void setItems(CartItem[] items) {
         this.items = items;
+        updateCartTotals();
     }
 
-    public double getTotalAmount() {
-        double total = 0;
-        for (CartItem item : items) {
-            total += item.getSubtotal();
-        }
-        return total;
-    }
-
-    public int getTotalItems() {
+    public void updateCartTotals() {
         int count = 0;
+        double total = 0.0;
+
         for (CartItem item : items) {
             count += item.getQuantity();
+            total += item.getSubtotal();
         }
-        return count;
+
+        this.itemCount = count;
+        this.subtotal = total;
     }
 }

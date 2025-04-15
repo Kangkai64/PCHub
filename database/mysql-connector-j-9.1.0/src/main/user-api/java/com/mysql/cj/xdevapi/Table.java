@@ -28,14 +28,14 @@ import java.util.Map;
 public interface Table extends DatabaseObject {
 
     /**
-     * Create an insert statement using the list of all columns in the table.
+     * Create an insertUser statement using the list of all columns in the table.
      *
      * @return {@link InsertStatement}
      */
     InsertStatement insert();
 
     /**
-     * Create an insert statement using the given list columns.
+     * Create an insertUser statement using the given list columns.
      *
      * @param projection
      *            one or more projection expressions
@@ -44,7 +44,7 @@ public interface Table extends DatabaseObject {
     InsertStatement insert(String... projection);
 
     /**
-     * Create an insert statement using the given key/value pairs.
+     * Create an insertUser statement using the given key/value pairs.
      *
      * @param fieldsAndValues
      *            table name-value pairs
@@ -62,14 +62,14 @@ public interface Table extends DatabaseObject {
     SelectStatement select(String... projections);
 
     /**
-     * Create a new update statement.
+     * Create a new updateOrder statement.
      *
      * @return {@link UpdateStatement}
      */
     UpdateStatement update();
 
     /**
-     * Create a new delete statement.
+     * Create a new deleteOrder statement.
      *
      * @return {@link DeleteStatement}
      */

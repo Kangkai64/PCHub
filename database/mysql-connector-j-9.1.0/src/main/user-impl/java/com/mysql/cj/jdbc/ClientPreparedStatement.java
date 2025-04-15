@@ -483,7 +483,7 @@ public class ClientPreparedStatement extends com.mysql.cj.jdbc.StatementImpl imp
      *
      * @param batchTimeout
      *            timeout for the batch execution
-     * @return update counts in the same fashion as executeBatch()
+     * @return updateOrder counts in the same fashion as executeBatch()
      *
      * @throws SQLException
      *             if a database access error occurs or this method is called on a closed PreparedStatement
@@ -677,7 +677,7 @@ public class ClientPreparedStatement extends com.mysql.cj.jdbc.StatementImpl imp
      *
      * @param batchTimeout
      *            timeout for the batch execution
-     * @return update counts in the same fashion as executeBatch()
+     * @return updateOrder counts in the same fashion as executeBatch()
      *
      * @throws SQLException
      *             if a database access error occurs or this method is called on a closed PreparedStatement
@@ -810,7 +810,7 @@ public class ClientPreparedStatement extends com.mysql.cj.jdbc.StatementImpl imp
      *
      * @param batchTimeout
      *            timeout for the batch execution
-     * @return a list of update counts
+     * @return a list of updateOrder counts
      * @throws SQLException
      *             if an error occurs
      */
@@ -1112,7 +1112,7 @@ public class ClientPreparedStatement extends com.mysql.cj.jdbc.StatementImpl imp
      * @param isReallyBatch
      *            is it a batched statement?
      *
-     * @return the update count
+     * @return the updateOrder count
      *
      * @throws SQLException
      *             if a database error occurs

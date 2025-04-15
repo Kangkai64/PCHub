@@ -32,12 +32,12 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public boolean updatePaymentMethod(pchub.model.PaymentMethod paymentMethod) {
+    public boolean updatePaymentMethod(PaymentMethod paymentMethod) {
         return paymentDao.update(paymentMethod);
     }
 
     @Override
-    public boolean deletePaymentMethod(int paymentId) {
+    public boolean deletePaymentMethod(String paymentId) {
         return paymentDao.delete(paymentId);
     }
 }

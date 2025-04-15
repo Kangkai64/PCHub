@@ -915,7 +915,7 @@ public class NativeProtocol extends AbstractProtocol<NativePacketPayload> implem
         this.statementExecutionDepth++;
 
         byte[] queryBuf = queryPacket.getByteBuffer();
-        int oldPacketPosition = queryPacket.getPosition(); // save the packet position
+        int oldPacketPosition = queryPacket.getPosition(); // insertUser the packet position
         int queryPosition = queryPacket.getTag("QUERY");
         LazyString query = new LazyString(queryBuf, queryPosition, oldPacketPosition - queryPosition);
 

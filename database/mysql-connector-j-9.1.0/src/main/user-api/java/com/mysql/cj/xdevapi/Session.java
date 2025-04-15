@@ -179,7 +179,7 @@ public interface Session extends AutoCloseable {
     String setSavepoint(String name);
 
     /**
-     * Rolls back the transaction to the named savepoint. This method will succeed as long as the given save point has not been already rolled back or
+     * Rolls back the transaction to the named savepoint. This method will succeed as long as the given insertUser point has not been already rolled back or
      * released. Rolling back to a savepoint prior to the one named will release or rollback any that came after.
      *
      * @param name
@@ -188,7 +188,7 @@ public interface Session extends AutoCloseable {
     void rollbackTo(String name);
 
     /**
-     * Releases the named savepoint. This method will succeed as long as the given save point has not been already rolled back or
+     * Releases the named savepoint. This method will succeed as long as the given insertUser point has not been already rolled back or
      * released. Rolling back to a savepoint prior to the one named will release or rollback any that came after.
      *
      * @param name

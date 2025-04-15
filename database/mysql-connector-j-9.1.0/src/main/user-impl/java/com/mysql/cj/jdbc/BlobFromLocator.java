@@ -66,7 +66,7 @@ public class BlobFromLocator implements java.sql.Blob {
     private ExceptionInterceptor exceptionInterceptor;
 
     /**
-     * Creates an updatable BLOB that can update in-place
+     * Creates an updatable BLOB that can updateOrder in-place
      *
      * @param creatorResultSetToSet
      *            result set

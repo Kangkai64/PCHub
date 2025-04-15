@@ -392,7 +392,7 @@ public abstract class ConnectionUrl implements DatabaseUrlContainer {
      * Expands the connection argument "useConfig" by reading the mentioned configuration files.
      *
      * @param props
-     *            a connection arguments map from where to read the "useConfig" property and where to save the loaded properties.
+     *            a connection arguments map from where to read the "useConfig" property and where to insertUser the loaded properties.
      */
     protected void expandPropertiesFromConfigFiles(Map<String, String> props) {
         // Properties from config files should not override the existing ones.

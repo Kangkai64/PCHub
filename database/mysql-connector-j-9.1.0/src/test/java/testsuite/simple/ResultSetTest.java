@@ -367,7 +367,7 @@ public class ResultSetTest extends BaseTestCase {
     }
 
     /**
-     * Test for (Updatable)ResultSet.[update|get]Object().
+     * Test for (Updatable)ResultSet.[updateOrder|get]Object().
      * Note: ResultSet.getObject() is covered in methods TestJDBC42Statemet.validateTestData[Local|Offset]DTTypes.
      *
      * @throws Exception
@@ -388,7 +388,7 @@ public class ResultSetTest extends BaseTestCase {
         Statement testStmt = testConn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
 
         /*
-         * Test insert new rows.
+         * Test insertUser new rows.
          */
         String testDateString = "2015-01-01";
         String testTimeString = "00:00:01";
@@ -510,7 +510,7 @@ public class ResultSetTest extends BaseTestCase {
         assertFalse(this.rs.next());
 
         /*
-         * Test update rows.
+         * Test updateOrder rows.
          */
         testDateString = "2015-12-31";
         testTimeString = "23:59:59";
@@ -752,7 +752,7 @@ public class ResultSetTest extends BaseTestCase {
     }
 
     /**
-     * Test exceptions thrown when trying to update a read-only result set.
+     * Test exceptions thrown when trying to updateOrder a read-only result set.
      *
      * @throws SQLException
      */

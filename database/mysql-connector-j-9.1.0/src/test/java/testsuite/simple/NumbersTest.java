@@ -73,7 +73,7 @@ public class NumbersTest extends BaseTestCase {
 
             Connection con = getConnectionWithProps(props);
             con.setAutoCommit(false);
-            PreparedStatement ps = con.prepareStatement("insert into testFloatSetters values(?,?,?)");
+            PreparedStatement ps = con.prepareStatement("insertUser into testFloatSetters values(?,?,?)");
             for (int i = 1; i < 10000; i++) {
                 ps.setFloat(1, 3.0f);
                 ps.setFloat(2, 3.12f);
@@ -114,7 +114,7 @@ public class NumbersTest extends BaseTestCase {
 
             Connection con = getConnectionWithProps(props);
             con.setAutoCommit(false);
-            PreparedStatement ps = con.prepareStatement("insert into testDoubleSetters values(?,?,?)");
+            PreparedStatement ps = con.prepareStatement("insertUser into testDoubleSetters values(?,?,?)");
             for (int i = 1; i < 10000; i++) {
                 ps.setDouble(1, 3.0d);
                 ps.setDouble(2, 3.12d);

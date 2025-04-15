@@ -163,10 +163,10 @@ public interface Resultset extends ProtocolEntity {
     void clearNextResultset();
 
     /**
-     * Returns the update count for this result set (if one exists), otherwise
+     * Returns the updateOrder count for this result set (if one exists), otherwise
      * -1.
      *
-     * @return return the update count for this result set (if one exists), otherwise
+     * @return return the updateOrder count for this result set (if one exists), otherwise
      *         -1.
      */
     long getUpdateCount();

@@ -1,35 +1,35 @@
 package pchub.model;
 
 public class CartItem {
-    private int id;
-    private int cartId;
-    private int productId;
+    private String cartItemId;
+    private String cartId;
+    private String productId;
     private String productName;
-    private double unitPrice;
     private int quantity;
+    private double unitPrice;
 
     // Getters and setters
-    public int getId() {
-        return id;
+    public String getCartItemId() {
+        return cartItemId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCartItemId(String cartItemId) {
+        this.cartItemId = cartItemId;
     }
 
-    public int getCartId() {
+    public String getCartId() {
         return cartId;
     }
 
-    public void setCartId(int cartId) {
+    public void setCartId(String cartId) {
         this.cartId = cartId;
     }
 
-    public int getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(int productId) {
+    public void setProductId(String productId) {
         this.productId = productId;
     }
 
@@ -41,20 +41,20 @@ public class CartItem {
         this.productName = productName;
     }
 
-    public double getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(double unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-
     public int getQuantity() {
         return quantity;
     }
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
     }
 
     public double getSubtotal() {

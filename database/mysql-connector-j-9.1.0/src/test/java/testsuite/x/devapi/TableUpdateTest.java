@@ -49,8 +49,8 @@ public class TableUpdateTest extends BaseTableTestCase {
             sqlUpdate("create table updates (_id varchar(32), name varchar(20), birthday date, age int)");
             sqlUpdate("create view updatesView as select _id, name, age from updates");
 
-            sqlUpdate("insert into updates values ('1', 'Sakila', '2000-05-27', 14)");
-            sqlUpdate("insert into updates values ('2', 'Shakila', '2001-06-26', 13)");
+            sqlUpdate("insertUser into updates values ('1', 'Sakila', '2000-05-27', 14)");
+            sqlUpdate("insertUser into updates values ('2', 'Shakila', '2001-06-26', 13)");
 
             Table table = this.schema.getTable("updates");
             table.update().set("name", expr("concat(name, '-updated')")).set("age", expr("age + 1")).where("name == 'Sakila'").execute();

@@ -3,25 +3,29 @@ package pchub.dao.impl;
 import pchub.dao.UserDao;
 import pchub.model.User;
 import pchub.model.enums.UserRole;
+import pchub.utils.DatabaseConnection;
+import pchub.utils.PasswordUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
 
     @Override
-    public User findById(String id) {
-        String sql = "SELECT * FROM users WHERE id = ?";
+    public User findById(String userId) {
+        String sql = "SELECT * FROM user WHERE userID = ?";
 
-        try (Connection conn = pchub.utils.DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-            preparedStatement.setString(1, id);
+            preparedStatement.setString(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
@@ -36,9 +40,9 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User findByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = ?";
+        String sql = "SELECT * FROM user WHERE username = ?";
 
-        try (Connection conn = pchub.utils.DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
             preparedStatement.setString(1, username);
@@ -56,9 +60,9 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User findByEmail(String email) {
-        String sql = "SELECT * FROM users WHERE email = ?";
+        String sql = "SELECT * FROM user WHERE email = ?";
 
-        try (Connection conn = pchub.utils.DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
             preparedStatement.setString(1, email);
@@ -77,9 +81,9 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM users";
+        String sql = "SELECT * FROM user";
 
-        try (Connection conn = pchub.utils.DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              Statement statement = conn.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
 
@@ -94,45 +98,51 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public boolean save(User user) {
-        String sql = "INSERT INTO users (userID, username, email, password, registrationDate, lastLogin, status, " +
-                " full_name, phone, role) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public boolean insertUser(User user) {
+        String sql = "INSERT INTO user (userID, username, email, password, registrationDate, lastLogin, status, " +
+                "phone, fullName, role) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = pchub.utils.DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-            preparedStatement.setString(1, user.getUsername());
-            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setString(1, user.getUserId());
+            preparedStatement.setString(2, user.getUsername());
             preparedStatement.setString(3, user.getEmail());
-            preparedStatement.setString(4, user.getFullName());
-            preparedStatement.setString(5, user.getPhone());
-            preparedStatement.setString(6, user.getRole().name());
+            preparedStatement.setString(4, PasswordUtils.hashPassword(user.getPassword()));
+            preparedStatement.setDate(5, new Date(user.getRegistrationDate().getTime()));
+            preparedStatement.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // Current timestamp for last login
+            preparedStatement.setString(7, user.getStatus() != null ? user.getStatus() : "Active");
+            preparedStatement.setString(8, user.getPhone());
+            preparedStatement.setString(9, user.getFullName());
+            preparedStatement.setString(10, user.getRole().name());
 
             int affectedRows = preparedStatement.executeUpdate();
+            return affectedRows > 0;
 
         } catch (SQLException e) {
-            System.err.println("Error saving user: " + e.getMessage());
+            System.err.println("Error inserting user: " + e.getMessage());
+            return false;
         }
-
-        return false;
     }
 
     @Override
-    public boolean update(User user) {
-        String sql = "UPDATE users SET username = ?, password = ?, email = ?, " +
-                "full_name = ?, phone = ?, role = ? WHERE id = ?";
+    public boolean updateUser(User user) {
+        String sql = "UPDATE user SET username = ?, email = ?, password = ?, lastLogin = ?, " +
+                "status = ?, phone = ?, fullName = ?, role = ? WHERE userID = ?";
 
-        try (Connection conn = pchub.utils.DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
             preparedStatement.setString(1, user.getUsername());
-            preparedStatement.setString(2, user.getPassword());
-            preparedStatement.setString(3, user.getEmail());
-            preparedStatement.setString(4, user.getFullName());
-            preparedStatement.setString(5, user.getPhone());
-            preparedStatement.setString(6, user.getRole().name());
-            preparedStatement.setInt(7, user.getId());
+            preparedStatement.setString(2, user.getEmail());
+            preparedStatement.setString(3, PasswordUtils.hashPassword(user.getPassword()));
+            preparedStatement.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+            preparedStatement.setString(5, user.getStatus());
+            preparedStatement.setString(6, user.getPhone());
+            preparedStatement.setString(7, user.getFullName());
+            preparedStatement.setString(8, user.getRole().name());
+            preparedStatement.setString(9, user.getUserId());
 
             int affectedRows = preparedStatement.executeUpdate();
             return affectedRows > 0;
@@ -143,13 +153,32 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public boolean delete(int id) {
-        String sql = "DELETE FROM users WHERE id = ?";
+    public boolean updateAllPasswords(String newPassword) {
+        String sql = "UPDATE user SET password = ?";
 
-        try (Connection conn = pchub.utils.DatabaseConnection.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-            preparedStatement.setInt(1, id);
+            // Hash the password before storing
+            String hashedPassword = PasswordUtils.hashPassword(newPassword);
+            preparedStatement.setString(1, hashedPassword);
+
+            int affectedRows = preparedStatement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.err.println("Error updating passwords: " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteUser(String userId) {
+        String sql = "DELETE FROM user WHERE userID = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, userId);
 
             int affectedRows = preparedStatement.executeUpdate();
             return affectedRows > 0;
@@ -161,12 +190,15 @@ public class UserDaoImpl implements UserDao {
 
     private User mapResultSetToUser(ResultSet resultSet) throws SQLException {
         User user = new User();
-        user.setId(resultSet.getInt("id"));
+        user.setUserId(resultSet.getString("userID"));
         user.setUsername(resultSet.getString("username"));
         user.setPassword(resultSet.getString("password"));
         user.setEmail(resultSet.getString("email"));
-        user.setFullName(resultSet.getString("full_name"));
+        user.setRegistrationDate(resultSet.getTimestamp("registrationDate"));
+        user.setLastLogin(resultSet.getTimestamp("lastLogin"));
+        user.setStatus(resultSet.getString("status"));
         user.setPhone(resultSet.getString("phone"));
+        user.setFullName(resultSet.getString("fullName"));
         user.setRole(UserRole.valueOf(resultSet.getString("role")));
         return user;
     }

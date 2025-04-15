@@ -26,7 +26,7 @@ import com.mysql.cj.exceptions.FeatureNotAvailableException;
 import com.mysql.cj.protocol.x.StatementExecuteOk;
 
 /**
- * {@link SqlResult} for insert, update, delete and DDL statements.
+ * {@link SqlResult} for insertUser, updateOrder, deleteOrder and DDL statements.
  */
 public class SqlUpdateResult extends UpdateResult implements SqlResult {
 

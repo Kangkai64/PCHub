@@ -187,7 +187,7 @@ public class BlobRegressionTest extends BaseTestCase {
     @Test
     public void testBug5490() throws Exception {
         createTable("testBug5490", "(pk INT NOT NULL PRIMARY KEY, blobField BLOB)");
-        String sql = "insert into testBug5490 values(?,?)";
+        String sql = "insertUser into testBug5490 values(?,?)";
 
         int blobFileSize = 871;
         File blobFile = newTempBinaryFile("Bug5490", blobFileSize);

@@ -7,8 +7,8 @@ import java.util.Date;
 import java.util.List;
 
 public class Order {
-    private int id;
-    private int userId;
+    private String orderId;
+    private String customerId;
     private String userName;
     private Date orderDate;
     private OrderStatus status;
@@ -24,20 +24,20 @@ public class Order {
     }
 
     // Getters and setters
-    public int getId() {
-        return id;
+    public String getOrderId() {
+        return orderId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
     public String getUserName() {

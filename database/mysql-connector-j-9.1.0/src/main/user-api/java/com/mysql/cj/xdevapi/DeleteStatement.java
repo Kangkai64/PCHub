@@ -21,7 +21,7 @@
 package com.mysql.cj.xdevapi;
 
 /**
- * A statement to delete rows from a table.
+ * A statement to deleteOrder rows from a table.
  */
 public interface DeleteStatement extends Statement<DeleteStatement, Result> {
 

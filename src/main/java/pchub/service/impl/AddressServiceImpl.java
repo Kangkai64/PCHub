@@ -25,7 +25,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public boolean addAddress(pchub.model.Address address) {
+    public boolean addAddress(Address address) {
         return addressDao.save(address);
     }
 

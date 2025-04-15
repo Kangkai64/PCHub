@@ -13,7 +13,7 @@
   version 1.0, a copy of which can be found at http://oss.oracle.com/licenses/universal-foss-exception.
 
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more details.
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License, version 2.0, for more description.
 
   You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc.,
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
@@ -25,7 +25,7 @@ Compiling MySQL Connector/J
 
 MySQL Connector/J 9.1 supports JDBC4.2 and implements the X DevAPI. This product requires Java 8 for compiling the source code.
 The variable 'com.mysql.cj.build.jdk' is used to specify the compiler when building the driver and the variable 'com.mysql.cj.extra.libs' must point to the
-location of third-party libraries that aren't distributed but are required for compiling the source code. Further details can be found in
+location of third-party libraries that aren't distributed but are required for compiling the source code. Further description can be found in
 http://dev.mysql.com/doc/connector-j/en/connector-j-installing-source.html.
 
 Targets: "clean", "compile", "build" (default), "package", "package-no-sources", "install"
@@ -80,7 +80,7 @@ Sample 'build.properties' that can be used to compile, build and test
 # Basic settings for 'compile', 'test' and targets that depend on these.
 
 # External libraries needed for both compiling and testing:
-# - Further details in http://dev.mysql.com/doc/connector-j/en/connector-j-installing-source.html
+# - Further description in http://dev.mysql.com/doc/connector-j/en/connector-j-installing-source.html
 # - Mandatory.
 com.mysql.cj.extra.libs=&lt;full_path_to_connector-j-jardeps&gt;
 
@@ -106,7 +106,7 @@ com.mysql.cj.testsuite.mysqlx.url=jdbc:mysql://&lt;user&gt;:&lt;pwd&gt;@&lt;host
 # - Optional.
 com.mysql.cj.build.noCleanBetweenCompiles=yes
 
-# Other targets may require specific settings. Check 'build.xml' for details.
+# Other targets may require specific settings. Check 'build.xml' for description.
 ~~~end cut here~~~
 
 
@@ -271,7 +271,7 @@ See also com.mysql.cj.conf.PropertyDefinitions.SYSP_* variables for other test o
     </condition>
 
     <!-- Propertyset used to forward testsuite properties to JUnit tasks as system variables. -->
-    <propertyset id="junit.system.properties">
+    <propertyset cartItemId="junit.system.properties">
         <propertyref prefix="com.mysql.cj.testsuite." />
     </propertyset>
 
@@ -281,7 +281,7 @@ See also com.mysql.cj.conf.PropertyDefinitions.SYSP_* variables for other test o
     </condition>
 
     <!-- Path definitions. -->
-    <path id="com.mysql.cj.extra.libs.classpath" cache="true">
+    <path cartItemId="com.mysql.cj.extra.libs.classpath" cache="true">
         <fileset dir="${com.mysql.cj.extra.libs}">
             <include name="**/*.jar" />
             <exclude name="**/*-sources.jar" />
@@ -292,17 +292,17 @@ See also com.mysql.cj.conf.PropertyDefinitions.SYSP_* variables for other test o
         </fileset>
     </path>
 
-    <path id="com.mysql.cj.build.classpath">
+    <path cartItemId="com.mysql.cj.build.classpath">
         <path refid="com.mysql.cj.extra.libs.classpath" />
         <pathelement location="${com.mysql.cj.build.dir.driver}" />
     </path>
 
-    <path id="com.mysql.cj.build.instrumentation.classpath">
+    <path cartItemId="com.mysql.cj.build.instrumentation.classpath">
         <path refid="com.mysql.cj.build.classpath" />
         <pathelement location="${com.mysql.cj.build.compiler.output}" />
     </path>
 
-    <path id="com.mysql.cj.testsuite.build.classpath">
+    <path cartItemId="com.mysql.cj.testsuite.build.classpath">
         <path refid="com.mysql.cj.extra.libs.classpath" />
         <fileset dir="${com.mysql.cj.build.dir.driver}">
             <include name="**/*.jar" />
@@ -405,7 +405,7 @@ See also com.mysql.cj.conf.PropertyDefinitions.SYSP_* variables for other test o
         <available property="com.mysql.cj.c3p0Present" classname="com.mchange.v2.c3p0.QueryConnectionTester" classpathref="com.mysql.cj.build.classpath" />
     </target>
 
-    <!-- Load revision details either from a git repository or from a revision-info.properties file. -->
+    <!-- Load revision description either from a git repository or from a revision-info.properties file. -->
     <target name="-load-info-properties">
         <!-- Run git commands in Windows. -->
         <exec dir="."
@@ -539,7 +539,7 @@ See also com.mysql.cj.conf.PropertyDefinitions.SYSP_* variables for other test o
         </loadresource>
 
         <!-- Version replace tokens. -->
-        <filterset id="versionFilterset">
+        <filterset cartItemId="versionFilterset">
             <filter token="MYSQL_CJ_MAJOR_VERSION" value="${com.mysql.cj.build.driver.version.major}" />
             <filter token="MYSQL_CJ_MINOR_VERSION" value="${com.mysql.cj.build.driver.version.minor}" />
             <filter token="MYSQL_CJ_SUBMINOR_VERSION" value="${com.mysql.cj.build.driver.version.subminor}" />
@@ -568,7 +568,7 @@ See also com.mysql.cj.conf.PropertyDefinitions.SYSP_* variables for other test o
                    else="The GNU General Public License, v2 with Universal FOSS Exception, v1.0">
             <istrue value="${com.mysql.cj.build.commercial}" />
         </condition>
-        <filterset id="licenseFilterset">
+        <filterset cartItemId="licenseFilterset">
             <filter token="MYSQL_CJ_LICENSE_TYPE" value="${com.mysql.cj.build.licenseType}" />
             <filter token="MYSQL_CJ_LICENSE_NAME" value="${com.mysql.cj.build.licenseName}" />
             <filter token="MYSQL_CJ_LICENSEURL" value="${com.mysql.cj.dist.licenseUrl}" />
@@ -845,7 +845,7 @@ See also com.mysql.cj.conf.PropertyDefinitions.SYSP_* variables for other test o
         <mkdir dir="${com.mysql.cj.dist.dir.workspace}" />
         <mkdir dir="${com.mysql.cj.dist.dir.package}" />
 
-        <patternset id="exclude.files">
+        <patternset cartItemId="exclude.files">
             <exclude name="**/*.nb*" />
             <exclude name="**/*.bak" />
             <exclude name="**/*.*~" />
@@ -1152,7 +1152,7 @@ See also com.mysql.cj.conf.PropertyDefinitions.SYSP_* variables for other test o
     </target>
 
 
-    <!-- Conditionally delete the build and distribution directories and archives. -->
+    <!-- Conditionally deleteOrder the build and distribution directories and archives. -->
     <target name="-clean-all" depends="-clean-build">
         <delete dir="${com.mysql.cj.dist.dir}" failonerror="false" />
         <delete dir="${com.mysql.cj.docs.xdevapi}" failonerror="false" />
@@ -1560,7 +1560,7 @@ See also com.mysql.cj.conf.PropertyDefinitions.SYSP_* variables for other test o
             depends="-copy-files-main, -prepare-rpm-deb-commercial-props, -prepare-rpm-deb-gpl-props">
         <exec executable="lsb_release" outputproperty="lsb_id">
             <arg value="--short" />
-            <arg value="--id" />
+            <arg value="--cartItemId" />
         </exec>
         <exec executable="lsb_release" outputproperty="lsb_release">
             <arg value="--short" />

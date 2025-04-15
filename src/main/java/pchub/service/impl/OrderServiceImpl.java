@@ -4,6 +4,10 @@ import pchub.dao.OrderDao;
 import pchub.dao.ProductDao;
 import pchub.dao.impl.OrderDaoImpl;
 import pchub.dao.impl.ProductDaoImpl;
+import pchub.model.Address;
+import pchub.model.PaymentMethod;
+import pchub.model.ShoppingCart;
+import pchub.model.User;
 import pchub.model.enums.OrderStatus;
 import pchub.service.CartService;
 import pchub.service.OrderService;
@@ -22,13 +26,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public pchub.model.Order createOrderFromCart(pchub.model.User user, pchub.model.ShoppingCart cart, pchub.model.Address shippingAddress, pchub.model.PaymentMethod paymentMethod) {
+    public Order createOrderFromCart(User user, ShoppingCart cart, Address shippingAddress, PaymentMethod paymentMethod) {
         if (cart.getItems().isEmpty()) {
             return null;
         }
 
         pchub.model.Order order = new pchub.model.Order();
-        order.setUserId(user.getId());
+        order.setCustomerId(user.getId());
         order.setUserName(user.getUsername());
         order.setShippingAddress(shippingAddress);
         order.setPaymentMethod(paymentMethod);
@@ -64,16 +68,16 @@ public class OrderServiceImpl implements OrderService {
         for (pchub.model.OrderItem item : order.getItems()) {
             pchub.model.Product product = productDao.findById(item.getProductId());
             product.setStockQuantity(product.getStockQuantity() - item.getQuantity());
-            productDao.update(product);
+            productDao.updateProduct(product);
         }
 
         // Save the order
-        boolean orderSaved = orderDao.save(order);
+        boolean orderSaved = orderDao.insertOrder(order);
 
         // Clear the cart after successful order placement
         if (orderSaved) {
             pchub.model.ShoppingCart cart = new pchub.model.ShoppingCart();
-            cart.setUserId(order.getUserId());
+            cart.setUserId(order.getCustomerId());
             cartService.clearCart(cart);
         }
 
@@ -86,8 +90,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<pchub.model.Order> getOrdersByUser(int userId) {
-        return orderDao.findByUserId(userId);
+    public List<pchub.model.Order> getOrdersByUser(String customerId) {
+        return orderDao.findByUserId(customerId);
     }
 
     @Override
@@ -103,11 +107,11 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setStatus(newStatus);
-        return orderDao.update(order);
+        return orderDao.updateOrder(order);
     }
 
     @Override
-    public boolean deleteOrder(int orderId) {
-        return orderDao.delete(orderId);
+    public boolean deleteOrder(String orderId) {
+        return orderDao.deleteOrder(orderId);
     }
 }

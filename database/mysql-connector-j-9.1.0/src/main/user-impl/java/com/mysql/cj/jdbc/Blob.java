@@ -83,7 +83,7 @@ public class Blob implements java.sql.Blob, OutputStreamWatcher {
     }
 
     /**
-     * Creates an updatable BLOB that can update in-place (not implemented yet).
+     * Creates an updatable BLOB that can updateOrder in-place (not implemented yet).
      *
      * @param data
      *            data to fill the Blob

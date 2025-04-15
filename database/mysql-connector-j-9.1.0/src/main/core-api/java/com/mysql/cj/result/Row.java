@@ -82,7 +82,7 @@ public interface Row extends ProtocolEntity {
     }
 
     /**
-     * Check whether a column is NULL and update the 'wasNull' status.
+     * Check whether a column is NULL and updateOrder the 'wasNull' status.
      *
      * @param columnIndex
      *            of the column value (starting at 0) to check.

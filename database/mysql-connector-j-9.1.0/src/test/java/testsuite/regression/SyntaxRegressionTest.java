@@ -841,15 +841,15 @@ public class SyntaxRegressionTest extends BaseTestCase {
         createTable("testGetStackedDiagnosticsTbl", "(c VARCHAR(8) NOT NULL)");
         createProcedure("testGetStackedDiagnosticsSP",
                 "() BEGIN DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN " + "GET CURRENT DIAGNOSTICS CONDITION 1 @errno = MYSQL_ERRNO, @msg = MESSAGE_TEXT; "
-                        + "SELECT 'current DA before insert in handler' AS op, @errno AS errno, @msg AS msg; " // 1st result
+                        + "SELECT 'current DA before insertUser in handler' AS op, @errno AS errno, @msg AS msg; " // 1st result
                         + "GET STACKED DIAGNOSTICS CONDITION 1 @errno = MYSQL_ERRNO, @msg = MESSAGE_TEXT; "
-                        + "SELECT 'stacked DA before insert in handler' AS op, @errno AS errno, @msg AS msg; " // 2nd result
+                        + "SELECT 'stacked DA before insertUser in handler' AS op, @errno AS errno, @msg AS msg; " // 2nd result
                         + "INSERT INTO testGetStackedDiagnosticsTbl (c) VALUES('gnitset'); " + "GET CURRENT DIAGNOSTICS @num = NUMBER; "
                         + "IF @num = 0 THEN SELECT 'INSERT succeeded, current DA is empty' AS op; " // 3rd result
                         + "ELSE GET CURRENT DIAGNOSTICS CONDITION 1 @errno = MYSQL_ERRNO, @msg = MESSAGE_TEXT; "
-                        + "SELECT 'current DA after insert in handler' AS op, @errno AS errno, @msg AS msg; END IF; "
+                        + "SELECT 'current DA after insertUser in handler' AS op, @errno AS errno, @msg AS msg; END IF; "
                         + "GET STACKED DIAGNOSTICS CONDITION 1 @errno = MYSQL_ERRNO, @msg = MESSAGE_TEXT; "
-                        + "SELECT 'stacked DA after insert in handler' AS op, @errno AS errno, @msg AS msg; END; " // 4th result
+                        + "SELECT 'stacked DA after insertUser in handler' AS op, @errno AS errno, @msg AS msg; END; " // 4th result
                         + "INSERT INTO testGetStackedDiagnosticsTbl (c) VALUES ('testing');INSERT INTO testGetStackedDiagnosticsTbl (c) VALUES (NULL); END");
 
         CallableStatement cStmt = this.conn.prepareCall("CALL testGetStackedDiagnosticsSP()");
@@ -858,7 +858,7 @@ public class SyntaxRegressionTest extends BaseTestCase {
         // test 1st ResultSet
         this.rs = cStmt.getResultSet();
         assertTrue(this.rs.next());
-        assertEquals("current DA before insert in handler", this.rs.getString(1));
+        assertEquals("current DA before insertUser in handler", this.rs.getString(1));
         assertEquals(1048, this.rs.getInt(2));
         assertEquals("Column 'c' cannot be null", this.rs.getString(3));
         assertFalse(this.rs.next());
@@ -868,7 +868,7 @@ public class SyntaxRegressionTest extends BaseTestCase {
         assertTrue(cStmt.getMoreResults());
         this.rs = cStmt.getResultSet();
         assertTrue(this.rs.next());
-        assertEquals("stacked DA before insert in handler", this.rs.getString(1));
+        assertEquals("stacked DA before insertUser in handler", this.rs.getString(1));
         assertEquals(1048, this.rs.getInt(2));
         assertEquals("Column 'c' cannot be null", this.rs.getString(3));
         assertFalse(this.rs.next());
@@ -886,7 +886,7 @@ public class SyntaxRegressionTest extends BaseTestCase {
         assertTrue(cStmt.getMoreResults());
         this.rs = cStmt.getResultSet();
         assertTrue(this.rs.next());
-        assertEquals("stacked DA after insert in handler", this.rs.getString(1));
+        assertEquals("stacked DA after insertUser in handler", this.rs.getString(1));
         assertEquals(1048, this.rs.getInt(2));
         assertEquals("Column 'c' cannot be null", this.rs.getString(3));
         assertFalse(this.rs.next());

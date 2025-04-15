@@ -2232,7 +2232,7 @@ public class ResultSetImpl extends NativeResultset implements ResultSetInternalM
 
     @Override
     public String toString() {
-        return hasRows() ? super.toString() : "Result set representing update count of " + this.updateCount;
+        return hasRows() ? super.toString() : "Result set representing updateOrder count of " + this.updateCount;
     }
 
     @Override

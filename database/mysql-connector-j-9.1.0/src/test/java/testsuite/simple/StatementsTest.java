@@ -766,7 +766,7 @@ public class StatementsTest extends BaseTestCase {
         try {
             boolean autoCommit = this.conn.getAutoCommit();
 
-            // Test running a query for an update. It should fail.
+            // Test running a query for an updateOrder. It should fail.
             try {
                 this.conn.setAutoCommit(false);
                 this.stmt.executeUpdate("SELECT * FROM statement_test");
@@ -776,7 +776,7 @@ public class StatementsTest extends BaseTestCase {
                 this.conn.setAutoCommit(autoCommit);
             }
 
-            // Test running a update for an query. It should fail.
+            // Test running a updateOrder for an query. It should fail.
             try {
                 this.conn.setAutoCommit(false);
                 this.stmt.execute("UPDATE statement_test SET strdata1='blah' WHERE 1=0");
@@ -858,7 +858,7 @@ public class StatementsTest extends BaseTestCase {
             assertTrue("abcd".equals(this.rs.getString(1)));
             this.rs.close();
 
-            // Next should be an update count...
+            // Next should be an updateOrder count...
             assertTrue(!multiStmt.getMoreResults());
 
             assertTrue(multiStmt.getUpdateCount() == 1, "Update count was " + multiStmt.getUpdateCount() + ", expected 1");
@@ -2474,7 +2474,7 @@ public class StatementsTest extends BaseTestCase {
     }
 
     /**
-     * Test for Statement.executeLargeBatch(). Validate update count returned and generated keys.
+     * Test for Statement.executeLargeBatch(). Validate updateOrder count returned and generated keys.
      *
      * @throws Exception
      */
@@ -2559,7 +2559,7 @@ public class StatementsTest extends BaseTestCase {
 
     /**
      * Test for Statement.executeLargeUpdate(String).
-     * Validate update count returned and generated keys.
+     * Validate updateOrder count returned and generated keys.
      * Case: without requesting generated keys.
      *
      * @throws Exception
@@ -2582,7 +2582,7 @@ public class StatementsTest extends BaseTestCase {
 
     /**
      * Test for Statement.executeLargeUpdate(String, _).
-     * Validate update count returned and generated keys.
+     * Validate updateOrder count returned and generated keys.
      * Case 1: explicitly requesting generated keys.
      * Case 2: requesting generated keys by defining column indexes.
      * Case 3: requesting generated keys by defining column names.
@@ -2630,7 +2630,7 @@ public class StatementsTest extends BaseTestCase {
 
     /**
      * Test for PreparedStatement.executeLargeBatch().
-     * Validate update count returned and generated keys.
+     * Validate updateOrder count returned and generated keys.
      *
      * @throws Exception
      */
@@ -2727,7 +2727,7 @@ public class StatementsTest extends BaseTestCase {
 
     /**
      * Test for PreparedStatement.executeLargeUpdate().
-     * Validate update count returned and generated keys.
+     * Validate updateOrder count returned and generated keys.
      * Case: without requesting generated keys.
      *
      * @throws Exception
@@ -2757,7 +2757,7 @@ public class StatementsTest extends BaseTestCase {
 
     /**
      * Test for PreparedStatement.executeLargeUpdate().
-     * Validate update count returned and generated keys.
+     * Validate updateOrder count returned and generated keys.
      * Case: explicitly requesting generated keys.
      *
      * @throws Exception
@@ -2794,7 +2794,7 @@ public class StatementsTest extends BaseTestCase {
 
     /**
      * Test for CallableStatement.executeLargeBatch().
-     * Validate update count returned and generated keys.
+     * Validate updateOrder count returned and generated keys.
      *
      * @throws Exception
      */
@@ -2902,7 +2902,7 @@ public class StatementsTest extends BaseTestCase {
 
     /**
      * Test for CallableStatement.executeLargeUpdate().
-     * Validate update count returned and generated keys.
+     * Validate updateOrder count returned and generated keys.
      *
      * @throws Exception
      */
@@ -2943,7 +2943,7 @@ public class StatementsTest extends BaseTestCase {
 
     /**
      * Test for (Server)PreparedStatement.executeLargeBatch().
-     * Validate update count returned and generated keys.
+     * Validate updateOrder count returned and generated keys.
      *
      * @throws Exception
      */

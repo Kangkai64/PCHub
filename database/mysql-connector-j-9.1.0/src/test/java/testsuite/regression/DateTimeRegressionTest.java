@@ -292,7 +292,7 @@ public class DateTimeRegressionTest extends BaseTestCase {
                 props.setProperty(PropertyKey.sendFractionalSeconds.getKeyName(), "" + sendFr);
                 Connection testConn = getConnectionWithProps(timeZoneFreeDbUrl, props);
 
-                this.pstmt = testConn.prepareStatement("insert into testBug20391832 values(?)");
+                this.pstmt = testConn.prepareStatement("insertUser into testBug20391832 values(?)");
 
                 for (MysqlType type : new MysqlType[] { MysqlType.DATETIME, MysqlType.TIMESTAMP }) {
                     subTestBug20391832(props, type, "2038-01-19", "2038-01-19 00:00:00");
@@ -963,7 +963,7 @@ public class DateTimeRegressionTest extends BaseTestCase {
         String query = this.pstmt.toString().replace(".0)", ")");
 
         assertEquals((useSSPS ? "com.mysql.cj.jdbc.ServerPreparedStatement[1]: " : "com.mysql.cj.jdbc.ClientPreparedStatement: ")
-                + "insert into testBug20391832 values(" + (targetType == MysqlType.YEAR ? exp : "'" + exp + "'") + ")", query);
+                + "insertUser into testBug20391832 values(" + (targetType == MysqlType.YEAR ? exp : "'" + exp + "'") + ")", query);
     }
 
     /**
@@ -974,7 +974,7 @@ public class DateTimeRegressionTest extends BaseTestCase {
     @Test
     public void testBug20316640() throws Exception {
         createTable("testBug20316640", "(c1 timestamp, c2 time, c3 date)");
-        this.stmt.execute("insert into testBug20316640 values('2038-01-19 03:14:07','18:59:59','9999-12-31')");
+        this.stmt.execute("insertUser into testBug20316640 values('2038-01-19 03:14:07','18:59:59','9999-12-31')");
         this.rs = this.stmt.executeQuery("select * from testBug20316640");
         this.rs.next();
         System.out.println("Col 1 [" + this.rs.getTimestamp("c1", null) + "]");
@@ -990,7 +990,7 @@ public class DateTimeRegressionTest extends BaseTestCase {
     @Test
     public void testBug20818678() throws Exception {
         createTable("testBug20818678", "(c1 YEAR)");
-        this.stmt.execute("insert into testBug20818678 values(2155)");
+        this.stmt.execute("insertUser into testBug20818678 values(2155)");
 
         Connection con = null;
         PreparedStatement ps = null;
@@ -1040,7 +1040,7 @@ public class DateTimeRegressionTest extends BaseTestCase {
         assumeTrue(versionMeetsMinimum(5, 6, 4), "Fractional seconds are not supported in this server version.");
 
         createTable("testBug21308907", "(c1 time(6))");
-        this.stmt.execute("insert into testBug21308907 values('12:59:59.123456')");
+        this.stmt.execute("insertUser into testBug21308907 values('12:59:59.123456')");
 
         Connection con = null;
         try {
@@ -1115,7 +1115,7 @@ public class DateTimeRegressionTest extends BaseTestCase {
                     props.setProperty(PropertyKey.rewriteBatchedStatements.getKeyName(), "true");
 
                     Connection con = getConnectionWithProps(props);
-                    PreparedStatement ps = con.prepareStatement("insert into testBug101413(createtime1, createtime2) values(?, ?)");
+                    PreparedStatement ps = con.prepareStatement("insertUser into testBug101413(createtime1, createtime2) values(?, ?)");
 
                     con.setAutoCommit(false);
                     for (int i = 1; i <= 20000; i++) {

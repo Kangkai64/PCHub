@@ -70,7 +70,7 @@ public class TableSelectTest extends BaseTableTestCase {
         try {
             sqlUpdate("drop table if exists basicQuery");
             sqlUpdate("create table basicQuery (_id varchar(32), name varchar(20), birthday date, age int)");
-            sqlUpdate("insert into basicQuery values ('some long UUID', 'Sakila', '2000-05-27', 14)");
+            sqlUpdate("insertUser into basicQuery values ('some long UUID', 'Sakila', '2000-05-27', 14)");
             Table table = this.schema.getTable("basicQuery");
             Map<String, Object> params = new HashMap<>();
             params.put("name", "Saki%");
@@ -108,18 +108,18 @@ public class TableSelectTest extends BaseTableTestCase {
         try {
             sqlUpdate("drop table if exists complexQuery");
             sqlUpdate("create table complexQuery (name varchar(32), age int, something int)");
-            sqlUpdate("insert into complexQuery values ('Mamie', 11, 0)");
-            sqlUpdate("insert into complexQuery values ('Eulalia', 11, 0)");
-            sqlUpdate("insert into complexQuery values ('Polly', 12, 0)");
-            sqlUpdate("insert into complexQuery values ('Rufus', 12, 0)");
-            sqlUpdate("insert into complexQuery values ('Cassidy', 13, 0)");
-            sqlUpdate("insert into complexQuery values ('Olympia', 14, 0)");
-            sqlUpdate("insert into complexQuery values ('Lev', 14, 0)");
-            sqlUpdate("insert into complexQuery values ('Tierney', 15, 0)");
-            sqlUpdate("insert into complexQuery values ('Octavia', 15, 0)");
-            sqlUpdate("insert into complexQuery values ('Vesper', 16, 0)");
-            sqlUpdate("insert into complexQuery values ('Caspian', 17, 0)");
-            sqlUpdate("insert into complexQuery values ('Romy', 17, 0)");
+            sqlUpdate("insertUser into complexQuery values ('Mamie', 11, 0)");
+            sqlUpdate("insertUser into complexQuery values ('Eulalia', 11, 0)");
+            sqlUpdate("insertUser into complexQuery values ('Polly', 12, 0)");
+            sqlUpdate("insertUser into complexQuery values ('Rufus', 12, 0)");
+            sqlUpdate("insertUser into complexQuery values ('Cassidy', 13, 0)");
+            sqlUpdate("insertUser into complexQuery values ('Olympia', 14, 0)");
+            sqlUpdate("insertUser into complexQuery values ('Lev', 14, 0)");
+            sqlUpdate("insertUser into complexQuery values ('Tierney', 15, 0)");
+            sqlUpdate("insertUser into complexQuery values ('Octavia', 15, 0)");
+            sqlUpdate("insertUser into complexQuery values ('Vesper', 16, 0)");
+            sqlUpdate("insertUser into complexQuery values ('Caspian', 17, 0)");
+            sqlUpdate("insertUser into complexQuery values ('Romy', 17, 0)");
             Table table = this.schema.getTable("complexQuery");
             // Result:
             // age_group | cnt
@@ -157,7 +157,7 @@ public class TableSelectTest extends BaseTableTestCase {
         try {
             sqlUpdate("drop table if exists allColumns");
             sqlUpdate("create table allColumns (x int, y int, z int)");
-            sqlUpdate("insert into allColumns values (1,2,3)");
+            sqlUpdate("insertUser into allColumns values (1,2,3)");
             Table table = this.schema.getTable("allColumns");
             // * must come first, as with SQL
             SelectStatement stmt = table.select("*, 42 as a_number, '43' as a_string");
@@ -177,7 +177,7 @@ public class TableSelectTest extends BaseTableTestCase {
         try {
             sqlUpdate("drop table if exists countAllColumns");
             sqlUpdate("create table countAllColumns(x int, y int)");
-            sqlUpdate("insert into countAllColumns values (1,1), (2,2), (3,3), (4,4)");
+            sqlUpdate("insertUser into countAllColumns values (1,1), (2,2), (3,3), (4,4)");
             Table table = this.schema.getTable("countAllColumns");
             Row row = table.select("count(*) + 10").execute().next();
             assertEquals(14, row.getInt(0));
@@ -355,8 +355,8 @@ public class TableSelectTest extends BaseTableTestCase {
             sqlUpdate(
                     "create view basicView as select basicTable1._id, name, birthday, age from basicTable1 join basicTable2 on basicTable1._id=basicTable2._id");
 
-            sqlUpdate("insert into basicTable1 values ('some long UUID', 'Sakila')");
-            sqlUpdate("insert into basicTable2 values ('some long UUID', '2000-05-27', 14)");
+            sqlUpdate("insertUser into basicTable1 values ('some long UUID', 'Sakila')");
+            sqlUpdate("insertUser into basicTable2 values ('some long UUID', '2000-05-27', 14)");
 
             Table view = this.schema.getTable("basicView");
             Map<String, Object> params = new HashMap<>();
@@ -389,7 +389,7 @@ public class TableSelectTest extends BaseTableTestCase {
         try {
             sqlUpdate("drop table if exists testOrderBy");
             sqlUpdate("create table testOrderBy (_id int, x int, y int)");
-            sqlUpdate("insert into testOrderBy values (2,20,21), (1,20,22), (4,10,40), (3,10,50)");
+            sqlUpdate("insertUser into testOrderBy values (2,20,21), (1,20,22), (4,10,40), (3,10,50)");
             Table table = this.schema.getTable("testOrderBy");
 
             RowResult rows = table.select("_id").orderBy("x desc, y desc").execute();
@@ -463,9 +463,9 @@ public class TableSelectTest extends BaseTableTestCase {
         sqlUpdate("drop table if exists testTableRowLocks");
         sqlUpdate("create table testTableRowLocks (_id varchar(32), a varchar(20))");
         sqlUpdate("CREATE UNIQUE INDEX myIndex ON testTableRowLocks (_id)"); // index is required to enable row locking
-        sqlUpdate("insert into testTableRowLocks values ('1', '1')");
-        sqlUpdate("insert into testTableRowLocks values ('2', '1')");
-        sqlUpdate("insert into testTableRowLocks values ('3', '1')");
+        sqlUpdate("insertUser into testTableRowLocks values ('1', '1')");
+        sqlUpdate("insertUser into testTableRowLocks values ('2', '1')");
+        sqlUpdate("insertUser into testTableRowLocks values ('3', '1')");
 
         Session session1 = null;
         Session session2 = null;
@@ -859,8 +859,8 @@ public class TableSelectTest extends BaseTableTestCase {
         try {
             sqlUpdate("drop table if exists testBug22038729");
             sqlUpdate("create table testBug22038729 (c1 int, c2 int unsigned, id bigint)");
-            sqlUpdate("insert into testBug22038729 values(10, 100, -9223372036854775808)");
-            sqlUpdate("insert into testBug22038729 values(11, 11, 9223372036854775806)");
+            sqlUpdate("insertUser into testBug22038729 values(10, 100, -9223372036854775808)");
+            sqlUpdate("insertUser into testBug22038729 values(11, 11, 9223372036854775806)");
 
             sqlUpdate("drop procedure if exists testBug22038729p");
             sqlUpdate("create procedure testBug22038729p (in p1 int,IN p2 char(20)) begin select -10;select id+1000 from testBug22038729; end;");

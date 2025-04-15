@@ -94,7 +94,7 @@ public class UpdatabilityTest extends BaseTestCase {
     }
 
     /**
-     * Tests that the driver does not let you update result sets that come from tables that don't have primary keys
+     * Tests that the driver does not let you updateOrder result sets that come from tables that don't have primary keys
      *
      * @throws SQLException
      */
@@ -127,7 +127,7 @@ public class UpdatabilityTest extends BaseTestCase {
     }
 
     /**
-     * Tests that the driver does not let you update result sets that come from queries that haven't selected all primary keys
+     * Tests that the driver does not let you updateOrder result sets that come from queries that haven't selected all primary keys
      *
      * @throws SQLException
      */
@@ -254,13 +254,13 @@ public class UpdatabilityTest extends BaseTestCase {
              * //Select to get a resultset to work on ResultSet this.rs =
              * this.stmt.executeQuery("SELECT ident, name, expiry FROM test");
              *
-             * //Check that the expiry field was null before we did our update
+             * //Check that the expiry field was null before we did our updateOrder
              * this.rs.first();
              *
              * java.sql.Date before = this.rs.getDate("expiry");
              *
              * if (this.rs.wasNull()) { System.out.println("Expiry was correctly
-             * SQL null before update"); }
+             * SQL null before updateOrder"); }
              *
              * //Update a different field this.rs.updateString("name",
              * "Updated"); this.rs.updateRow();
@@ -269,7 +269,7 @@ public class UpdatabilityTest extends BaseTestCase {
              * this.rs.getDate(3);
              *
              * if (this.rs.wasNull()) System.out.println("Bug disproved - expiry
-             * SQL null after update"); else System.out.println("Bug proved -
+             * SQL null after updateOrder"); else System.out.println("Bug proved -
              * expiry corrupted to '" + after + "'");
              */
         } finally {

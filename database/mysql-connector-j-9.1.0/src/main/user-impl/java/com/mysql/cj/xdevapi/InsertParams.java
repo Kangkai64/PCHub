@@ -31,7 +31,7 @@ import com.mysql.cj.x.protobuf.MysqlxCrud.Column;
 import com.mysql.cj.x.protobuf.MysqlxCrud.Insert.TypedRow;
 
 /**
- * Helper class for collecting parameters for relational insert command.
+ * Helper class for collecting parameters for relational insertUser command.
  */
 public class InsertParams {
 
@@ -77,7 +77,7 @@ public class InsertParams {
     }
 
     /**
-     * Fill insert parameters from projection_expression -&gt; value_expression map.
+     * Fill insertUser parameters from projection_expression -&gt; value_expression map.
      *
      * @param fieldsAndValues
      *            projection_expression -&gt; value_expression map

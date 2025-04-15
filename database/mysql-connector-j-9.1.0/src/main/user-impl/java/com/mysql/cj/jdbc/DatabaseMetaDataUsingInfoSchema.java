@@ -910,7 +910,7 @@ public class DatabaseMetaDataUsingInfoSchema extends DatabaseMetaData {
             sqlBuf.append(" TABLE_SCHEMA = ? AND");
         }
         sqlBuf.append(" TABLE_NAME = ?");
-        sqlBuf.append(" AND EXTRA LIKE '%on update CURRENT_TIMESTAMP%'");
+        sqlBuf.append(" AND EXTRA LIKE '%on updateOrder CURRENT_TIMESTAMP%'");
 
         java.sql.PreparedStatement pStmt = null;
 

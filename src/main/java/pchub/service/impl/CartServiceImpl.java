@@ -4,16 +4,10 @@ import pchub.dao.CartDao;
 import pchub.dao.ProductDao;
 import pchub.dao.impl.CartDaoImpl;
 import pchub.dao.impl.ProductDaoImpl;
-import pchub.model.CartItem;
-import pchub.model.Product;
-import pchub.model.ShoppingCart;
-import pchub.model.User;
+import pchub.model.*;
 import pchub.service.CartService;
-import pchub.model.CartItem;
-import pchub.model.Product;
-import pchub.model.ShoppingCart;
-import pchub.model.User;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class CartServiceImpl implements CartService {
@@ -26,51 +20,49 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public pchub.model.ShoppingCart getCartForUser(pchub.model.User user) {
-        pchub.model.ShoppingCart cart = cartDao.findByUserId(user.getId());
+    public ShoppingCart getCartForUser(User user) throws SQLException {
+        ShoppingCart cart = cartDao.findByUserId(user.getUserId());
         if (cart == null) {
             cart = new pchub.model.ShoppingCart();
-            cart.setUserId(user.getId());
-            cartDao.save(cart);
+            cart.setCustomerId(user.getUserId());
+            cartDao.createCart(cart);
         }
         return cart;
     }
 
     @Override
-    public boolean addItemToCart(pchub.model.ShoppingCart cart, pchub.model.Product product, int quantity) {
-        if (product.getStockQuantity() < quantity) {
+    public boolean addItemToCart(ShoppingCart cart, pchub.model.Product product, int quantity) throws SQLException {
+        if (product.getCurrentQuantity() < quantity) {
             return false; // Not enough stock
         }
 
         // Check if the product is already in the cart
-        Optional<pchub.model.CartItem> existingItem = cart.getItems().stream()
-                .filter(item -> item.getProductId() == product.getId())
-                .findFirst();
+        Optional<CartItem> existingItem = cart.getItems().stream()
+                .filter(item -> item.getProductId().equals(product.getProductID())).findFirst();
 
         if (existingItem.isPresent()) {
             pchub.model.CartItem item = existingItem.get();
             int newQuantity = item.getQuantity() + quantity;
 
-            if (product.getStockQuantity() < newQuantity) {
+            if (product.getCurrentQuantity() < newQuantity) {
                 return false; // Not enough stock for combined quantity
             }
 
             item.setQuantity(newQuantity);
         } else {
-            pchub.model.CartItem newItem = new pchub.model.CartItem();
-            newItem.setCartId(cart.getId());
-            newItem.setProductId(product.getId());
-            newItem.setProductName(product.getName());
-            newItem.setUnitPrice(product.getPrice());
+            CartItem newItem = new pchub.model.CartItem();
+            newItem.setCartId(cart.getCartId());
+            newItem.setProductId(product.getProductID());
+            newItem.setUnitPrice(product.getUnitPrice());
             newItem.setQuantity(quantity);
             cart.getItems().add(newItem);
         }
 
-        return cartDao.update(cart);
+        return cartDao.updateCart(cart);
     }
 
     @Override
-    public boolean updateItemQuantity(pchub.model.ShoppingCart cart, int productId, int quantity) {
+    public boolean updateItemQuantity(ShoppingCart cart, String productId, int quantity) throws SQLException{
         if (quantity <= 0) {
             return removeItemFromCart(cart, productId);
         }
@@ -79,38 +71,38 @@ public class CartServiceImpl implements CartService {
                 .filter(item -> item.getProductId() == productId)
                 .findFirst();
 
-        if (!itemOpt.isPresent()) {
+        if (itemOpt.isEmpty()) {
             return false;
         }
 
         pchub.model.CartItem item = itemOpt.get();
         pchub.model.Product product = productDao.findById(productId);
 
-        if (product == null || product.getStockQuantity() < quantity) {
+        if (product == null || product.getCurrentQuantity() < quantity) {
             return false;
         }
 
         item.setQuantity(quantity);
-        return cartDao.update(cart);
+        return cartDao.updateCart(cart);
     }
 
     @Override
-    public boolean removeItemFromCart(pchub.model.ShoppingCart cart, int productId) {
-        boolean removed = cart.getItems().removeIf(item -> item.getProductId() == productId);
+    public boolean removeItemFromCart(ShoppingCart cart, String productId) throws SQLException{
+        boolean removed = cart.getItems().removeIf(item -> item.getProductId().equals(productId));
         if (removed) {
-            return cartDao.update(cart);
+            return cartDao.updateCart(cart);
         }
         return false;
     }
 
     @Override
-    public void clearCart(pchub.model.ShoppingCart cart) {
+    public void clearCart(ShoppingCart cart) throws SQLException {
         cart.getItems().clear();
-        cartDao.update(cart);
+        cartDao.updateCart(cart);
     }
 
     @Override
-    public boolean saveCart(pchub.model.ShoppingCart cart) {
-        return cartDao.update(cart);
+    public boolean saveCart(ShoppingCart cart) throws SQLException {
+        return cartDao.updateCart(cart);
     }
 }

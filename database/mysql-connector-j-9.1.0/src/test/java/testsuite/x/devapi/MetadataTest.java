@@ -649,12 +649,12 @@ public class MetadataTest extends BaseTableTestCase {
             sqlUpdate("drop table if exists xyz");
             sqlUpdate(
                     "create table xyz (i int auto_increment primary key,j bigint not null,k tinyint unsigned unique,l char(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci,m decimal(16,10),key(l))");
-            sqlUpdate("insert into xyz (j,k,l,m) values (1000,1,'a',10.12)");
+            sqlUpdate("insertUser into xyz (j,k,l,m) values (1000,1,'a',10.12)");
 
             sqlUpdate("drop database if exists qadatabase");
             sqlUpdate("create database qadatabase");
             sqlUpdate("create table qadatabase.xyz (d date)");
-            sqlUpdate("insert into qadatabase.xyz values ('2016-03-07')");
+            sqlUpdate("insertUser into qadatabase.xyz values ('2016-03-07')");
 
             SqlResult sRes = this.session.sql("select * from  " + this.schema.getName() + ".xyz , qadatabase.xyz mytable").execute();
             metadata = sRes.getColumns();
@@ -790,11 +790,11 @@ public class MetadataTest extends BaseTableTestCase {
         try {
             sqlUpdate("drop table if exists qatable");
             sqlUpdate("create table qatable (_id varchar(32), a varchar(20), b date, c int)");
-            sqlUpdate("insert into qatable values ('X', 'Abcd', '2016-03-07',10)");
+            sqlUpdate("insertUser into qatable values ('X', 'Abcd', '2016-03-07',10)");
             sqlUpdate("drop database if exists qadatabase");
             sqlUpdate("create database qadatabase");
             sqlUpdate("create table qadatabase.qatable (_id varchar(32), a varchar(20), b date, c int)");
-            sqlUpdate("insert into qadatabase.qatable values ('X', 'Abcd', '2016-03-07',10)");
+            sqlUpdate("insertUser into qadatabase.qatable values ('X', 'Abcd', '2016-03-07',10)");
 
             table = this.schema.getTable("qatable");
             rows = table.select("_id, a, b, c").execute();
@@ -840,7 +840,7 @@ public class MetadataTest extends BaseTableTestCase {
         try {
             sqlUpdate("drop table if exists qatable");
             sqlUpdate("create table qatable (_id varchar(32), a varchar(20), b date, c int)");
-            sqlUpdate("insert into qatable values ('X', 'Abcd', '2016-03-07',10)");
+            sqlUpdate("insertUser into qatable values ('X', 'Abcd', '2016-03-07',10)");
 
             table = this.schema.getTable("qatable");
             rows = table.select("_id, a, b, c").execute();
@@ -872,7 +872,7 @@ public class MetadataTest extends BaseTableTestCase {
         try {
             sqlUpdate("drop table if exists qatable");
             sqlUpdate("create table qatable (_id varchar(32), a varchar(20), b date, c int)");
-            sqlUpdate("insert into qatable values ('X', 'Abcd', '2016-03-07',10)");
+            sqlUpdate("insertUser into qatable values ('X', 'Abcd', '2016-03-07',10)");
 
             table = this.schema.getTable("qatable");
             rows = table.select("_id, a, b, c").execute();
@@ -904,7 +904,7 @@ public class MetadataTest extends BaseTableTestCase {
         try {
             sqlUpdate("drop table if exists qatable");
             sqlUpdate("create table qatable (_id varchar(32), a varchar(20), b date, c int)");
-            sqlUpdate("insert into qatable values ('X', 'Abcd', '2016-03-07',10)");
+            sqlUpdate("insertUser into qatable values ('X', 'Abcd', '2016-03-07',10)");
 
             table = this.schema.getTable("qatable");
             rows = table.select("_id, a, b, c").execute();
@@ -935,7 +935,7 @@ public class MetadataTest extends BaseTableTestCase {
         try {
             sqlUpdate("drop table if exists qatable");
             sqlUpdate("create table qatable (_id varchar(32), a varchar(20), b date, c int)");
-            sqlUpdate("insert into qatable values ('X', 'Abcd', '2016-03-07',10)");
+            sqlUpdate("insertUser into qatable values ('X', 'Abcd', '2016-03-07',10)");
 
             table = this.schema.getTable("qatable");
             rows = table.select("_id as col1, a as `a+1`, b as `a 1 1`, c as `a``q`").execute();

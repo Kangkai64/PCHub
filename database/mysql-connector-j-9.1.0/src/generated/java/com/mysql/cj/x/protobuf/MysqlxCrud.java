@@ -5836,7 +5836,7 @@ public final class MysqlxCrud {
       ITEM_MERGE(5),
       /**
        * <pre>
-       * * insert the value in the array at the index identified in the source path 
+       * * insertUser the value in the array at the index identified in the source path
        * </pre>
        *
        * <code>ARRAY_INSERT = 6;</code>
@@ -5911,7 +5911,7 @@ public final class MysqlxCrud {
       public static final int ITEM_MERGE_VALUE = 5;
       /**
        * <pre>
-       * * insert the value in the array at the index identified in the source path 
+       * * insertUser the value in the array at the index identified in the source path
        * </pre>
        *
        * <code>ARRAY_INSERT = 6;</code>
@@ -11465,7 +11465,7 @@ public final class MysqlxCrud {
 
     /**
      * <pre>
-     * * collection to insert into 
+     * * collection to insertUser into
      * </pre>
      *
      * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -11474,7 +11474,7 @@ public final class MysqlxCrud {
     boolean hasCollection();
     /**
      * <pre>
-     * * collection to insert into 
+     * * collection to insertUser into
      * </pre>
      *
      * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -11483,7 +11483,7 @@ public final class MysqlxCrud {
     com.mysql.cj.x.protobuf.MysqlxCrud.Collection getCollection();
     /**
      * <pre>
-     * * collection to insert into 
+     * * collection to insertUser into
      * </pre>
      *
      * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -11511,7 +11511,7 @@ public final class MysqlxCrud {
 
     /**
      * <pre>
-     * * name of the columns to insert data into
+     * * name of the columns to insertUser data into
      * (empty if data_model is DOCUMENT) 
      * </pre>
      *
@@ -11521,7 +11521,7 @@ public final class MysqlxCrud {
         getProjectionList();
     /**
      * <pre>
-     * * name of the columns to insert data into
+     * * name of the columns to insertUser data into
      * (empty if data_model is DOCUMENT) 
      * </pre>
      *
@@ -11530,7 +11530,7 @@ public final class MysqlxCrud {
     com.mysql.cj.x.protobuf.MysqlxCrud.Column getProjection(int index);
     /**
      * <pre>
-     * * name of the columns to insert data into
+     * * name of the columns to insertUser data into
      * (empty if data_model is DOCUMENT) 
      * </pre>
      *
@@ -11539,7 +11539,7 @@ public final class MysqlxCrud {
     int getProjectionCount();
     /**
      * <pre>
-     * * name of the columns to insert data into
+     * * name of the columns to insertUser data into
      * (empty if data_model is DOCUMENT) 
      * </pre>
      *
@@ -11549,7 +11549,7 @@ public final class MysqlxCrud {
         getProjectionOrBuilderList();
     /**
      * <pre>
-     * * name of the columns to insert data into
+     * * name of the columns to insertUser data into
      * (empty if data_model is DOCUMENT) 
      * </pre>
      *
@@ -11560,7 +11560,7 @@ public final class MysqlxCrud {
 
     /**
      * <pre>
-     * * set of rows to insert into the collection/table (a single expression
+     * * set of rows to insertUser into the collection/table (a single expression
      * with a JSON document literal or an OBJECT expression) 
      * </pre>
      *
@@ -11570,7 +11570,7 @@ public final class MysqlxCrud {
         getRowList();
     /**
      * <pre>
-     * * set of rows to insert into the collection/table (a single expression
+     * * set of rows to insertUser into the collection/table (a single expression
      * with a JSON document literal or an OBJECT expression) 
      * </pre>
      *
@@ -11579,7 +11579,7 @@ public final class MysqlxCrud {
     com.mysql.cj.x.protobuf.MysqlxCrud.Insert.TypedRow getRow(int index);
     /**
      * <pre>
-     * * set of rows to insert into the collection/table (a single expression
+     * * set of rows to insertUser into the collection/table (a single expression
      * with a JSON document literal or an OBJECT expression) 
      * </pre>
      *
@@ -11588,7 +11588,7 @@ public final class MysqlxCrud {
     int getRowCount();
     /**
      * <pre>
-     * * set of rows to insert into the collection/table (a single expression
+     * * set of rows to insertUser into the collection/table (a single expression
      * with a JSON document literal or an OBJECT expression) 
      * </pre>
      *
@@ -11598,7 +11598,7 @@ public final class MysqlxCrud {
         getRowOrBuilderList();
     /**
      * <pre>
-     * * set of rows to insert into the collection/table (a single expression
+     * * set of rows to insertUser into the collection/table (a single expression
      * with a JSON document literal or an OBJECT expression) 
      * </pre>
      *
@@ -11654,7 +11654,7 @@ public final class MysqlxCrud {
     /**
      * <pre>
      * * true if this should be treated as an Upsert
-     * (that is, update on duplicate key) 
+     * (that is, updateOrder on duplicate key)
      * </pre>
      *
      * <code>optional bool upsert = 6 [default = false];</code>
@@ -11664,7 +11664,7 @@ public final class MysqlxCrud {
     /**
      * <pre>
      * * true if this should be treated as an Upsert
-     * (that is, update on duplicate key) 
+     * (that is, updateOrder on duplicate key)
      * </pre>
      *
      * <code>optional bool upsert = 6 [default = false];</code>
@@ -11750,7 +11750,7 @@ public final class MysqlxCrud {
     }
     /**
      * <pre>
-     * * set of fields to insert as a one row 
+     * * set of fields to insertUser as a one row
      * </pre>
      *
      * Protobuf type {@code Mysqlx.Crud.Insert.TypedRow}
@@ -11998,7 +11998,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of fields to insert as a one row 
+       * * set of fields to insertUser as a one row
        * </pre>
        *
        * Protobuf type {@code Mysqlx.Crud.Insert.TypedRow}
@@ -12484,7 +12484,7 @@ public final class MysqlxCrud {
     private com.mysql.cj.x.protobuf.MysqlxCrud.Collection collection_;
     /**
      * <pre>
-     * * collection to insert into 
+     * * collection to insertUser into
      * </pre>
      *
      * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -12496,7 +12496,7 @@ public final class MysqlxCrud {
     }
     /**
      * <pre>
-     * * collection to insert into 
+     * * collection to insertUser into
      * </pre>
      *
      * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -12508,7 +12508,7 @@ public final class MysqlxCrud {
     }
     /**
      * <pre>
-     * * collection to insert into 
+     * * collection to insertUser into
      * </pre>
      *
      * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -12549,7 +12549,7 @@ public final class MysqlxCrud {
     private java.util.List<com.mysql.cj.x.protobuf.MysqlxCrud.Column> projection_;
     /**
      * <pre>
-     * * name of the columns to insert data into
+     * * name of the columns to insertUser data into
      * (empty if data_model is DOCUMENT) 
      * </pre>
      *
@@ -12561,7 +12561,7 @@ public final class MysqlxCrud {
     }
     /**
      * <pre>
-     * * name of the columns to insert data into
+     * * name of the columns to insertUser data into
      * (empty if data_model is DOCUMENT) 
      * </pre>
      *
@@ -12574,7 +12574,7 @@ public final class MysqlxCrud {
     }
     /**
      * <pre>
-     * * name of the columns to insert data into
+     * * name of the columns to insertUser data into
      * (empty if data_model is DOCUMENT) 
      * </pre>
      *
@@ -12586,7 +12586,7 @@ public final class MysqlxCrud {
     }
     /**
      * <pre>
-     * * name of the columns to insert data into
+     * * name of the columns to insertUser data into
      * (empty if data_model is DOCUMENT) 
      * </pre>
      *
@@ -12598,7 +12598,7 @@ public final class MysqlxCrud {
     }
     /**
      * <pre>
-     * * name of the columns to insert data into
+     * * name of the columns to insertUser data into
      * (empty if data_model is DOCUMENT) 
      * </pre>
      *
@@ -12615,7 +12615,7 @@ public final class MysqlxCrud {
     private java.util.List<com.mysql.cj.x.protobuf.MysqlxCrud.Insert.TypedRow> row_;
     /**
      * <pre>
-     * * set of rows to insert into the collection/table (a single expression
+     * * set of rows to insertUser into the collection/table (a single expression
      * with a JSON document literal or an OBJECT expression) 
      * </pre>
      *
@@ -12627,7 +12627,7 @@ public final class MysqlxCrud {
     }
     /**
      * <pre>
-     * * set of rows to insert into the collection/table (a single expression
+     * * set of rows to insertUser into the collection/table (a single expression
      * with a JSON document literal or an OBJECT expression) 
      * </pre>
      *
@@ -12640,7 +12640,7 @@ public final class MysqlxCrud {
     }
     /**
      * <pre>
-     * * set of rows to insert into the collection/table (a single expression
+     * * set of rows to insertUser into the collection/table (a single expression
      * with a JSON document literal or an OBJECT expression) 
      * </pre>
      *
@@ -12652,7 +12652,7 @@ public final class MysqlxCrud {
     }
     /**
      * <pre>
-     * * set of rows to insert into the collection/table (a single expression
+     * * set of rows to insertUser into the collection/table (a single expression
      * with a JSON document literal or an OBJECT expression) 
      * </pre>
      *
@@ -12664,7 +12664,7 @@ public final class MysqlxCrud {
     }
     /**
      * <pre>
-     * * set of rows to insert into the collection/table (a single expression
+     * * set of rows to insertUser into the collection/table (a single expression
      * with a JSON document literal or an OBJECT expression) 
      * </pre>
      *
@@ -12742,7 +12742,7 @@ public final class MysqlxCrud {
     /**
      * <pre>
      * * true if this should be treated as an Upsert
-     * (that is, update on duplicate key) 
+     * (that is, updateOrder on duplicate key)
      * </pre>
      *
      * <code>optional bool upsert = 6 [default = false];</code>
@@ -12755,7 +12755,7 @@ public final class MysqlxCrud {
     /**
      * <pre>
      * * true if this should be treated as an Upsert
-     * (that is, update on duplicate key) 
+     * (that is, updateOrder on duplicate key)
      * </pre>
      *
      * <code>optional bool upsert = 6 [default = false];</code>
@@ -13416,7 +13416,7 @@ public final class MysqlxCrud {
           com.mysql.cj.x.protobuf.MysqlxCrud.Collection, com.mysql.cj.x.protobuf.MysqlxCrud.Collection.Builder, com.mysql.cj.x.protobuf.MysqlxCrud.CollectionOrBuilder> collectionBuilder_;
       /**
        * <pre>
-       * * collection to insert into 
+       * * collection to insertUser into
        * </pre>
        *
        * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -13427,7 +13427,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * collection to insert into 
+       * * collection to insertUser into
        * </pre>
        *
        * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -13442,7 +13442,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * collection to insert into 
+       * * collection to insertUser into
        * </pre>
        *
        * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -13462,7 +13462,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * collection to insert into 
+       * * collection to insertUser into
        * </pre>
        *
        * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -13480,7 +13480,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * collection to insert into 
+       * * collection to insertUser into
        * </pre>
        *
        * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -13505,7 +13505,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * collection to insert into 
+       * * collection to insertUser into
        * </pre>
        *
        * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -13522,7 +13522,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * collection to insert into 
+       * * collection to insertUser into
        * </pre>
        *
        * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -13534,7 +13534,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * collection to insert into 
+       * * collection to insertUser into
        * </pre>
        *
        * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -13549,7 +13549,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * collection to insert into 
+       * * collection to insertUser into
        * </pre>
        *
        * <code>required .Mysqlx.Crud.Collection collection = 1;</code>
@@ -13640,7 +13640,7 @@ public final class MysqlxCrud {
 
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13655,7 +13655,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13670,7 +13670,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13685,7 +13685,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13707,7 +13707,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13726,7 +13726,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13747,7 +13747,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13769,7 +13769,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13788,7 +13788,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13807,7 +13807,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13827,7 +13827,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13845,7 +13845,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13863,7 +13863,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13875,7 +13875,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13890,7 +13890,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13906,7 +13906,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13918,7 +13918,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13931,7 +13931,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * name of the columns to insert data into
+       * * name of the columns to insertUser data into
        * (empty if data_model is DOCUMENT) 
        * </pre>
        *
@@ -13970,7 +13970,7 @@ public final class MysqlxCrud {
 
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -13985,7 +13985,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14000,7 +14000,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14015,7 +14015,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14037,7 +14037,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14056,7 +14056,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14077,7 +14077,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14099,7 +14099,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14118,7 +14118,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14137,7 +14137,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14157,7 +14157,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14175,7 +14175,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14193,7 +14193,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14205,7 +14205,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14220,7 +14220,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14236,7 +14236,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14248,7 +14248,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14261,7 +14261,7 @@ public final class MysqlxCrud {
       }
       /**
        * <pre>
-       * * set of rows to insert into the collection/table (a single expression
+       * * set of rows to insertUser into the collection/table (a single expression
        * with a JSON document literal or an OBJECT expression) 
        * </pre>
        *
@@ -14602,7 +14602,7 @@ public final class MysqlxCrud {
       /**
        * <pre>
        * * true if this should be treated as an Upsert
-       * (that is, update on duplicate key) 
+       * (that is, updateOrder on duplicate key)
        * </pre>
        *
        * <code>optional bool upsert = 6 [default = false];</code>
@@ -14615,7 +14615,7 @@ public final class MysqlxCrud {
       /**
        * <pre>
        * * true if this should be treated as an Upsert
-       * (that is, update on duplicate key) 
+       * (that is, updateOrder on duplicate key)
        * </pre>
        *
        * <code>optional bool upsert = 6 [default = false];</code>
@@ -14628,7 +14628,7 @@ public final class MysqlxCrud {
       /**
        * <pre>
        * * true if this should be treated as an Upsert
-       * (that is, update on duplicate key) 
+       * (that is, updateOrder on duplicate key)
        * </pre>
        *
        * <code>optional bool upsert = 6 [default = false];</code>
@@ -14645,7 +14645,7 @@ public final class MysqlxCrud {
       /**
        * <pre>
        * * true if this should be treated as an Upsert
-       * (that is, update on duplicate key) 
+       * (that is, updateOrder on duplicate key)
        * </pre>
        *
        * <code>optional bool upsert = 6 [default = false];</code>

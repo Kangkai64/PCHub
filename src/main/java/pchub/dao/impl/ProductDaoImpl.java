@@ -2,7 +2,6 @@ package pchub.dao.impl;
 
 import pchub.dao.ProductDao;
 import pchub.model.Product;
-import pchub.utils.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -75,7 +74,7 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public boolean save(Product product) {
+    public boolean insertProduct(Product product) {
         String sql = "INSERT INTO products (name, description, category, price, stock_quantity) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
@@ -105,7 +104,7 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public boolean update(Product product) {
+    public boolean updateProduct(Product product) {
         String sql = "UPDATE products SET name = ?, description = ?, category = ?, " +
                 "price = ?, stock_quantity = ? WHERE id = ?";
 
@@ -128,7 +127,7 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean deleteProduct(String id) {
         String sql = "DELETE FROM products WHERE id = ?";
 
         try (Connection conn = pchub.utils.DatabaseConnection.getConnection();

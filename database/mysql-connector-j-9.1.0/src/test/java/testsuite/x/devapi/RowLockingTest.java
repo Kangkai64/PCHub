@@ -475,7 +475,7 @@ public class RowLockingTest extends BaseCollectionTestCase {
 
             assertEquals(10, this.collection.count());
 
-            /* Two threads with same conditions, select for update in one and update in second */
+            /* Two threads with same conditions, select for updateOrder in one and updateOrder in second */
             this.CheckFlag = 0;
             initException = new Throwable[2];
             FindRowLock[] Thrd = new FindRowLock[2];
@@ -497,7 +497,7 @@ public class RowLockingTest extends BaseCollectionTestCase {
                 }
             }
 
-            /* Two threads with same conditions, select for share in one and update in second */
+            /* Two threads with same conditions, select for share in one and updateOrder in second */
             this.CheckFlag = 0;
             initException = new Throwable[2];
 
@@ -518,7 +518,7 @@ public class RowLockingTest extends BaseCollectionTestCase {
                 }
             }
 
-            /* Two threads with same conditions selecting multiple records, select for update in one and update in second */
+            /* Two threads with same conditions selecting multiple records, select for updateOrder in one and updateOrder in second */
             this.CheckFlag = 0;
             initException = new Throwable[2];
 
@@ -539,7 +539,7 @@ public class RowLockingTest extends BaseCollectionTestCase {
                 }
             }
 
-            /* Two threads with same conditions selecting multiple rows, select for share in one and update in second */
+            /* Two threads with same conditions selecting multiple rows, select for share in one and updateOrder in second */
             this.CheckFlag = 0;
             initException = new Throwable[2];
 
@@ -560,7 +560,7 @@ public class RowLockingTest extends BaseCollectionTestCase {
                 }
             }
 
-            /* Two threads with same conditions, select for update in one and select for share in second */
+            /* Two threads with same conditions, select for updateOrder in one and select for share in second */
             this.CheckFlag = 0;
             initException = new Throwable[2];
 
@@ -616,7 +616,7 @@ public class RowLockingTest extends BaseCollectionTestCase {
             initException = new Throwable[2];
             SelectRowLock[] Thrd = new SelectRowLock[2];
 
-            /* Two threads with same conditions, select for update in one and update in second */
+            /* Two threads with same conditions, select for updateOrder in one and updateOrder in second */
             Thrd[0] = new SelectRowLock(1, 1, 0, 5, "doc->$.F1 = :bVal");
             Thrd[0].setUncaughtExceptionHandler(new MyUncaughtExceptionHandler(0));
             Thrd[0].start();
@@ -634,7 +634,7 @@ public class RowLockingTest extends BaseCollectionTestCase {
                 }
             }
 
-            /* Two threads with same conditions, select for share in one and update in second */
+            /* Two threads with same conditions, select for share in one and updateOrder in second */
             this.CheckFlag = 0;
             initException = new Throwable[2];
 
@@ -655,7 +655,7 @@ public class RowLockingTest extends BaseCollectionTestCase {
                 }
             }
 
-            /* Two threads with same conditions, select for update in one and update in second */
+            /* Two threads with same conditions, select for updateOrder in one and updateOrder in second */
             this.CheckFlag = 0;
             initException = new Throwable[2];
 
@@ -676,7 +676,7 @@ public class RowLockingTest extends BaseCollectionTestCase {
                 }
             }
 
-            /* Two threads with same conditions, select for share in one and update in second */
+            /* Two threads with same conditions, select for share in one and updateOrder in second */
             this.CheckFlag = 0;
             initException = new Throwable[2];
 
@@ -697,7 +697,7 @@ public class RowLockingTest extends BaseCollectionTestCase {
                 }
             }
 
-            /* Two threads with same conditions selecting multiple records, select for update in one and update in second */
+            /* Two threads with same conditions selecting multiple records, select for updateOrder in one and updateOrder in second */
             this.CheckFlag = 0;
             initException = new Throwable[2];
 
@@ -718,7 +718,7 @@ public class RowLockingTest extends BaseCollectionTestCase {
                 }
             }
 
-            /* Two threads with same conditions selecting multiple records, select for share in one and update in second */
+            /* Two threads with same conditions selecting multiple records, select for share in one and updateOrder in second */
             this.CheckFlag = 0;
             initException = new Throwable[2];
 

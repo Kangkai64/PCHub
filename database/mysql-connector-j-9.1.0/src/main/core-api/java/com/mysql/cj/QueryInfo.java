@@ -250,7 +250,7 @@ public class QueryInfo {
                             parensLevel = 0; // Keep going, not checking for syntax validity.
                         }
                         strInspector.incrementPosition();
-                        valuesClauseEnd = strInspector.getPosition(); // It may not be the end of the VALUES clause yet but save it for later.
+                        valuesClauseEnd = strInspector.getPosition(); // It may not be the end of the VALUES clause yet but insertUser it for later.
 
                     } else if (withinValuesClause && parensLevel == 0 && isInsert && strInspector.matchesIgnoreCase(AS_CLAUSE) != -1) { // End of VALUES clause.
                         valueStrMayBeTableName = false; // At this point a string "VALUE" cannot be a table name.

@@ -565,7 +565,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
                         + " field2 varchar(128) NOT NULL default '', field3 varchar(128) default NULL, field4 varchar(128) default NULL,"
                         + " field5 varchar(64) default NULL, field6 int(10) unsigned default NULL, field7 varchar(64) default NULL, PRIMARY KEY  (id)) ",
                 "InnoDB");
-        this.stmt.executeUpdate("insert into updatabilityBug (id) values (1)");
+        this.stmt.executeUpdate("insertUser into updatabilityBug (id) values (1)");
 
         String sQuery = " SELECT * FROM updatabilityBug WHERE id = ? ";
         this.pstmt = this.conn.prepareStatement(sQuery, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
@@ -944,7 +944,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
     }
 
     /**
-     * Tests fix for BUG#5664, ResultSet.updateByte() when on insert row throws ArrayOutOfBoundsException.
+     * Tests fix for BUG#5664, ResultSet.updateByte() when on insertUser row throws ArrayOutOfBoundsException.
      *
      * @throws Exception
      */
@@ -1176,7 +1176,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
         String tableName = "testBug7686";
         createTable(tableName, "(id1 int(10) unsigned NOT NULL, id2 DATETIME, field1 varchar(128) NOT NULL default '', PRIMARY KEY  (id1, id2))", "InnoDB;");
 
-        this.stmt.executeUpdate("insert into " + tableName + " (id1, id2, field1) values (1, '2005-01-05 13:59:20', 'foo')");
+        this.stmt.executeUpdate("insertUser into " + tableName + " (id1, id2, field1) values (1, '2005-01-05 13:59:20', 'foo')");
 
         String sQuery = " SELECT * FROM " + tableName + " WHERE id1 = ? AND id2 = ?";
         this.pstmt = this.conn.prepareStatement(sQuery, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
@@ -1393,7 +1393,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
         createTable(tableName,
                 "(languageCode char(2) NOT NULL default '', countryCode char(2) NOT NULL default '',"
                         + "supported enum('no','yes') NOT NULL default 'no', ordering int(11) default NULL,"
-                        + "createDate datetime NOT NULL default '1000-01-01 00:00:03', modifyDate timestamp NOT NULL default CURRENT_TIMESTAMP on update"
+                        + "createDate datetime NOT NULL default '1000-01-01 00:00:03', modifyDate timestamp NOT NULL default CURRENT_TIMESTAMP on updateOrder"
                         + " CURRENT_TIMESTAMP, PRIMARY KEY  (languageCode,countryCode), KEY languageCode (languageCode),"
                         + "KEY countryCode (countryCode), KEY ordering (ordering), KEY modifyDate (modifyDate)) DEFAULT CHARSET=utf8",
                 "InnoDB");
@@ -1619,9 +1619,9 @@ public class ResultSetRegressionTest extends BaseTestCase {
         createTable("table2", "(id int)");
         createTable("lang_table", "(id int, en varchar(255) CHARACTER SET utf8, cz varchar(255) CHARACTER SET utf8)");
 
-        this.stmt.executeUpdate("insert into table1 values (0, 0)");
-        this.stmt.executeUpdate("insert into table2 values (0)");
-        this.stmt.executeUpdate("insert into lang_table values (0, 'abcdef', 'ghijkl')");
+        this.stmt.executeUpdate("insertUser into table1 values (0, 0)");
+        this.stmt.executeUpdate("insertUser into table2 values (0)");
+        this.stmt.executeUpdate("insertUser into lang_table values (0, 'abcdef', 'ghijkl')");
         this.rs = this.stmt.executeQuery("select a.id, b.id, c.en, c.cz from table1 as a, table2 as b, lang_table as c where a.id = b.id and a.name_id = c.id");
         assertTrue(this.rs.next());
         this.rs.getString("c.cz");
@@ -1714,8 +1714,8 @@ public class ResultSetRegressionTest extends BaseTestCase {
     public void testBug17450() throws Exception {
         createTable("testBug17450", "(FOO VARCHAR(100), BAR CHAR NOT NULL)");
 
-        this.stmt.execute("insert into testBug17450 (foo,bar) values ('foo',true)");
-        this.stmt.execute("insert into testBug17450 (foo,bar) values (null,true)");
+        this.stmt.execute("insertUser into testBug17450 (foo,bar) values ('foo',true)");
+        this.stmt.execute("insertUser into testBug17450 (foo,bar) values (null,true)");
 
         this.pstmt = this.conn.prepareStatement("select * from testBug17450 where foo=?");
         this.pstmt.setString(1, "foo");
@@ -2875,7 +2875,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
     public void testBug24710() throws Exception {
         createTable("testBug24710", "(x varbinary(256))");
 
-        this.stmt.executeUpdate("insert into testBug24710(x) values(0x0000000000), (0x1111111111), (0x2222222222), (0x3333333333),"
+        this.stmt.executeUpdate("insertUser into testBug24710(x) values(0x0000000000), (0x1111111111), (0x2222222222), (0x3333333333),"
                 + "(0x4444444444), (0x5555555555), (0x6666666666), (0x7777777777), (0x8888888888), (0x9999999999), (0xaaaaaaaaaa),"
                 + "(0xbbbbbbbbbb), (0xcccccccccc), (0xdddddddddd), (0xeeeeeeeeee), (0xffffffffff)");
 
@@ -3171,7 +3171,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
     @Test
     public void testBug26173() throws Exception {
         createTable("testBug26173", "(fkey int, fdate date, fprice decimal(15, 2), fdiscount decimal(5,3))", "InnoDB");
-        this.stmt.executeUpdate("insert into testBug26173 values (1, '2007-02-23', 99.9, 0.02)");
+        this.stmt.executeUpdate("insertUser into testBug26173 values (1, '2007-02-23', 99.9, 0.02)");
 
         Connection fetchConn = null;
         Statement stmtRead = null;
@@ -3425,8 +3425,8 @@ public class ResultSetRegressionTest extends BaseTestCase {
         createTable("testBug30664_1", "(id int)");
         createTable("testBug30664_2", "(id int, binaryvalue varbinary(255))");
 
-        this.stmt.executeUpdate("insert into testBug30664_1 values (1),(2),(3)");
-        this.stmt.executeUpdate("insert into testBug30664_2 values (1,'���'),(2,'����'),(3,' ���')");
+        this.stmt.executeUpdate("insertUser into testBug30664_1 values (1),(2),(3)");
+        this.stmt.executeUpdate("insertUser into testBug30664_2 values (1,'���'),(2,'����'),(3,' ���')");
         this.rs = this.stmt.executeQuery("select testBug30664_1.id, (select testBug30664_2.binaryvalue from testBug30664_2 "
                 + "where testBug30664_2.id=testBug30664_1.id) as value from testBug30664_1");
         ResultSetMetaData tblMD = this.rs.getMetaData();
@@ -3996,7 +3996,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
         CachedRowSet crs;
 
         createTable("bug49516", "(`testingID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, `firstName` TEXT NOT NULL) CHARACTER SET utf8;");
-        this.stmt.executeUpdate("insert into bug49516 set firstName ='John'");
+        this.stmt.executeUpdate("insertUser into bug49516 set firstName ='John'");
 
         this.rs = this.stmt.executeQuery("select firstName as 'first person' from bug49516");
         this.rs.first();
@@ -4213,7 +4213,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
     }
 
     /**
-     * Bug #45757 - ResultSet.updateRow should throw SQLException when cursor is on insert row
+     * Bug #45757 - ResultSet.updateRow should throw SQLException when cursor is on insertUser row
      *
      * @throws SQLException
      */
@@ -4223,8 +4223,8 @@ public class ResultSetRegressionTest extends BaseTestCase {
         this.stmt = this.conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
         this.rs = this.stmt.executeQuery("select id from bug45757");
         this.rs.moveToInsertRow();
-        assertThrows("updateRow() should throw an exception, not allowed to be called on insert row", SQLException.class,
-                "Can not call updateRow\\(\\) when on insert row.*", () -> {
+        assertThrows("updateRow() should throw an exception, not allowed to be called on insertUser row", SQLException.class,
+                "Can not call updateRow\\(\\) when on insertUser row.*", () -> {
                     this.rs.updateRow();
                     return null;
                 });
@@ -4505,7 +4505,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
     public void testBug19536760() throws Exception {
         createTable("testBug19536760", "(id int)");
 
-        this.stmt.execute("insert into testBug19536760 values(1),(2),(3)");
+        this.stmt.execute("insertUser into testBug19536760 values(1),(2),(3)");
         this.rs = this.stmt.executeQuery("select * from testBug19536760");
 
         // "before first" check
@@ -5731,7 +5731,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
     @Test
     public void testBug24527173() throws Exception {
         createTable("testBug24527173", "(a tinyint auto_increment primary key)");
-        this.stmt.execute("insert into testBug24527173 (a) values (101),(102),(103),(104)");
+        this.stmt.execute("insertUser into testBug24527173 (a) values (101),(102),(103),(104)");
 
         Properties props = new Properties();
         props.setProperty(PropertyKey.sslMode.getKeyName(), SslMode.DISABLED.name());
@@ -5836,7 +5836,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
 
         createTable("testBug82707", "(Started  TIMESTAMP(6))");
         for (String string : ts) {
-            this.stmt.executeUpdate("insert into testBug82707 values('" + string + "')");
+            this.stmt.executeUpdate("insertUser into testBug82707 values('" + string + "')");
         }
 
         this.rs = this.stmt.executeQuery("select Started from testBug82707");
@@ -6136,7 +6136,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
         assumeTrue(versionMeetsMinimum(5, 6, 4), "Fractional seconds are not supported by server");
 
         createTable("testBug26750705", "(c1 time(3), c2 time(3))");
-        this.stmt.execute("insert into testBug26750705 values('80:59:59','8:59:59.01')");
+        this.stmt.execute("insertUser into testBug26750705 values('80:59:59','8:59:59.01')");
 
         Properties props = new Properties();
         props.setProperty(PropertyKey.sslMode.getKeyName(), SslMode.DISABLED.name());
@@ -6178,9 +6178,9 @@ public class ResultSetRegressionTest extends BaseTestCase {
 
         createTable("testBug26266731", "(c1 int,c2 char(10),c3 float,c4 double,c5 bigint,c6 blob,c7 bool,c8 date,c9 timestamp NULL,c10 time,"
                 + "c11 mediumint,c12 varchar(100),c13 binary(10),  primary key(c1,c5,c7))", "InnoDB");
-        this.stmt.executeUpdate("insert into testBug26266731 values(1,'a',1.1,1.1,1,'1',true,'2013-03-25','2013-03-25 01:01:01.01','01:01:01',1,'1','1')");
-        this.stmt.executeUpdate("insert into testBug26266731 values(2,'b',2.2,2.2,2,'2',true,'2014-03-25','2014-03-25 02:02:02.02','02:02:02',2,'2','2')");
-        this.stmt.executeUpdate("insert into testBug26266731 values(3,'c',3.3,3.3,3,'3',true,'2015-03-25','2015-03-25 03:03:03.03','03:03:03',3,'3','3')");
+        this.stmt.executeUpdate("insertUser into testBug26266731 values(1,'a',1.1,1.1,1,'1',true,'2013-03-25','2013-03-25 01:01:01.01','01:01:01',1,'1','1')");
+        this.stmt.executeUpdate("insertUser into testBug26266731 values(2,'b',2.2,2.2,2,'2',true,'2014-03-25','2014-03-25 02:02:02.02','02:02:02',2,'2','2')");
+        this.stmt.executeUpdate("insertUser into testBug26266731 values(3,'c',3.3,3.3,3,'3',true,'2015-03-25','2015-03-25 03:03:03.03','03:03:03',3,'3','3')");
 
         assertEquals(3, getRowCount("testBug26266731"));
 
@@ -6209,7 +6209,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
     @Test
     public void testBug85941() throws Exception {
         createTable("testBug85941", "(strField VARCHAR(1), bitField TEXT)");
-        this.stmt.executeUpdate("insert into testBug85941 values(NULL, 1)");
+        this.stmt.executeUpdate("insertUser into testBug85941 values(NULL, 1)");
 
         this.rs = this.stmt.executeQuery("SELECT strField, bitField FROM testBug85941");
         this.rs.next();
@@ -6247,8 +6247,8 @@ public class ResultSetRegressionTest extends BaseTestCase {
             Timestamp ts2 = new Timestamp(TimeUtil.getSimpleDateFormat(null, "yyyy-MM-dd HH:mm:ss.SSS", null).parse("2019-12-30 13:59:57.789").getTime());
             createTable("testBug22305979_orig_1",
                     "(id int, tmp int,ts1 timestamp(6),ts2 timestamp(3) NOT NULL DEFAULT '2001-01-01 00:00:01',primary key(id,ts1) )");
-            this.stmt.execute("insert into testBug22305979_orig_1 values (1,100,'2014-12-31 23:59:59.123','2015-12-31 23:59:59.456')");
-            this.stmt.execute("insert into testBug22305979_orig_1 values (1,200,'2014-12-31 23:59:59','2022-12-31 23:59:59.456')");
+            this.stmt.execute("insertUser into testBug22305979_orig_1 values (1,100,'2014-12-31 23:59:59.123','2015-12-31 23:59:59.456')");
+            this.stmt.execute("insertUser into testBug22305979_orig_1 values (1,200,'2014-12-31 23:59:59','2022-12-31 23:59:59.456')");
 
             Statement scrollableStmt = testConn2.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
             ResultSet rs1 = scrollableStmt.executeQuery("SELECT * FROM testBug22305979_orig_1 where id=1 and ts1='2014-12-31 23:59:59.123'");
@@ -6274,7 +6274,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
 
         /* Unified test */
 
-        // Original values we insert
+        // Original values we insertUser
         Timestamp[] ts_ins = new Timestamp[] { //
                 Timestamp.valueOf("2018-07-09 13:14:15"), //
                 Timestamp.valueOf("2018-07-09 13:14:15.1"), //
@@ -6298,7 +6298,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
                 new Time(Timestamp.valueOf("2018-07-09 13:14:15.987654321").getTime()), //
                 new Time(Timestamp.valueOf("2018-07-09 13:14:15.987654321").getTime()) };
 
-        // Values we expect in DB after insert operation if TIME_TRUNCATE_FRACTIONAL sql_mode is unset
+        // Values we expect in DB after insertUser operation if TIME_TRUNCATE_FRACTIONAL sql_mode is unset
         Timestamp[] ts_ins_expected_round = new Timestamp[] { //
                 Timestamp.valueOf("2018-07-09 13:14:15"), //
                 Timestamp.valueOf("2018-07-09 13:14:15.1"), //
@@ -6322,7 +6322,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
                 new Time(Timestamp.valueOf("2018-07-09 13:14:15.98700000").getTime()), //
                 new Time(Timestamp.valueOf("2018-07-09 13:14:15.987000000").getTime()) };
 
-        // Values we expect in DB after insert operation if TIME_TRUNCATE_FRACTIONAL sql_mode is set
+        // Values we expect in DB after insertUser operation if TIME_TRUNCATE_FRACTIONAL sql_mode is set
         Timestamp[] ts_ins_expected_truncate = new Timestamp[] { //
                 Timestamp.valueOf("2018-07-09 13:14:15"), //
                 Timestamp.valueOf("2018-07-09 13:14:15.1"), //
@@ -6346,7 +6346,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
                 new Time(Timestamp.valueOf("2018-07-09 13:14:15.98700000").getTime()), //
                 new Time(Timestamp.valueOf("2018-07-09 13:14:15.987000000").getTime()) };
 
-        // Values we expect in DB after insert operation if sendFractionalSeconds=false
+        // Values we expect in DB after insertUser operation if sendFractionalSeconds=false
         Timestamp[] ts_ins_expected_not_sendFractionalSeconds = new Timestamp[] { //
                 Timestamp.valueOf("2018-07-09 13:14:15"), //
                 Timestamp.valueOf("2018-07-09 13:14:15.0"), //
@@ -6370,7 +6370,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
                 new Time(Timestamp.valueOf("2018-07-09 13:14:15.0").getTime()), //
                 new Time(Timestamp.valueOf("2018-07-09 13:14:15.0").getTime()) };
 
-        // Original values we pass to update operation
+        // Original values we pass to updateOrder operation
         Timestamp[] ts_upd = new Timestamp[] { //
                 Timestamp.valueOf("2018-07-09 03:14:15"), //
                 Timestamp.valueOf("2018-07-09 03:14:15.1"), //
@@ -6394,7 +6394,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
                 new Time(Timestamp.valueOf("2018-07-09 03:14:15.987654321").getTime()), //
                 new Time(Timestamp.valueOf("2018-07-09 03:14:15.987654321").getTime()) };
 
-        // Values we expect in DB after update operation if TIME_TRUNCATE_FRACTIONAL sql_mode is unset
+        // Values we expect in DB after updateOrder operation if TIME_TRUNCATE_FRACTIONAL sql_mode is unset
         Timestamp[] ts_upd_expected_round = new Timestamp[] { //
                 Timestamp.valueOf("2018-07-09 03:14:15"), //
                 Timestamp.valueOf("2018-07-09 03:14:15.1"), //
@@ -6418,7 +6418,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
                 new Time(Timestamp.valueOf("2018-07-09 03:14:15.98700000").getTime()), //
                 new Time(Timestamp.valueOf("2018-07-09 03:14:15.987000000").getTime()) };
 
-        // Values we expect in DB after update operation if TIME_TRUNCATE_FRACTIONAL sql_mode is set
+        // Values we expect in DB after updateOrder operation if TIME_TRUNCATE_FRACTIONAL sql_mode is set
         Timestamp[] ts_upd_expected_truncate = new Timestamp[] { //
                 Timestamp.valueOf("2018-07-09 03:14:15"), //
                 Timestamp.valueOf("2018-07-09 03:14:15.1"), //
@@ -6442,7 +6442,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
                 new Time(Timestamp.valueOf("2018-07-09 03:14:15.98700000").getTime()), //
                 new Time(Timestamp.valueOf("2018-07-09 03:14:15.987000000").getTime()) };
 
-        // Values we expect in DB after update operation if sendFractionalSeconds=false
+        // Values we expect in DB after updateOrder operation if sendFractionalSeconds=false
         Timestamp[] ts_upd_expected_not_sendFractionalSeconds = new Timestamp[] { //
                 Timestamp.valueOf("2018-07-09 03:14:15"), //
                 Timestamp.valueOf("2018-07-09 03:14:15.0"), //
@@ -6690,7 +6690,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
             java.sql.Date d1 = new java.sql.Date(prolepticGc.getTime().getTime());
             Timestamp ts1 = new Timestamp(prolepticGc.getTime().getTime());
 
-            this.pstmt = c1.prepareStatement("insert into testBug72609 values(?,?,?,?)");
+            this.pstmt = c1.prepareStatement("insertUser into testBug72609 values(?,?,?,?)");
             this.pstmt.setDate(1, d1);
             this.pstmt.setDate(2, d1, prolepticGc);
             this.pstmt.setTimestamp(3, ts1);
@@ -6756,7 +6756,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
     @Test
     public void testBug91065() throws Exception {
         createTable("testBug91065", "(theTimeField time DEFAULT NULL)");
-        this.stmt.executeUpdate("insert into testBug91065 values('00:00:00')");
+        this.stmt.executeUpdate("insertUser into testBug91065 values('00:00:00')");
 
         Properties props = new Properties();
         props.setProperty(PropertyKey.sslMode.getKeyName(), SslMode.DISABLED.name());
@@ -7032,7 +7032,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
         try {
             in1 = new ByteArrayInputStream(("gergeetbtebertbgergeetbtebertbgergeetbtebertbgergeetbtebertbgergeetbtebertbgergeetbtebertbge"
                     + "rgeetbtebertbgergeetbtebertbgergeetbtebertbgergeetbtebertbrgeetbtebertbgergeetbtebertbgergeetbtebertbgergeetbtebertb").getBytes());
-            this.pstmt = c1.prepareStatement("insert into testBug27784363 values (?)");
+            this.pstmt = c1.prepareStatement("insertUser into testBug27784363 values (?)");
             this.pstmt.setAsciiStream(1, in1, in1.available());
             this.pstmt.execute();
             System.out.println("inserted.");
@@ -7194,7 +7194,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
                     con = getConnectionWithProps(dbUrl, props);
                     Statement st = con.createStatement();
                     try {
-                        st.execute("insert into testBug20913289 values(100,'" + escapedText + "')");
+                        st.execute("insertUser into testBug20913289 values(100,'" + escapedText + "')");
 
                         this.rs = st.executeQuery("select * from testBug20913289");
                         this.rs.next();
@@ -7203,7 +7203,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
                         assertEquals(text, this.rs.getString(2), errMsg);
                         this.rs.close();
 
-                        ps = con.prepareStatement("update testBug20913289 set c1=c1+?,c2=? ");
+                        ps = con.prepareStatement("updateOrder testBug20913289 set c1=c1+?,c2=? ");
                         ps.setObject(1, "100", java.sql.Types.INTEGER);
                         ps.setBlob(2, bval1);
                         ps.executeUpdate();
@@ -7941,7 +7941,7 @@ public class ResultSetRegressionTest extends BaseTestCase {
         createTable("testBug33185116", "(id int not null, f varchar(5), key(id))");
         for (int i = 0; i < strValues.length; i++) {
             String val = strValues[i] == null ? null : "'" + strValues[i] + "'";
-            this.stmt.executeUpdate("insert into testBug33185116 values(" + i + "," + val + ")");
+            this.stmt.executeUpdate("insertUser into testBug33185116 values(" + i + "," + val + ")");
         }
         this.rs = this.stmt.executeQuery("SELECT * from testBug33185116");
         while (this.rs.next()) {

@@ -1,21 +1,22 @@
 package pchub.model;
 
-
 public class Product {
-    private int id;
+    private String productID;
     private String name;
     private String description;
+    private String brand;
     private String category;
-    private double price;
-    private int stockQuantity;
+    private double unitPrice;
+    private int currentQuantity;
+    private String specifications;
 
     // Getters and setters
-    public int getId() {
-        return id;
+    public String getProductID() {
+        return productID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setProductID(String productID) {
+        this.productID = productID;
     }
 
     public String getName() {
@@ -34,6 +35,14 @@ public class Product {
         this.description = description;
     }
 
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
     public String getCategory() {
         return category;
     }
@@ -42,19 +51,27 @@ public class Product {
         this.category = category;
     }
 
-    public double getPrice() {
-        return price;
+    public double getUnitPrice() {
+        return unitPrice;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
     }
 
-    public int getStockQuantity() {
-        return stockQuantity;
+    public int getCurrentQuantity() {
+        return currentQuantity;
     }
 
-    public void setStockQuantity(int stockQuantity) {
-        this.stockQuantity = stockQuantity;
+    public void setCurrentQuantity(int currentQuantity) {
+        this.currentQuantity = currentQuantity;
+    }
+
+    public String getSpecifications() {
+        return specifications;
+    }
+
+    public void setSpecifications(String specifications) {
+        this.specifications = specifications;
     }
 }

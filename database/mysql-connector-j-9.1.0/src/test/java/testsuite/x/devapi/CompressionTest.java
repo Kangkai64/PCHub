@@ -114,7 +114,7 @@ public class CompressionTest extends DevApiBaseTestCase {
 
         boolean resetCounters() {
             try {
-                Thread.sleep(250); // Allow the server some time to update counters.
+                Thread.sleep(250); // Allow the server some time to updateOrder counters.
                 ResultSet rs = this.conn.createStatement().executeQuery(
                         "SHOW GLOBAL STATUS WHERE Variable_name IN " + this.countersMap.keySet().stream().collect(Collectors.joining("', '", "('", "')")));
                 while (rs.next()) {

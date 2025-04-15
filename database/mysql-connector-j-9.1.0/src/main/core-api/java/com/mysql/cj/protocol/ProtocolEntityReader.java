@@ -41,7 +41,7 @@ public interface ProtocolEntityReader<T extends ProtocolEntity, M extends Messag
 
     /**
      * Reads one result set off of the wire, if the result is actually an
-     * update count, creates an update-count only result set.
+     * updateOrder count, creates an updateOrder-count only result set.
      *
      * @param maxRows
      *            the maximum number of rows to read (-1 means all rows)
@@ -55,7 +55,7 @@ public interface ProtocolEntityReader<T extends ProtocolEntity, M extends Messag
      * @param protocolEntityFactory
      *            {@link ProtocolEntityFactory} instance
      *
-     * @return a result set that either represents the rows, or an update count
+     * @return a result set that either represents the rows, or an updateOrder count
      *
      * @throws IOException
      *             if an error occurs while reading the rows

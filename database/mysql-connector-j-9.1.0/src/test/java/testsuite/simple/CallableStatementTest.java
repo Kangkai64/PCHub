@@ -421,11 +421,11 @@ public class CallableStatementTest extends BaseTestCase {
             createTable("t1", "(id   char(16) not null default '', data int not null)");
             createTable("t2", "(s   char(16),  i   int,  d   double)");
 
-            createProcedure("foo42", "() insert into test.t1 values ('foo', 42);");
+            createProcedure("foo42", "() insertUser into test.t1 values ('foo', 42);");
             this.conn.prepareCall("{CALL foo42()}");
             this.conn.prepareCall("{CALL foo42}");
 
-            createProcedure("bar", "(x char(16), y int, z DECIMAL(10)) insert into test.t1 values (x, y);");
+            createProcedure("bar", "(x char(16), y int, z DECIMAL(10)) insertUser into test.t1 values (x, y);");
             cstmt = this.conn.prepareCall("{CALL bar(?, ?, ?)}");
 
             ParameterMetaData md = cstmt.getParameterMetaData();

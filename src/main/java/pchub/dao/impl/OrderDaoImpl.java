@@ -18,13 +18,13 @@ import java.util.List;
 public class OrderDaoImpl implements OrderDao {
 
     @Override
-    public Order findById(int id) {
+    public Order findById(String orderId) {
         String sql = "SELECT * FROM orders WHERE id = ?";
 
         try (Connection conn = pchub.utils.DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setInt(1, id);
+            pstmt.setInt(1, orderId);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
@@ -83,8 +83,7 @@ public class OrderDaoImpl implements OrderDao {
         return orders;
     }
 
-    @Override
-    public boolean save(Order order) {
+    public boolean insertOrder(Order order) {
         String sql = "INSERT INTO orders (user_id, user_name, order_date, status, total_amount, " +
                 "shipping_address_id, payment_method_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
@@ -92,7 +91,7 @@ public class OrderDaoImpl implements OrderDao {
             conn.setAutoCommit(false);
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                pstmt.setInt(1, order.getUserId());
+                pstmt.setInt(1, order.getCustomerId());
                 pstmt.setString(2, order.getUserName());
                 pstmt.setTimestamp(3, new Timestamp(new Date().getTime()));
                 pstmt.setString(4, OrderStatus.PENDING.name());
@@ -106,7 +105,7 @@ public class OrderDaoImpl implements OrderDao {
                     ResultSet generatedKeys = pstmt.getGeneratedKeys();
                     if (generatedKeys.next()) {
                         int orderId = generatedKeys.getInt(1);
-                        order.setId(orderId);
+                        order.setOrderId(orderId);
 
                         // Save order items
                         if (saveOrderItems(conn, order)) {
@@ -131,8 +130,7 @@ public class OrderDaoImpl implements OrderDao {
         }
     }
 
-    @Override
-    public boolean update(Order order) {
+    public boolean updateOrder(Order order) {
         String sql = "UPDATE orders SET status = ?, total_amount = ? WHERE id = ?";
 
         try (Connection conn = pchub.utils.DatabaseConnection.getConnection()) {
@@ -141,13 +139,13 @@ public class OrderDaoImpl implements OrderDao {
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, order.getStatus().name());
                 pstmt.setDouble(2, order.getTotalAmount());
-                pstmt.setInt(3, order.getId());
+                pstmt.setInt(3, order.getOrderId());
 
                 int affectedRows = pstmt.executeUpdate();
 
                 if (affectedRows > 0) {
-                    // Delete existing order items and save new ones
-                    deleteOrderItems(conn, order.getId());
+                    // Delete existing order items and insertUser new ones
+                    deleteOrderItems(conn, order.getOrderId());
                     if (saveOrderItems(conn, order)) {
                         conn.commit();
                         return true;
@@ -169,8 +167,7 @@ public class OrderDaoImpl implements OrderDao {
         }
     }
 
-    @Override
-    public boolean delete(int id) {
+    public boolean deleteOrder(String orderId) {
         String sql = "DELETE FROM orders WHERE id = ?";
 
         try (Connection conn = pchub.utils.DatabaseConnection.getConnection()) {
@@ -178,11 +175,11 @@ public class OrderDaoImpl implements OrderDao {
 
             try {
                 // Delete order items first
-                deleteOrderItems(conn, id);
+                deleteOrderItems(conn, orderId);
 
                 // Delete the order
                 try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                    pstmt.setInt(1, id);
+                    pstmt.setInt(1, orderId);
                     int affectedRows = pstmt.executeUpdate();
 
                     if (affectedRows > 0) {
@@ -208,8 +205,8 @@ public class OrderDaoImpl implements OrderDao {
 
     private Order mapResultSetToOrder(ResultSet rs) throws SQLException {
         Order order = new Order();
-        order.setId(rs.getInt("id"));
-        order.setUserId(rs.getInt("user_id"));
+        order.setOrderId(rs.getInt("id"));
+        order.setCustomerId(rs.getInt("user_id"));
         order.setUserName(rs.getString("user_name"));
         order.setOrderDate(rs.getTimestamp("order_date"));
         order.setStatus(OrderStatus.valueOf(rs.getString("status")));
@@ -226,12 +223,12 @@ public class OrderDaoImpl implements OrderDao {
         String sql = "SELECT * FROM order_items WHERE order_id = ?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, order.getId());
+            pstmt.setInt(1, order.getOrderId());
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
                 OrderItem item = new OrderItem();
-                item.setId(rs.getInt("id"));
+                item.setOrderItemId(rs.getInt("id"));
                 item.setOrderId(rs.getInt("order_id"));
                 item.setProductId(rs.getInt("product_id"));
                 item.setProductName(rs.getString("product_name"));
@@ -249,7 +246,7 @@ public class OrderDaoImpl implements OrderDao {
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             for (OrderItem item : order.getItems()) {
-                pstmt.setInt(1, order.getId());
+                pstmt.setInt(1, order.getOrderId());
                 pstmt.setInt(2, item.getProductId());
                 pstmt.setString(3, item.getProductName());
                 pstmt.setDouble(4, item.getUnitPrice());

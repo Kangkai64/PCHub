@@ -2,7 +2,7 @@ package pchub.model;
 
 public class Address {
     private int id;
-    private int userId;
+    private String userId;
     private String street;
     private String city;
     private String state;
@@ -18,11 +18,11 @@ public class Address {
         this.id = id;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

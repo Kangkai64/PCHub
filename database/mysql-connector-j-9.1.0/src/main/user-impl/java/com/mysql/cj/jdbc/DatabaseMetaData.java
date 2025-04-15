@@ -2617,7 +2617,7 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
      *
      * @param commentString
      *            the comment from 'SHOW TABLE STATUS'
-     * @return int[] [0] = delete action, [1] = update action
+     * @return int[] [0] = deleteOrder action, [1] = updateOrder action
      */
     protected int[] getForeignKeyActions(String commentString) {
         int[] actions = new int[] { java.sql.DatabaseMetaData.importedKeyRestrict, java.sql.DatabaseMetaData.importedKeyRestrict };
@@ -4243,7 +4243,7 @@ public class DatabaseMetaData implements java.sql.DatabaseMetaData {
                     ResultSet results = null;
 
                     try {
-                        StringBuilder whereBuf = new StringBuilder(" Extra LIKE '%on update CURRENT_TIMESTAMP%'");
+                        StringBuilder whereBuf = new StringBuilder(" Extra LIKE '%on updateOrder CURRENT_TIMESTAMP%'");
                         List<String> rsFields = new ArrayList<>();
 
                         if (whereBuf.length() > 0 || rsFields.size() > 0) {

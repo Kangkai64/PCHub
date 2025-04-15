@@ -100,9 +100,9 @@ public class CharsetRegressionTest extends BaseTestCase {
             try {
                 ms932Conn.createStatement().executeUpdate("drop table if exists testBug7607");
                 ms932Conn.createStatement().executeUpdate("create table testBug7607 (sortCol int, col1 varchar(100) ) character set sjis");
-                ms932Conn.createStatement().executeUpdate("insert into testBug7607 values(1, 0x835C)"); // standard
+                ms932Conn.createStatement().executeUpdate("insertUser into testBug7607 values(1, 0x835C)"); // standard
                 // sjis
-                ms932Conn.createStatement().executeUpdate("insert into testBug7607 values(2, 0x878A)"); // NEC
+                ms932Conn.createStatement().executeUpdate("insertUser into testBug7607 values(2, 0x878A)"); // NEC
                 // kanji
 
                 this.rs = ms932Conn.createStatement().executeQuery("SELECT col1 FROM testBug7607 ORDER BY sortCol ASC");

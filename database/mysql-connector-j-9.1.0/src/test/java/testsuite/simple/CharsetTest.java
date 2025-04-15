@@ -363,7 +363,7 @@ public class CharsetTest extends BaseTestCase {
         st.executeUpdate("DROP TABLE IF EXISTS testGB18030");
         st.executeUpdate("CREATE TABLE testGB18030(C VARCHAR(100) CHARACTER SET gb18030)");
 
-        // insert phrases
+        // insertUser phrases
         PreparedStatement pst = null;
         pst = con.prepareStatement("INSERT INTO testGB18030 VALUES(?)");
         for (int i = 0; i < str.length; i++) {
@@ -962,7 +962,7 @@ public class CharsetTest extends BaseTestCase {
         System.out.println(bytesOut.toString());
 
         //
-        // Now, insert and retrieve the value from the database
+        // Now, insertUser and retrieve the value from the database
         //
         Connection sjisConn = null;
         Statement sjisStmt = null;

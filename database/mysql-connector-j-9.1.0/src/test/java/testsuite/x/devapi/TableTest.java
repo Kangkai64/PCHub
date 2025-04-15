@@ -114,8 +114,8 @@ public class TableTest extends BaseTableTestCase {
         try {
             sqlUpdate("drop table if exists testCount");
             sqlUpdate("create table testCount (_id varchar(32), name varchar(20), birthday date, age int)");
-            sqlUpdate("insert into testCount values ('1', 'Sakila', '2000-05-27', 14)");
-            sqlUpdate("insert into testCount values ('2', 'Shakila', '2001-06-26', 13)");
+            sqlUpdate("insertUser into testCount values ('1', 'Sakila', '2000-05-27', 14)");
+            sqlUpdate("insertUser into testCount values ('2', 'Shakila', '2001-06-26', 13)");
 
             Table table = this.schema.getTable("testCount");
             assertEquals(2, table.count());
@@ -187,18 +187,18 @@ public class TableTest extends BaseTableTestCase {
 
             //execute without bind()
             assertThrows(ExecutionException.class, ".*You have an error in your SQL syntax.*",
-                    () -> this.session.sql("insert into testAsyncBind values(?,?,?,?)").executeAsync().get());
+                    () -> this.session.sql("insertUser into testAsyncBind values(?,?,?,?)").executeAsync().get());
 
             //execute with more bind()
             assertThrows(ExecutionException.class, ".*Too many arguments.*",
-                    () -> this.session.sql("insert into testAsyncBind values(?,?,?,?)").bind(1, 2, 3, 4, 5).executeAsync().get());
+                    () -> this.session.sql("insertUser into testAsyncBind values(?,?,?,?)").bind(1, 2, 3, 4, 5).executeAsync().get());
 
             //execute with less bind()
             assertThrows(ExecutionException.class, ".*You have an error in your SQL syntax.*",
-                    () -> this.session.sql("insert into testAsyncBind values(?,?,?,?)").bind(1, 2, 3).executeAsync().get());
+                    () -> this.session.sql("insertUser into testAsyncBind values(?,?,?,?)").bind(1, 2, 3).executeAsync().get());
 
             //Success
-            asyncSqlRes = this.session.sql("insert into testAsyncBind values(?,?,?,?)").bind(10, 2).bind(3, "S").executeAsync();
+            asyncSqlRes = this.session.sql("insertUser into testAsyncBind values(?,?,?,?)").bind(10, 2).bind(3, "S").executeAsync();
             sqlRes = asyncSqlRes.get();
             asyncSqlRes = this.session.sql("select * from testAsyncBind where a=?").bind(10).executeAsync();
             sqlRes = asyncSqlRes.get();

@@ -1,18 +1,16 @@
 package pchub.service;
 
-import pchub.model.CartItem;
-import pchub.model.Product;
-import pchub.model.ShoppingCart;
-import pchub.model.User;
 import pchub.model.Product;
 import pchub.model.ShoppingCart;
 import pchub.model.User;
 
+import java.sql.SQLException;
+
 public interface CartService {
-    pchub.model.ShoppingCart getCartForUser(pchub.model.User user);
-    boolean addItemToCart(pchub.model.ShoppingCart cart, pchub.model.Product product, int quantity);
-    boolean updateItemQuantity(pchub.model.ShoppingCart cart, int productId, int quantity);
-    boolean removeItemFromCart(pchub.model.ShoppingCart cart, int productId);
-    void clearCart(pchub.model.ShoppingCart cart);
-    boolean saveCart(pchub.model.ShoppingCart cart);
+    ShoppingCart getCartForUser(User user) throws SQLException;
+    boolean addItemToCart(ShoppingCart cart, Product product, int quantity) throws SQLException;
+    boolean updateItemQuantity(ShoppingCart cart, String productId, int quantity) throws SQLException;
+    boolean removeItemFromCart(ShoppingCart cart, String productId) throws SQLException;
+    void clearCart(ShoppingCart cart) throws SQLException;
+    boolean saveCart(ShoppingCart cart) throws SQLException;
 }

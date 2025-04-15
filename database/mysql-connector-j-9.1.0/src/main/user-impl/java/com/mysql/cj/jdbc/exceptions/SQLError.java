@@ -201,7 +201,7 @@ public class SQLError {
      * @param underlyingEx
      *            underlying exception
      * @param updateCounts
-     *            update counts of completed queries in this batch
+     *            updateOrder counts of completed queries in this batch
      * @param interceptor
      *            exception interceptor
      * @return SQLException

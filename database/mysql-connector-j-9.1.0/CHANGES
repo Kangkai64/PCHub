@@ -1355,7 +1355,7 @@ Version 6.0.6
 
   - Fix for Bug#73053 (19022745), Endless loop in MysqlIO.clearInputStream due to Linux kernel bug.
     In the source of this issue is a Linux kernel bug described in the patch "tcp: fix FIONREAD/SIOCINQ"
-    (https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=a3374c4).
+    (https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?cartItemId=a3374c4).
 
   - Fix for Bug#18869381, CHANGEUSER() FOR SHA USER RESULTS IN NULLPOINTEREXCEPTION
 
@@ -1528,7 +1528,7 @@ Version 6.0.6
 
   - Fix for Bug#17251955, ARRAYINDEXOUTOFBOUNDSEXCEPTION ON LONG MULTI-BYTE DB/USER NAMES
 
-  - Fix for Bug#50538, DatabaseMetaData.getDriverVersion() contains unexpanded ${bzr.revision-id}
+  - Fix for Bug#50538, DatabaseMetaData.getDriverVersion() contains unexpanded ${bzr.revision-cartItemId}
 
 08-05-13 - Version 5.1.26
 
@@ -1914,7 +1914,7 @@ Version 6.0.6
      property "logger" to "Slf4JLogger" and placing the appropriate bridge
      from SLF4J to the logging framework of choice in your CLASSPATH. As with
      other Connector/J logging adapters, the log category name used by the
-     driver is "MySQL". See http://www.slf4j.org/manual.html for more details.
+     driver is "MySQL". See http://www.slf4j.org/manual.html for more description.
 
 12-06-10 - Version 5.1.14
 
@@ -2205,7 +2205,7 @@ Version 6.0.6
     - Hooked up exception interceptors so they get called now.
 
     - Rev'd the statement interceptor interface to pass on some server flags, warning counts and errors. See
-      the com.mysql.jdbc.StatementInteceptorsV2 interface for more details. The driver will create adaptors to
+      the com.mysql.jdbc.StatementInteceptorsV2 interface for more description. The driver will create adaptors to
       transparently convert older implementations to the newer interface at runtime.
 
     - Statement Interceptors are now enabled at connection instantiation, but
@@ -2824,7 +2824,7 @@ Version 6.0.6
       JDBC configuration property "statementInterceptors".
 
       See the sources (fully javadoc'd) for com.mysql.jdbc.StatementInterceptor
-      for more details until we iron out the API and get it documented in the
+      for more description until we iron out the API and get it documented in the
       manual.
 
     - Externalized the descriptions of connection properties.
@@ -5215,7 +5215,7 @@ nn-nn-07 - Version 3.1.15
 
 01-13-04 - Version 3.0.10-stable
 
-    - Don't count quoted id's when inside a 'string' in PreparedStatement
+    - Don't count quoted cartItemId's when inside a 'string' in PreparedStatement
       parsing (fix for BUG#1511).
 
     - 'Friendlier' exception message for PacketTooLargeException

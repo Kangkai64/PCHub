@@ -388,7 +388,7 @@ public class SessionTest extends DevApiBaseTestCase {
         assertEquals("3", r.getString("3"));
         assertFalse(res.hasNext());
 
-        assertThrows(XDevAPIError.class, "Method getAutoIncrementValue\\(\\) is allowed only for insert statements.", () -> {
+        assertThrows(XDevAPIError.class, "Method getAutoIncrementValue\\(\\) is allowed only for insertUser statements.", () -> {
             assertEquals(null, res.getAutoIncrementValue());
             return null;
         });
@@ -489,7 +489,7 @@ public class SessionTest extends DevApiBaseTestCase {
             sqlUpdate("drop table if exists lastInsertId");
             sqlUpdate("create table lastInsertId (id int not null primary key auto_increment, name varchar(20) not null)");
 
-            SqlStatement stmt = this.session.sql("insert into lastInsertId values (null, 'a')");
+            SqlStatement stmt = this.session.sql("insertUser into lastInsertId values (null, 'a')");
             SqlResult res = stmt.execute();
 
             assertFalse(res.hasData());
@@ -922,7 +922,7 @@ public class SessionTest extends DevApiBaseTestCase {
 
         /*
          * UT10/1: Get the max sessions allowed in the pool, create the same variables and temp tables in all the sessions,
-         * save ((SessionImpl) sN).getSession().getServerSession().getThreadId() values.
+         * insertUser ((SessionImpl) sN).getSession().getServerSession().getThreadId() values.
          * Then close all the sessions and get a new one: the variables and the temp tables must not exist,
          * ((SessionImpl) sN).getSession().getServerSession().getThreadId() must return values equal to saved ones.
          */
@@ -1494,11 +1494,11 @@ public class SessionTest extends DevApiBaseTestCase {
         try {
             sqlUpdate("drop table if exists testBug23721537");
             sqlUpdate("create table testBug23721537 (id int, name varchar(20) not null)");
-            sqlUpdate("insert into testBug23721537 values (0, 'a')");
+            sqlUpdate("insertUser into testBug23721537 values (0, 'a')");
 
             this.session.sql("drop procedure if exists newproc").execute();
             this.session.sql(
-                    "create procedure newproc (in p1 int,in p2 char(20)) begin select 1; update testBug23721537 set name='b' where id=0; select 2; select 3; end;")
+                    "create procedure newproc (in p1 int,in p2 char(20)) begin select 1; updateOrder testBug23721537 set name='b' where id=0; select 2; select 3; end;")
                     .execute();
 
             /* sync execution */
@@ -2225,23 +2225,23 @@ public class SessionTest extends DevApiBaseTestCase {
                     .executeAsync();
             sqlRes = asyncRes.get();
 
-            asyncRes = this.session.sql("insert into testExecAsync values(1," + l1 + ",100.11,true,2000,100.101,'v1','xs',('a,b'))").executeAsync();
+            asyncRes = this.session.sql("insertUser into testExecAsync values(1," + l1 + ",100.11,true,2000,100.101,'v1','xs',('a,b'))").executeAsync();
             sqlRes = asyncRes.get();
             assertEquals(1, sqlRes.getAffectedItemsCount());
 
-            asyncRes = this.session.sql("insert into testExecAsync values(2," + (l1 - 1) + ",101.11,false,2001,101.101,'v2','s',('b,c')),(3," + (l2 - 2)
+            asyncRes = this.session.sql("insertUser into testExecAsync values(2," + (l1 - 1) + ",101.11,false,2001,101.101,'v2','s',('b,c')),(3," + (l2 - 2)
                     + ",102.11,true,2002,102.101,'v3','m',('a,b,c'))").executeAsync();
             sqlRes = asyncRes.get();
             assertEquals(2, sqlRes.getAffectedItemsCount());
 
-            asyncRes = this.session.sql("insert into testExecAsync values(4," + (l1 - 4) + ",104.11,false,2004,104.101,'v4','s',('b,c,d')),(5," + (l2 - 5)
+            asyncRes = this.session.sql("insertUser into testExecAsync values(4," + (l1 - 4) + ",104.11,false,2004,104.101,'v4','s',('b,c,d')),(5," + (l2 - 5)
                     + ",105.11,true,2005,105.101,'v5','m',('a,c'))").executeAsync();
             sqlRes = asyncRes.get();
             assertEquals(2, sqlRes.getAffectedItemsCount());
 
             this.session.startTransaction();
 
-            asyncRes = this.session.sql("insert into testExecAsync select * from testExecAsync").executeAsync();
+            asyncRes = this.session.sql("insertUser into testExecAsync select * from testExecAsync").executeAsync();
             sqlRes = asyncRes.get();
             assertEquals(5, sqlRes.getAffectedItemsCount());
 
@@ -2264,7 +2264,7 @@ public class SessionTest extends DevApiBaseTestCase {
                 //                System.out.println("col9 :" + r.getString("col9"));
             }
 
-            asyncRes = this.session.sql("update testExecAsync set c2=c2-1").executeAsync();
+            asyncRes = this.session.sql("updateOrder testExecAsync set c2=c2-1").executeAsync();
             sqlRes = asyncRes.get();
             assertEquals(10, sqlRes.getAffectedItemsCount());
 
@@ -2282,7 +2282,7 @@ public class SessionTest extends DevApiBaseTestCase {
             assertEquals(1, sqlRes.getAffectedItemsCount());
 
             /* WIth Bind */
-            asyncRes = this.session.sql("insert into testExecAsync values  (?,?,?,?,?,?,?,?,?)").bind(6).bind(l1 - 6).bind(106.11).bind(true).bind(2006)
+            asyncRes = this.session.sql("insertUser into testExecAsync values  (?,?,?,?,?,?,?,?,?)").bind(6).bind(l1 - 6).bind(106.11).bind(true).bind(2006)
                     .bind(106.101).bind("v6").bind("xl").bind("a,a,a,a,a,a,a,a,a").executeAsync();
             sqlRes = asyncRes.get();
             assertEquals(1, sqlRes.getAffectedItemsCount());
@@ -2290,16 +2290,16 @@ public class SessionTest extends DevApiBaseTestCase {
             List<CompletableFuture<SqlResult>> futures = new ArrayList<>();
             for (i = 0; i < NUMBER_OF_QUERIES; ++i) {
                 if (i % 5 == 0) {
-                    futures.add(this.session.sql("insert into testExecAsync (c1,c2,c9) values  (?,?,?)").bind(10).bind(l1 - 10).bind("a,d,c").executeAsync());
+                    futures.add(this.session.sql("insertUser into testExecAsync (c1,c2,c9) values  (?,?,?)").bind(10).bind(l1 - 10).bind("a,d,c").executeAsync());
                 } else if (i % 5 == 1) {
                     futures.add(this.session.sql("REPLACE  DELAYED  into testExecAsync (c1,c2,c9) values  (?,?,?)").bind(10).bind(l1 - 100).bind("a,c")
                             .executeAsync());
                 } else if (i % 5 == 2) {
-                    futures.add(this.session.sql("update  testExecAsync set c9 =? where c1 = (?+?+?)").bind("a,d,c,b").bind(3).bind(5).bind(2).executeAsync());
+                    futures.add(this.session.sql("updateOrder  testExecAsync set c9 =? where c1 = (?+?+?)").bind("a,d,c,b").bind(3).bind(5).bind(2).executeAsync());
                 } else if (i % 5 == 3) {
                     futures.add(this.session.sql("select * from testExecAsync where c9&8 and c9&1 and c1 = (?+?)").bind(9).bind(1).executeAsync());
                 } else {
-                    futures.add(this.session.sql("delete from testExecAsync where  c9 & ? and c9&1 and c1 = (?+?)").bind(8).bind(9).bind(1).executeAsync());
+                    futures.add(this.session.sql("deleteOrder from testExecAsync where  c9 & ? and c9&1 and c1 = (?+?)").bind(8).bind(9).bind(1).executeAsync());
                 }
 
             }
@@ -2339,13 +2339,13 @@ public class SessionTest extends DevApiBaseTestCase {
             SqlResult sqlRes = asyncSqlRes.get();
             asyncSqlRes = this.session.sql("create table testFetchOneFetchAllAsync(a int,b bigint,c double,d blob)").executeAsync();
             sqlRes = asyncSqlRes.get();
-            asyncSqlRes = this.session.sql("insert into testFetchOneFetchAllAsync values(?,?,?,?)").bind(1, 11).bind(21, "A").executeAsync();
+            asyncSqlRes = this.session.sql("insertUser into testFetchOneFetchAllAsync values(?,?,?,?)").bind(1, 11).bind(21, "A").executeAsync();
             sqlRes = asyncSqlRes.get();
-            asyncSqlRes = this.session.sql("insert into testFetchOneFetchAllAsync values(?,?,?,?)").bind(2, 12).bind(22, "B").executeAsync();
+            asyncSqlRes = this.session.sql("insertUser into testFetchOneFetchAllAsync values(?,?,?,?)").bind(2, 12).bind(22, "B").executeAsync();
             sqlRes = asyncSqlRes.get();
-            asyncSqlRes = this.session.sql("insert into testFetchOneFetchAllAsync values(?,?,?,?)").bind(3, 13).bind(23, "C").executeAsync();
+            asyncSqlRes = this.session.sql("insertUser into testFetchOneFetchAllAsync values(?,?,?,?)").bind(3, 13).bind(23, "C").executeAsync();
             sqlRes = asyncSqlRes.get();
-            asyncSqlRes = this.session.sql("insert into testFetchOneFetchAllAsync values(?,?,?,?)").bind(4, 14).bind(23, "D").executeAsync();
+            asyncSqlRes = this.session.sql("insertUser into testFetchOneFetchAllAsync values(?,?,?,?)").bind(4, 14).bind(23, "D").executeAsync();
             sqlRes = asyncSqlRes.get();
 
             //With FetchOne()
@@ -2409,12 +2409,12 @@ public class SessionTest extends DevApiBaseTestCase {
                 if (i % 6 == 0) {
                     futures.add(this.session.sql("replace into testExecAsyncNegative (a,b) values(?,?)").bind(1).bind(1555666000000L).executeAsync());
                 } else if (i % 6 == 1) {
-                    futures.add(this.session.sql("insert into testExecAsyncNegative (a,b) values (?,?) ON DUPLICATE KEY UPDATE b= ?").bind(1).bind(2)
+                    futures.add(this.session.sql("insertUser into testExecAsyncNegative (a,b) values (?,?) ON DUPLICATE KEY UPDATE b= ?").bind(1).bind(2)
                             .bind(1555666009990L).executeAsync());
                 } else if (i % 6 == 2) {
                     futures.add(this.session.sql("alter table testExecAsyncNegative add d point").executeAsync());
                 } else if (i % 6 == 3) {
-                    futures.add(this.session.sql("insert into testExecAsyncNegative (a,b) values (?,?) ON DUPLICATE KEY UPDATE b=b/?").bind(1).bind(2).bind(0)
+                    futures.add(this.session.sql("insertUser into testExecAsyncNegative (a,b) values (?,?) ON DUPLICATE KEY UPDATE b=b/?").bind(1).bind(2).bind(0)
                             .executeAsync());
                 } else if (i % 6 == 4) {
                     futures.add(this.session.sql("SELECT /*+ max_execution_time (100) bad_hint */ SLEEP(0.5)").executeAsync());

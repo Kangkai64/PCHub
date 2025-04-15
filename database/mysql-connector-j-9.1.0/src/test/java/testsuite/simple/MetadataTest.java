@@ -1010,7 +1010,7 @@ public class MetadataTest extends BaseTestCase {
                     userHostQuoted = "'" + userHost.get(0) + "'@'" + userHost.get(1) + "'";
 
                     try {
-                        stmt1.executeUpdate("GRANT update (c1) on t1 to " + userHostQuoted);
+                        stmt1.executeUpdate("GRANT updateOrder (c1) on t1 to " + userHostQuoted);
                         grantFailed = false;
                     } catch (SQLException sqlEx) {
                         fail("This testcase needs to be run with a URL that allows the user to issue GRANTs "

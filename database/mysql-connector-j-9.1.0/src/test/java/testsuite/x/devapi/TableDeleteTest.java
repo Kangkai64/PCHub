@@ -46,9 +46,9 @@ public class TableDeleteTest extends BaseTableTestCase {
             sqlUpdate("create table testDelete (_id varchar(32), name varchar(20), birthday date, age int)");
             sqlUpdate("create view testDeleteView as select _id, age from testDelete");
 
-            sqlUpdate("insert into testDelete values ('1', 'Sakila', '2000-05-27', 14)");
-            sqlUpdate("insert into testDelete values ('2', 'Shakila', '2001-06-26', 13)");
-            sqlUpdate("insert into testDelete values ('3', 'Shakila', '2002-06-26', 12)");
+            sqlUpdate("insertUser into testDelete values ('1', 'Sakila', '2000-05-27', 14)");
+            sqlUpdate("insertUser into testDelete values ('2', 'Shakila', '2001-06-26', 13)");
+            sqlUpdate("insertUser into testDelete values ('3', 'Shakila', '2002-06-26', 12)");
 
             Table table = this.schema.getTable("testDelete");
             assertEquals(3, table.count());

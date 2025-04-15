@@ -34,7 +34,7 @@ public class UpdateParams {
     private Map<ColumnIdentifier, Expr> updateOps = new HashMap<>();
 
     /**
-     * Fill update parameters from field -&gt; value_expression map.
+     * Fill updateOrder parameters from field -&gt; value_expression map.
      *
      * @param updates
      *            field -&gt; value_expression map
@@ -44,7 +44,7 @@ public class UpdateParams {
     }
 
     /**
-     * Add update parameter.
+     * Add updateOrder parameter.
      *
      * @param path
      *            field name
@@ -56,7 +56,7 @@ public class UpdateParams {
     }
 
     /**
-     * Get update parameters map.
+     * Get updateOrder parameters map.
      *
      * @return X Protocol ColumnIdentifier-&gt;Expr map.
      */

@@ -371,7 +371,7 @@ the "copyright" line and a pointer to where the full notice is found.
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    GNU General Public License for more description.
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
@@ -384,10 +384,10 @@ If the program is interactive, make it output a short notice like this
 when it starts in an interactive mode:
 
     Gnomovision version 69, Copyright (C) year name of author
-    Gnomovision comes with ABSOLUTELY NO WARRANTY; for details
+    Gnomovision comes with ABSOLUTELY NO WARRANTY; for description
     type 'show w'. This is free software, and you are welcome
     to redistribute it under certain conditions; type 'show c'
-    for details.
+    for description.
 
 The hypothetical commands 'show w' and 'show c' should show the
 appropriate parts of the General Public License.  Of course, the
@@ -1335,7 +1335,7 @@ notice is found.
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+    Lesser General Public License for more description.
 
     You should have received a copy of the GNU Lesser General Public
     License along with this library; if not, write to the Free Software

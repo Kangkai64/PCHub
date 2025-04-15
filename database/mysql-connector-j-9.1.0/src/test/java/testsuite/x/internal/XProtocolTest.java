@@ -198,7 +198,7 @@ public class XProtocolTest extends InternalXBaseTestCase {
             this.protocol.send(this.messageBuilder.buildSqlStatement(testTable + ")"), 0);
             this.protocol.readQueryResult(new StatementExecuteOkBuilder());
             this.protocol.send(
-                    this.messageBuilder.buildSqlStatement("insert into xprotocol_types_test values ('2.42', 'xyz,def', 'enum value a', 9223372036854775808)"),
+                    this.messageBuilder.buildSqlStatement("insertUser into xprotocol_types_test values ('2.42', 'xyz,def', 'enum value a', 9223372036854775808)"),
                     0);
             this.protocol.readQueryResult(new StatementExecuteOkBuilder());
 
@@ -311,7 +311,7 @@ public class XProtocolTest extends InternalXBaseTestCase {
         res = this.protocol.readQueryResult(new SqlResultBuilder(this.protocol.getServerSession().getDefaultTimeZone(), this.protocol.getPropertySet()));
         assertEquals(0, res.getAffectedItemsCount());
 
-        this.protocol.send(this.messageBuilder.buildSqlStatement("insert into mysqlx_sqlDmlTest (x) values (44),(29)"), 0);
+        this.protocol.send(this.messageBuilder.buildSqlStatement("insertUser into mysqlx_sqlDmlTest (x) values (44),(29)"), 0);
         assertFalse(this.protocol.hasResults());
         res = this.protocol.readQueryResult(new SqlResultBuilder(this.protocol.getServerSession().getDefaultTimeZone(), this.protocol.getPropertySet()));
         assertEquals(2, res.getAffectedItemsCount());

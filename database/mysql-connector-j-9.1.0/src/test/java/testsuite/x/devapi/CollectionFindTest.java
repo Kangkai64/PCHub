@@ -179,7 +179,7 @@ public class CollectionFindTest extends BaseCollectionTestCase {
             this.collection.add("{}").execute();
         }
 
-        // limit 1, order by ID, save the first ID
+        // limit 1, order by ID, insertUser the first ID
         DocResult docs = this.collection.find().orderBy("$._id").limit(1).execute();
         assertTrue(docs.hasNext());
         String firstId = ((JsonString) docs.next().get("_id")).getString();
@@ -1826,7 +1826,7 @@ public class CollectionFindTest extends BaseCollectionTestCase {
 
         Table table = this.schema.getCollectionAsTable(this.collectionName);
 
-        /* update with single IN */
+        /* updateOrder with single IN */
         String toUpdate = String.format("JSON_REPLACE(doc, \"$.F1\", \"Data_New_4\")");
         res = table.update().set("doc", expr(toUpdate)).where("'1001' in doc->$._id").execute();
         assertEquals(res.getAffectedItemsCount(), 1);
@@ -1844,7 +1844,7 @@ public class CollectionFindTest extends BaseCollectionTestCase {
             }
         }
 
-        /* update with multiple IN */
+        /* updateOrder with multiple IN */
         toUpdate = String.format("JSON_REPLACE(doc, \"$.F1\", \"Data_New_5\")");
         res = table.update().set("doc", expr(toUpdate)).where(findCond).execute();
         assertEquals(res.getAffectedItemsCount(), 1);
@@ -1853,7 +1853,7 @@ public class CollectionFindTest extends BaseCollectionTestCase {
         assertEquals(r.getString("F1"), "\"Data_New_5\"");
         assertFalse(rows.hasNext());
 
-        /* update with single IN for float */
+        /* updateOrder with single IN for float */
         toUpdate = String.format("JSON_REPLACE(doc, \"$.F1\", \"Data_New_6\")");
         res = table.update().set("doc", expr(toUpdate)).where("20.1234 in doc->$.F2").execute();
         assertEquals(res.getAffectedItemsCount(), 1);
@@ -1862,7 +1862,7 @@ public class CollectionFindTest extends BaseCollectionTestCase {
         assertEquals(r.getString("F1"), "\"Data_New_6\"");
         assertFalse(rows.hasNext());
 
-        /* update with single IN for int */
+        /* updateOrder with single IN for int */
         toUpdate = String.format("JSON_REPLACE(doc, \"$.F1\", \"Data_New_7\")");
         res = table.update().set("doc", expr(toUpdate)).where("10000 in doc->$.F4").execute();
         assertEquals(res.getAffectedItemsCount(), 1);
@@ -1960,13 +1960,13 @@ public class CollectionFindTest extends BaseCollectionTestCase {
 
         Table table = this.schema.getCollectionAsTable(this.collectionName);
 
-        /* delete with single IN */
+        /* deleteOrder with single IN */
         res = table.delete().where("'1001' in doc->$._id").execute();
         assertEquals(res.getAffectedItemsCount(), 1);
         RowResult rows = table.select("doc->$.F1 as _id").where("'1001' in doc->$._id").execute();
         assertFalse(rows.hasNext());
 
-        /* delete with multiple IN */
+        /* deleteOrder with multiple IN */
         findCond = "";
         for (i = 1; i < maxrec; i++) {
             findCond = findCond + "'";
@@ -1981,13 +1981,13 @@ public class CollectionFindTest extends BaseCollectionTestCase {
         rows = table.select("doc->$.F1 as _id").where(findCond).execute();
         assertFalse(rows.hasNext());
 
-        /* delete with single IN for float */
+        /* deleteOrder with single IN for float */
         res = table.delete().where("30.1234 in doc->$.F2").execute();
         assertEquals(res.getAffectedItemsCount(), 1);
         rows = table.select("doc->$.F1 as F1").where("30.1234 in doc->$.F2").execute();
         assertFalse(rows.hasNext());
 
-        /* delete with single IN for int */
+        /* deleteOrder with single IN for int */
         res = table.delete().where("10004 in doc->$.F4").execute();
         assertEquals(res.getAffectedItemsCount(), 1);
         rows = table.select("doc->$.F1 as F1").where("10004 in doc->$.F4").execute();
@@ -2594,7 +2594,7 @@ public class CollectionFindTest extends BaseCollectionTestCase {
 
         Table table = this.schema.getCollectionAsTable(this.collectionName);
 
-        /* update with single OVERLAPS */
+        /* updateOrder with single OVERLAPS */
         String toUpdate = String.format("JSON_REPLACE(doc, \"$.F1\", \"Data_New_4\")");
         res = table.update().set("doc", expr(toUpdate)).where("'1001' overlaps doc->$._id").execute();
         assertEquals(res.getAffectedItemsCount(), 1);
@@ -2612,7 +2612,7 @@ public class CollectionFindTest extends BaseCollectionTestCase {
             }
         }
 
-        /* update with multiple OVERLAPS */
+        /* updateOrder with multiple OVERLAPS */
         toUpdate = String.format("JSON_REPLACE(doc, \"$.F1\", \"Data_New_5\")");
         res = table.update().set("doc", expr(toUpdate)).where(findCond).execute();
         assertEquals(res.getAffectedItemsCount(), 1);
@@ -2621,7 +2621,7 @@ public class CollectionFindTest extends BaseCollectionTestCase {
         assertEquals(r.getString("F1"), "\"Data_New_5\"");
         assertFalse(rows.hasNext());
 
-        /* update with single OVERLAPS for float */
+        /* updateOrder with single OVERLAPS for float */
         toUpdate = String.format("JSON_REPLACE(doc, \"$.F1\", \"Data_New_6\")");
         res = table.update().set("doc", expr(toUpdate)).where("20.1234 overlaps doc->$.F2").execute();
         assertEquals(res.getAffectedItemsCount(), 1);
@@ -2630,7 +2630,7 @@ public class CollectionFindTest extends BaseCollectionTestCase {
         assertEquals(r.getString("F1"), "\"Data_New_6\"");
         assertFalse(rows.hasNext());
 
-        /* update with single OVERLAPS for int */
+        /* updateOrder with single OVERLAPS for int */
         toUpdate = String.format("JSON_REPLACE(doc, \"$.F1\", \"Data_New_7\")");
         res = table.update().set("doc", expr(toUpdate)).where("10000 overlaps doc->$.F4").execute();
         assertEquals(res.getAffectedItemsCount(), 1);
@@ -2728,13 +2728,13 @@ public class CollectionFindTest extends BaseCollectionTestCase {
 
         Table table = this.schema.getCollectionAsTable(this.collectionName);
 
-        /* delete with single OVERLAPS */
+        /* deleteOrder with single OVERLAPS */
         res = table.delete().where("'1001' overlaps doc->$._id").execute();
         assertEquals(res.getAffectedItemsCount(), 1);
         RowResult rows = table.select("doc->$.F1 as _id").where("'1001' overlaps doc->$._id").execute();
         assertFalse(rows.hasNext());
 
-        /* delete with multiple OVERLAPS */
+        /* deleteOrder with multiple OVERLAPS */
         findCond = "";
         for (i = 1; i < maxrec; i++) {
             findCond = findCond + "'";
@@ -2749,13 +2749,13 @@ public class CollectionFindTest extends BaseCollectionTestCase {
         rows = table.select("doc->$.F1 as _id").where(findCond).execute();
         assertFalse(rows.hasNext());
 
-        /* delete with single OVERLAPS for float */
+        /* deleteOrder with single OVERLAPS for float */
         res = table.delete().where("30.1234 overlaps doc->$.F2").execute();
         assertEquals(res.getAffectedItemsCount(), 1);
         rows = table.select("doc->$.F1 as F1").where("30.1234 overlaps doc->$.F2").execute();
         assertFalse(rows.hasNext());
 
-        /* delete with single OVERLAPS for int */
+        /* deleteOrder with single OVERLAPS for int */
         res = table.delete().where("10004 overlaps doc->$.F4").execute();
         assertEquals(res.getAffectedItemsCount(), 1);
         rows = table.select("doc->$.F1 as F1").where("10004 overlaps doc->$.F4").execute();

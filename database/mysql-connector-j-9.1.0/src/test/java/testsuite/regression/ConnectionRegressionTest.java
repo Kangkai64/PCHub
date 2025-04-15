@@ -791,7 +791,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
     @Test
     public void testBug12229() throws Exception {
         createTable("testBug12229", "(`int_field` integer )");
-        this.stmt.executeUpdate("insert into testBug12229 values (123456),(1)");
+        this.stmt.executeUpdate("insertUser into testBug12229 values (123456),(1)");
 
         Properties props = new Properties();
         props.setProperty(PropertyKey.sslMode.getKeyName(), SslMode.DISABLED.name());
@@ -4813,7 +4813,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
         createTable("testBug68400", "(x VARCHAR(255) NOT NULL DEFAULT '')");
         String s1 = "a very very very very very very very very very very very very very very very very very very very very very very very very large string "
                 + "to ensure compression enabled";
-        this.stmt.executeUpdate("insert into testBug68400 values ('" + s1 + "')");
+        this.stmt.executeUpdate("insertUser into testBug68400 values ('" + s1 + "')");
 
         Properties props = new Properties();
         props.setProperty(PropertyKey.sslMode.getKeyName(), SslMode.DISABLED.name());
@@ -7171,7 +7171,7 @@ public class ConnectionRegressionTest extends BaseTestCase {
     @Test
     public void testBug16634180() throws Exception {
         createTable("testBug16634180", "(pk integer primary key, val integer)", "InnoDB");
-        this.stmt.executeUpdate("insert into testBug16634180 values(0,0)");
+        this.stmt.executeUpdate("insertUser into testBug16634180 values(0,0)");
 
         Connection c1 = null;
         Connection c2 = null;
@@ -7184,13 +7184,13 @@ public class ConnectionRegressionTest extends BaseTestCase {
             c1 = getConnectionWithProps(props);
             c1.setAutoCommit(false);
             Statement s1 = c1.createStatement();
-            s1.executeUpdate("update testBug16634180 set val=val+1 where pk=0");
+            s1.executeUpdate("updateOrder testBug16634180 set val=val+1 where pk=0");
 
             c2 = getConnectionWithProps(props);
             c2.setAutoCommit(false);
             Statement s2 = c2.createStatement();
             try {
-                s2.executeUpdate("update testBug16634180 set val=val+1 where pk=0");
+                s2.executeUpdate("updateOrder testBug16634180 set val=val+1 where pk=0");
                 fail("ER_LOCK_WAIT_TIMEOUT should be thrown.");
             } catch (SQLTransientException ex) {
                 assertEquals(MysqlErrorNumbers.ER_LOCK_WAIT_TIMEOUT, ex.getErrorCode());
@@ -11459,11 +11459,11 @@ public class ConnectionRegressionTest extends BaseTestCase {
         assertEquals(1, cnt1);
         assertEquals(1, cnt2);
 
-        System.out.println("insert into testBug102404 values('abc')");
+        System.out.println("insertUser into testBug102404 values('abc')");
         ((MysqlConnection) c).getServerSessionStateController().removeSessionStateChangesListener(listener);
 
         cnt1 = 0;
-        testStmt.executeUpdate("insert into testBug102404 values('abc')");
+        testStmt.executeUpdate("insertUser into testBug102404 values('abc')");
 
         assertNotEquals(listener.changes, ((MysqlConnection) c).getServerSessionStateController().getSessionStateChanges());
 

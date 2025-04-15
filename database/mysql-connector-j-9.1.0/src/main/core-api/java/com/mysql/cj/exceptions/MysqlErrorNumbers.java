@@ -54,7 +54,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_DD_VIEW_CANT_ALLOC_CHARSET = 10019; // [HY000] Error in allocating memory for character set name for view %s.%s.
     public final static int ER_NO = 1002; // [HY000] NO
     public final static int ER_DD_INIT_FAILED = 10020; // [HY000] Data Dictionary initialization failed.
-    public final static int ER_DD_UPDATING_PLUGIN_MD_FAILED = 10021; // [HY000] Failed to update plugin metadata in dictionary tables.
+    public final static int ER_DD_UPDATING_PLUGIN_MD_FAILED = 10021; // [HY000] Failed to updateOrder plugin metadata in dictionary tables.
     public final static int ER_DD_VIEW_CANT_CREATE = 10023; // [HY000] Error in Creating View %s.%s
     public final static int ER_DD_METADATA_NOT_FOUND = 10024; // [HY000] Unable to start server. Cannot find the meta data for data dictionary table '%s'.
     public final static int ER_DD_CACHE_NOT_EMPTY_AT_SHUTDOWN = 10025; // [HY000] Dictionary cache not empty at shutdown.
@@ -129,7 +129,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_THREAD_HANDLING_OOM = 10090; // [HY000] Could not allocate memory for thread handling
     public final static int ER_CANT_CREATE_TEST_FILE = 10091; // [HY000] Can't create test file %s
     public final static int ER_CANT_CREATE_PID_FILE = 10092; // [HY000] Can't start server: can't create PID file: %s
-    public final static int ER_CANT_REMOVE_PID_FILE = 10093; // [HY000] Unable to delete pid file: %s
+    public final static int ER_CANT_REMOVE_PID_FILE = 10093; // [HY000] Unable to deleteOrder pid file: %s
     public final static int ER_CANT_CREATE_SHUTDOWN_THREAD = 10094; // [HY000] Can't create thread to handle shutdown requests (errno= %d)
     public final static int ER_SEC_FILE_PRIV_CANT_ACCESS_DIR = 10095; // [HY000] Failed to access directory for --secure-file-priv. Please make sure that dir...
     public final static int ER_SEC_FILE_PRIV_IGNORED = 10096; // [HY000] Ignoring --secure-file-priv value as server is running with --initialize(-insecure).
@@ -217,7 +217,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_CANT_STAT_DATADIR = 10173; // [HY000] Can't read data directory's stats (%d): %s. Assuming that it's not owned by the same use...
     public final static int ER_CANT_CHOWN_DATADIR = 10174; // [HY000] Can't change data directory owner to %s
     public final static int ER_CANT_SET_UP_PERSISTED_VALUES = 10175; // [HY000] Setting persistent options failed.
-    public final static int ER_CANT_SAVE_GTIDS = 10176; // [HY000] Failed to save the set of Global Transaction Identifiers of the last binary log into the m...
+    public final static int ER_CANT_SAVE_GTIDS = 10176; // [HY000] Failed to insertUser the set of Global Transaction Identifiers of the last binary log into the m...
     public final static int ER_CANT_JOIN_SHUTDOWN_THREAD = 10178; // [HY000] Could not join %sthread. error:%d
     public final static int ER_CANT_HASH_DO_AND_IGNORE_RULES = 10179; // [HY000] An error occurred while building do_table and ignore_table rules to hashes f...
     public final static int ER_CANT_READ_DIR = 1018; // [HY000] Can't read dir of '%s' (errno: %d - %s)
@@ -432,7 +432,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_REPLICA_SQL_THREAD_STOPPED_GAP_TRX_PROCESSED = 10380; // [HY000] Replica SQL thread stopped according to UNTIL SQL_AFTER_MTS_G...
     public final static int ER_GROUP_REPLICATION_PLUGIN_NOT_INSTALLED = 10381; // [HY000] Group Replication plugin is not installed.
     public final static int ER_GTID_ALREADY_ADDED_BY_USER = 10382; // [HY000] The transaction owned GTID is already in the %s table, which is caused by an ex...
-    public final static int ER_FAILED_TO_DELETE_FROM_GTID_EXECUTED_TABLE = 10383; // [HY000] Failed to delete the row: '%s' from the gtid_executed table.
+    public final static int ER_FAILED_TO_DELETE_FROM_GTID_EXECUTED_TABLE = 10383; // [HY000] Failed to deleteOrder the row: '%s' from the gtid_executed table.
     public final static int ER_FAILED_TO_COMPRESS_GTID_EXECUTED_TABLE = 10384; // [HY000] Failed to compress the gtid_executed table.
     public final static int ER_FAILED_TO_COMPRESS_GTID_EXECUTED_TABLE_OOM = 10385; // [HY000] Failed to compress the gtid_executed table, because it is faile...
     public final static int ER_FAILED_TO_INIT_THREAD_ATTR_FOR_GTID_TABLE_COMPRESSION = 10386; // [HY000] Failed to initialize thread attribute when creating ...
@@ -454,7 +454,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_RPL_ERROR_CREATING_CONNECTION_METADATA = 10415; // [HY000] Error creating connection metadata: %s.
     public final static int ER_RPL_ERROR_CREATING_APPLIER_METADATA = 10418; // [HY000] Error creating applier metadata: %s.
     public final static int ER_BAD_HOST_ERROR = 1042; // [08S01] Can't get hostname for your address
-    public final static int ER_RPL_FAILED_TO_DELETE_FROM_REPLICA_WORKERS_INFO_REPOSITORY = 10420; // [HY000] Could not delete from Replica Workers info repos...
+    public final static int ER_RPL_FAILED_TO_DELETE_FROM_REPLICA_WORKERS_INFO_REPOSITORY = 10420; // [HY000] Could not deleteOrder from Replica Workers info repos...
     public final static int ER_RPL_FAILED_TO_RESET_STATE_IN_REPLICA_INFO_REPOSITORY = 10421; // [HY000] Could not store the reset Replica Worker state into t...
     public final static int ER_RPL_REPLICA_GENERIC_MESSAGE = 10423; // [HY000] Replica: %s
     public final static int ER_RPL_REPLICA_COULD_NOT_CREATE_CHANNEL_LIST = 10424; // [HY000] Replica: Could not create channel list
@@ -728,13 +728,13 @@ public final class MysqlErrorNumbers {
     public final static int ER_BINLOG_FAILED_TO_SYNC_INDEX_FILE_IN_OPEN = 10823; // [HY000] MYSQL_BIN_LOG::open failed to sync the index file.
     public final static int ER_BINLOG_CANT_USE_FOR_LOGGING = 10824; // [HY000] Could not use %s for logging (error %d). Turning logging off for the whole dur...
     public final static int ER_BINLOG_FAILED_TO_CLOSE_INDEX_FILE_WHILE_REBUILDING = 10825; // [HY000] While rebuilding index file %s: Failed to close the ind...
-    public final static int ER_BINLOG_FAILED_TO_DELETE_INDEX_FILE_WHILE_REBUILDING = 10826; // [HY000] While rebuilding index file %s: Failed to delete the e...
+    public final static int ER_BINLOG_FAILED_TO_DELETE_INDEX_FILE_WHILE_REBUILDING = 10826; // [HY000] While rebuilding index file %s: Failed to deleteOrder the e...
     public final static int ER_BINLOG_FAILED_TO_RENAME_INDEX_FILE_WHILE_REBUILDING = 10827; // [HY000] While rebuilding index file %s: Failed to rename the n...
     public final static int ER_BINLOG_FAILED_TO_OPEN_INDEX_FILE_AFTER_REBUILDING = 10828; // [HY000] After rebuilding the index file %s: Failed to open the i...
     public final static int ER_BINLOG_CANT_APPEND_LOG_TO_TMP_INDEX = 10829; // [HY000] MYSQL_BIN_LOG::add_log_to_index failed to append log file name: %s, to...
     public final static int ER_WRONG_FIELD_TERMINATORS = 1083; // [42000] Field separator argument is not what is expected; check the manual
     public final static int ER_BINLOG_CANT_LOCATE_OLD_BINLOG_OR_RELAY_LOG_FILES = 10830; // [HY000] Failed to locate old binlog or relay log files
-    public final static int ER_BINLOG_CANT_DELETE_FILE = 10831; // [HY000] Failed to delete file '%s'
+    public final static int ER_BINLOG_CANT_DELETE_FILE = 10831; // [HY000] Failed to deleteOrder file '%s'
     public final static int ER_BINLOG_CANT_SET_TMP_INDEX_NAME = 10832; // [HY000] MYSQL_BIN_LOG::set_crash_safe_index_file_name failed to set file name.
     public final static int ER_BINLOG_FAILED_TO_OPEN_TEMPORARY_INDEX_FILE = 10833; // [HY000] MYSQL_BIN_LOG::open_crash_safe_index_file failed to open tempor...
     public final static int ER_BINLOG_CANT_OPEN_TMP_INDEX = 10835; // [HY000] %s failed to open the crash safe index file.
@@ -746,7 +746,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_BINLOG_PURGE_LOGS_CANT_SYNC_INDEX_FILE = 10840; // [HY000] MYSQL_BIN_LOG::purge_logs failed to sync the index file.
     public final static int ER_BINLOG_PURGE_LOGS_CANT_COPY_TO_REGISTER_FILE = 10841; // [HY000] MYSQL_BIN_LOG::purge_logs failed to copy %s to register file.
     public final static int ER_BINLOG_PURGE_LOGS_CANT_FLUSH_REGISTER_FILE = 10842; // [HY000] MYSQL_BIN_LOG::purge_logs failed to flush register file.
-    public final static int ER_BINLOG_PURGE_LOGS_CANT_UPDATE_INDEX_FILE = 10843; // [HY000] MYSQL_BIN_LOG::purge_logs failed to update the index file
+    public final static int ER_BINLOG_PURGE_LOGS_CANT_UPDATE_INDEX_FILE = 10843; // [HY000] MYSQL_BIN_LOG::purge_logs failed to updateOrder the index file
     public final static int ER_BINLOG_PURGE_LOGS_FAILED_TO_PURGE_LOG = 10844; // [HY000] MYSQL_BIN_LOG::purge_logs failed to process registered files that wo...
     public final static int ER_BINLOG_FAILED_TO_SET_PURGE_INDEX_FILE_NAME = 10845; // [HY000] MYSQL_BIN_LOG::set_purge_index_file_name failed to set file name.
     public final static int ER_BINLOG_FAILED_TO_OPEN_REGISTER_FILE = 10846; // [HY000] MYSQL_BIN_LOG::open_purge_index_file failed to open register file.
@@ -754,9 +754,9 @@ public final class MysqlErrorNumbers {
     public final static int ER_BINLOG_FAILED_TO_READ_REGISTER_FILE = 10848; // [HY000] MYSQL_BIN_LOG::purge_index_entry error %d reading from register file.
     public final static int ER_CANT_STAT_FILE = 10849; // [HY000] Failed to execute mysql_file_stat on file '%s'
     public final static int ER_TEXTFILE_NOT_READABLE = 1085; // [HY000] The file '%s' must be in the database directory or be readable by all
-    public final static int ER_BINLOG_CANT_DELETE_LOG_FILE_DOES_INDEX_MATCH_FILES = 10850; // [HY000] Failed to delete log file '%s'; consider examining corr...
-    public final static int ER_BINLOG_CANT_DELETE_FILE_AND_READ_BINLOG_INDEX = 10851; // [HY000] Failed to delete file '%s' and read the binlog index file
-    public final static int ER_BINLOG_FAILED_TO_DELETE_LOG_FILE = 10852; // [HY000] Failed to delete log file '%s'
+    public final static int ER_BINLOG_CANT_DELETE_LOG_FILE_DOES_INDEX_MATCH_FILES = 10850; // [HY000] Failed to deleteOrder log file '%s'; consider examining corr...
+    public final static int ER_BINLOG_CANT_DELETE_FILE_AND_READ_BINLOG_INDEX = 10851; // [HY000] Failed to deleteOrder file '%s' and read the binlog index file
+    public final static int ER_BINLOG_FAILED_TO_DELETE_LOG_FILE = 10852; // [HY000] Failed to deleteOrder log file '%s'
     public final static int ER_BINLOG_LOGGING_INCIDENT_TO_STOP_REPLICAS = 10853; // [HY000] %s An incident event has been written to the binary log which wil...
     public final static int ER_BINLOG_CANT_FIND_LOG_IN_INDEX = 10854; // [HY000] find_log_pos() failed (error: %d)
     public final static int ER_BINLOG_RECOVERING_AFTER_CRASH_USING = 10855; // [HY000] Recovering after a crash using %s
@@ -800,7 +800,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_AUDIT_WARNING = 10893; // [HY000] %s. The trigger error was (%d) [%s]: %s
     public final static int ER_RPL_REPLICA_INSECURE_CHANGE_SOURCE = 10897; // [HY000] Storing MySQL user name or password information in the connection metad...
     public final static int ER_RPL_REPLICA_INCORRECT_CHANNEL = 10899; // [HY000] Replica channel '%s' does not exist.
-    public final static int ER_CANT_REMOVE_ALL_FIELDS = 1090; // [42000] You can't delete all columns with ALTER TABLE; use DROP TABLE instead
+    public final static int ER_CANT_REMOVE_ALL_FIELDS = 1090; // [42000] You can't deleteOrder all columns with ALTER TABLE; use DROP TABLE instead
     public final static int ER_FAILED_TO_FIND_DL_ENTRY = 10900; // [HY000] Can't find symbol '%s' in library.
     public final static int ER_FAILED_TO_OPEN_SHARED_LIBRARY = 10901; // [HY000] Can't open shared library '%s' (errno: %d %s).
     public final static int ER_THREAD_PRIORITY_IGNORED = 10902; // [HY000] Thread priority attribute setting in Resource Group SQL shall be ignored due to un...
@@ -831,7 +831,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_ACCESS_DENIED_ERROR_WITH_PASSWORD = 10926; // [HY000] Access denied for user '%s'@'%s' (using password: %s)
     public final static int ER_ACCESS_DENIED_FOR_USER_ACCOUNT_LOCKED = 10927; // [HY000] Access denied for user '%s'@'%s'. Account is locked.
     public final static int ER_SYSTEM_TABLES_NOT_SUPPORTED_BY_STORAGE_ENGINE = 10929; // [HY000] Storage engine '%s' does not support system tables. [%s.%s].
-    public final static int ER_UPDATE_TABLE_USED = 1093; // [HY000] You can't specify target table '%s' for update in FROM clause
+    public final static int ER_UPDATE_TABLE_USED = 1093; // [HY000] You can't specify target table '%s' for updateOrder in FROM clause
     public final static int ER_SERVER_STARTUP_MSG = 10931; // [HY000] %s: ready for connections. Version: '%s'  socket: '%s'  port: %d  %s.
     public final static int ER_FAILED_TO_FIND_LOCALE_NAME = 10932; // [HY000] Unknown locale: '%s'.
     public final static int ER_FAILED_TO_FIND_COLLATION_NAME = 10933; // [HY000] Unknown collation: '%s'.
@@ -870,7 +870,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_MISSING_ACL_SYSTEM_TABLE = 10966; // [HY000] ACL table mysql.%.*s missing. Some operations may fail.
     public final static int ER_ANONYMOUS_AUTH_ID_NOT_ALLOWED_IN_MANDATORY_ROLES = 10967; // [HY000] Can't set mandatory_role %s@%s: Anonymous authorization I...
     public final static int ER_UNKNOWN_AUTH_ID_IN_MANDATORY_ROLE = 10968; // [HY000] Can't set mandatory_role: There's no such authorization ID %s@%s.
-    public final static int ER_WRITE_ROW_TO_PARTITION_FAILED = 10969; // [HY000] Table '%s' failed to move/insert a row from part %d into part %d: %s.
+    public final static int ER_WRITE_ROW_TO_PARTITION_FAILED = 10969; // [HY000] Table '%s' failed to move/insertUser a row from part %d into part %d: %s.
     public final static int ER_TOO_BIG_SET = 1097; // [HY000] Too many strings for column %s and SET
     public final static int ER_RESOURCE_GROUP_METADATA_UPDATE_SKIPPED = 10970; // [HY000] Skipped updating resource group metadata in InnoDB read only mode.
     public final static int ER_FAILED_TO_PERSIST_RESOURCE_GROUP_METADATA = 10971; // [HY000] Failed to persist resource group %s to Data Dictionary.
@@ -1049,7 +1049,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_SEMISYNC_RPL_INIT_FOR_TRX = 11130; // [HY000] Semi-sync replication initialized for transactions.
     public final static int ER_SEMISYNC_FAILED_TO_ALLOCATE_TRX_NODE = 11131; // [HY000] %s: transaction node allocation failed for: (%s, %lu).
     public final static int ER_SEMISYNC_BINLOG_WRITE_OUT_OF_ORDER = 11132; // [HY000] %s: binlog write out-of-order, tail (%s, %lu), new node (%s, %lu).
-    public final static int ER_SEMISYNC_INSERT_LOG_INFO_IN_ENTRY = 11133; // [HY000] %s: insert (%s, %lu) in entry(%u).
+    public final static int ER_SEMISYNC_INSERT_LOG_INFO_IN_ENTRY = 11133; // [HY000] %s: insertUser (%s, %lu) in entry(%u).
     public final static int ER_SEMISYNC_PROBE_LOG_INFO_IN_ENTRY = 11134; // [HY000] %s: probe (%s, %lu) in entry(%u).
     public final static int ER_SEMISYNC_CLEARED_ALL_ACTIVE_TRANSACTION_NODES = 11135; // [HY000] %s: cleared all nodes.
     public final static int ER_SEMISYNC_CLEARED_ACTIVE_TRANSACTION_TILL_POS = 11136; // [HY000] %s: cleared %d nodes back until pos (%s, %lu).
@@ -1077,7 +1077,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_SEMISYNC_RPL_SWITCHED_ON = 11156; // [HY000] Semi-sync replication switched ON at (%s, %lu).
     public final static int ER_SEMISYNC_NO_SPACE_IN_THE_PKT = 11157; // [HY000] No enough space in the packet for semi-sync extra header, semi-sync replicati...
     public final static int ER_SEMISYNC_SYNC_HEADER_UPDATE_INFO = 11158; // [HY000] %s: server(%d), (%s, %lu) sync(%d), repl(%d).
-    public final static int ER_SEMISYNC_FAILED_TO_INSERT_TRX_NODE = 11159; // [HY000] Semi-sync failed to insert tranx_node for binlog file: %s, position: %lu.
+    public final static int ER_SEMISYNC_FAILED_TO_INSERT_TRX_NODE = 11159; // [HY000] Semi-sync failed to insertUser tranx_node for binlog file: %s, position: %lu.
     public final static int ER_TOO_MANY_TABLES = 1116; // [HY000] Too many tables; MySQL can only use %d tables in a join
     public final static int ER_SEMISYNC_TRX_SKIPPED_AT_POS = 11160; // [HY000] %s: Transaction skipped at (%s, %lu).
     public final static int ER_SEMISYNC_SOURCE_FAILED_ON_NET_FLUSH = 11161; // [HY000] Semi-sync source failed on net_flush() before waiting for replica reply.
@@ -1143,9 +1143,9 @@ public final class MysqlErrorNumbers {
     public final static int ER_AUDIT_LOG_JSON_READER_FILE_PARSING_ERROR = 11216; // [HY000] JSON file parsing error. Reading next file if exists
     public final static int ER_AUDIT_LOG_FILTER_FAILED_TO_STORE_TABLE_FLDS = 11219; // [HY000] Could not store field of the %s table.
     public final static int ER_CANT_FIND_UDF = 1122; // [HY000] Can't load function '%s'
-    public final static int ER_AUDIT_LOG_FILTER_FAILED_TO_UPDATE_TABLE = 11220; // [HY000] Could not update %s table.
-    public final static int ER_AUDIT_LOG_FILTER_FAILED_TO_INSERT_INTO_TABLE = 11221; // [HY000] Could not insert into %s table.
-    public final static int ER_AUDIT_LOG_FILTER_FAILED_TO_DELETE_FROM_TABLE = 11222; // [HY000] Could not delete from %s table.
+    public final static int ER_AUDIT_LOG_FILTER_FAILED_TO_UPDATE_TABLE = 11220; // [HY000] Could not updateOrder %s table.
+    public final static int ER_AUDIT_LOG_FILTER_FAILED_TO_INSERT_INTO_TABLE = 11221; // [HY000] Could not insertUser into %s table.
+    public final static int ER_AUDIT_LOG_FILTER_FAILED_TO_DELETE_FROM_TABLE = 11222; // [HY000] Could not deleteOrder from %s table.
     public final static int ER_AUDIT_LOG_FILTER_FAILED_TO_INIT_TABLE_FOR_READ = 11223; // [HY000] Could not initialize %s table for reading.
     public final static int ER_AUDIT_LOG_FILTER_FAILED_TO_READ_TABLE = 11224; // [HY000] Could not read %s table.
     public final static int ER_AUDIT_LOG_FILTER_FAILED_TO_CLOSE_TABLE_AFTER_READING = 11225; // [HY000] Could not close %s table reading.
@@ -1200,12 +1200,12 @@ public final class MysqlErrorNumbers {
     public final static int ER_REWRITER_READ_FAILED = 11278; // [HY000] Got error from storage engine while refreshing rewrite rules.
     public final static int ER_CONN_CONTROL_EVENT_COORDINATOR_INIT_FAILED = 11279; // [HY000] Failed to initialize Connection_event_coordinator
     public final static int ER_FUNCTION_NOT_DEFINED = 1128; // [HY000] Function '%s' is not defined
-    public final static int ER_CONN_CONTROL_STAT_CONN_DELAY_TRIGGERED_UPDATE_FAILED = 11280; // [HY000] Failed to update connection delay triggered stats
+    public final static int ER_CONN_CONTROL_STAT_CONN_DELAY_TRIGGERED_UPDATE_FAILED = 11280; // [HY000] Failed to updateOrder connection delay triggered stats
     public final static int ER_CONN_CONTROL_STAT_CONN_DELAY_TRIGGERED_RESET_FAILED = 11281; // [HY000] Failed to reset connection delay triggered stats
     public final static int ER_CONN_CONTROL_INVALID_CONN_DELAY_TYPE = 11282; // [HY000] Unexpected option type for connection delay.
     public final static int ER_CONN_CONTROL_DELAY_ACTION_INIT_FAILED = 11283; // [HY000] Failed to initialize Connection_delay_action
     public final static int ER_CONN_CONTROL_FAILED_TO_SET_CONN_DELAY = 11284; // [HY000] Could not set %s delay for connection delay.
-    public final static int ER_CONN_CONTROL_FAILED_TO_UPDATE_CONN_DELAY_HASH = 11285; // [HY000] Failed to update connection delay hash for account : %s
+    public final static int ER_CONN_CONTROL_FAILED_TO_UPDATE_CONN_DELAY_HASH = 11285; // [HY000] Failed to updateOrder connection delay hash for account : %s
     public final static int ER_XPLUGIN_FORCE_STOP_CLIENT = 11286; // [HY000] %s: Force stopping client because exception occurred: %s
     public final static int ER_XPLUGIN_MAX_AUTH_ATTEMPTS_REACHED = 11287; // [HY000] %s.%u: Maximum number of authentication attempts reached, login failed.
     public final static int ER_XPLUGIN_BUFFER_PAGE_ALLOC_FAILED = 11288; // [HY000] Error allocating Buffer_page: %s
@@ -1236,7 +1236,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_XPLUGIN_ERROR_READING_SOCKET = 11314; // [HY000] %s: Error reading from socket %s (%i)
     public final static int ER_XPLUGIN_PEER_DISCONNECTED_WHILE_READING_MSG_BODY = 11315; // [HY000] %s: peer disconnected while reading message body
     public final static int ER_XPLUGIN_READ_FAILED_CLOSING_CONNECTION = 11316; // [HY000] client_id:%s - %s while reading from socket, closing connection
-    public final static int ER_PASSWORD_NOT_ALLOWED = 1132; // [42000] You must have privileges to update tables in the mysql database to be able to change p...
+    public final static int ER_PASSWORD_NOT_ALLOWED = 1132; // [42000] You must have privileges to updateOrder tables in the mysql database to be able to change p...
     public final static int ER_XPLUGIN_LISTENER_SYS_VARIABLE_ERROR = 11322; // [HY000] Please see the MySQL documentation for '%s' system variables to fix th...
     public final static int ER_XPLUGIN_LISTENER_STATUS_MSG = 11323; // [HY000] X Plugin ready for connections. %s
     public final static int ER_XPLUGIN_RETRYING_BIND_ON_PORT = 11324; // [HY000] Retrying `bind()` on TCP/IP port %i
@@ -1364,7 +1364,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_GRP_RPL_ERROR_FETCHING_GTID_SET = 11465; // [HY000] Error when extracting this member retrieved set for its applier. Certifica...
     public final static int ER_GRP_RPL_ADD_RETRIEVED_SET_TO_GRP_GTID_EXECUTED_ERROR = 11466; // [HY000] Error while adding the member retrieved set to the gr...
     public final static int ER_GRP_RPL_CERTIFICATION_INITIALIZATION_FAILURE = 11467; // [HY000] Error during Certification module initialization.
-    public final static int ER_GRP_RPL_UPDATE_LAST_CONFLICT_FREE_TRANS_ERROR = 11468; // [HY000] Unable to update last conflict free transaction, this transa...
+    public final static int ER_GRP_RPL_UPDATE_LAST_CONFLICT_FREE_TRANS_ERROR = 11468; // [HY000] Unable to updateOrder last conflict free transaction, this transa...
     public final static int ER_GRP_RPL_UPDATE_TRANS_SNAPSHOT_REF_VER_ERROR = 11469; // [HY000] Error updating transaction snapshot version reference for inte...
     public final static int ER_NONEXISTING_TABLE_GRANT = 1147; // [42000] There is no such grant defined for user '%s' on host '%s' on table '%s'
     public final static int ER_GRP_RPL_CANT_GENERATE_GTID = 11472; // [HY000] Impossible to generate Global Transaction Identifier: the integer component rea...
@@ -1452,7 +1452,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_GRP_RPL_FETCH_TRANS_CONTEXT_LOG_EVENT_FAILED = 11550; // [HY000] Failed to fetch Transaction_context_log_event containing requ...
     public final static int ER_GRP_RPL_FETCH_SNAPSHOT_VERSION_FAILED = 11551; // [HY000] Failed to read snapshot version from transaction context event requi...
     public final static int ER_GRP_RPL_FETCH_GTID_LOG_EVENT_FAILED = 11552; // [HY000] Failed to fetch Gtid_log_event containing required transaction info fo...
-    public final static int ER_GRP_RPL_UPDATE_SERV_CERTIFICATE_FAILED = 11553; // [HY000] Unable to update certification result on server side, thread_id: %lu
+    public final static int ER_GRP_RPL_UPDATE_SERV_CERTIFICATE_FAILED = 11553; // [HY000] Unable to updateOrder certification result on server side, thread_id: %lu
     public final static int ER_GRP_RPL_ADD_GTID_INFO_WITH_LOCAL_GTID_FAILED = 11554; // [HY000] Unable to add gtid information to the group_gtid_executed set...
     public final static int ER_GRP_RPL_ADD_GTID_INFO_WITHOUT_LOCAL_GTID_FAILED = 11555; // [HY000] Unable to add gtid information to the group_gtid_executed ...
     public final static int ER_GRP_RPL_NOTIFY_CERTIFICATION_OUTCOME_FAILED = 11556; // [HY000] Failed to notify certification outcome
@@ -1625,7 +1625,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_GRP_RPL_FORCE_MEMBER_VALUE_TIME_OUT = 11723; // [HY000] Timeout on wait for view after setting group_replication_force_members...
     public final static int ER_GRP_RPL_BROADCAST_COMMIT_MSSG_TOO_BIG = 11724; // [HY000] Broadcast of committed transactions message failed. Message is too big.
     public final static int ER_GRP_RPL_SEND_STATS_ERROR = 11725; // [HY000] Error while sending stats message
-    public final static int ER_GRP_RPL_MEMBER_STATS_INFO = 11726; // [HY000] Flow control - update member stats: %s stats certifier_queue %d, applier_queue %...
+    public final static int ER_GRP_RPL_MEMBER_STATS_INFO = 11726; // [HY000] Flow control - updateOrder member stats: %s stats certifier_queue %d, applier_queue %...
     public final static int ER_GRP_RPL_FLOW_CONTROL_STATS = 11727; // [HY000] Flow control: throttling to %ld commits per %ld sec, with %d writing and %d non...
     public final static int ER_GRP_RPL_UNABLE_TO_CONVERT_PACKET_TO_EVENT = 11728; // [HY000] Unable to convert a packet into an event on the applier. Error: %s
     public final static int ER_GRP_RPL_PIPELINE_CREATE_FAILED = 11729; // [HY000] Failed to create group replication pipeline cache.
@@ -1649,7 +1649,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_LDAP_AUTH_TLS_CONNECTION = 11747; // [HY000] LDAP TLS connection
     public final static int ER_LDAP_AUTH_CONN_POOL_NOT_CREATED = 11748; // [HY000] LDAP pool is not created.
     public final static int ER_LDAP_AUTH_CONN_POOL_INITIALIZING = 11749; // [HY000] LDAP pool is initializing
-    public final static int ER_UPDATE_WITHOUT_KEY_IN_SAFE_MODE = 1175; // [HY000] You are using safe update mode and you tried to update a table without a WH...
+    public final static int ER_UPDATE_WITHOUT_KEY_IN_SAFE_MODE = 1175; // [HY000] You are using safe updateOrder mode and you tried to updateOrder a table without a WH...
     public final static int ER_LDAP_AUTH_CONN_POOL_DEINITIALIZING = 11750; // [HY000] LDAP pool is de-initializing
     public final static int ER_LDAP_AUTH_ZERO_MAX_POOL_SIZE_UNCHANGED = 11751; // [HY000] Pool max size old and new values are 0
     public final static int ER_LDAP_AUTH_POOL_REINITIALIZING = 11752; // [HY000] LDAP pool is re-initializing
@@ -2015,11 +2015,11 @@ public final class MysqlErrorNumbers {
     public final static int ER_NO_PERMISSION_TO_CREATE_USER = 1211; // [42000] '%s'@'%s' is not allowed to create new users
     public final static int ER_IB_MSG_285 = 12110; // [HY000] Max tablespace id is too high, %lu
     public final static int ER_IB_WARN_ACCESSING_NONEXISTINC_SPACE = 12111; // [HY000] Trying to access missing tablespace %lu
-    public final static int ER_IB_MSG_287 = 12112; // [HY000] Trying to close/delete tablespace '%s' but there are %lu pending operations on it.
-    public final static int ER_IB_MSG_288 = 12113; // [HY000] Trying to delete/close tablespace '%s' but there are %lu flushes and %zu pending I/O's on it.
+    public final static int ER_IB_MSG_287 = 12112; // [HY000] Trying to close/deleteOrder tablespace '%s' but there are %lu pending operations on it.
+    public final static int ER_IB_MSG_288 = 12113; // [HY000] Trying to deleteOrder/close tablespace '%s' but there are %lu flushes and %zu pending I/O's on it.
     public final static int ER_IB_MSG_289 = 12114; // [HY000] %s
-    public final static int ER_IB_MSG_291 = 12116; // [HY000] While deleting tablespace %lu in DISCARD TABLESPACE. File rename/delete failed: %s
-    public final static int ER_IB_MSG_292 = 12117; // [HY000] Cannot delete tablespace %lu in DISCARD TABLESPACE: %s
+    public final static int ER_IB_MSG_291 = 12116; // [HY000] While deleting tablespace %lu in DISCARD TABLESPACE. File rename/deleteOrder failed: %s
+    public final static int ER_IB_MSG_292 = 12117; // [HY000] Cannot deleteOrder tablespace %lu in DISCARD TABLESPACE: %s
     public final static int ER_IB_MSG_293 = 12118; // [HY000] Cannot rename '%s' to '%s' for space ID %lu because the source file does not exist.
     public final static int ER_IB_MSG_294 = 12119; // [HY000] Cannot rename '%s' to '%s' for space ID %lu because the target file exists. Remove the target f...
     public final static int ER_IB_MSG_295 = 12120; // [HY000] Cannot rename file '%s' (space id %lu) retried %llu times. There are either pending IOs or flus...
@@ -2064,7 +2064,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_IB_MSG_332 = 12157; // [HY000] %s
     public final static int ER_IB_MSG_333 = 12158; // [HY000] %s
     public final static int ER_IB_MSG_334 = 12159; // [HY000] %s
-    public final static int ER_NO_REFERENCED_ROW = 1216; // [23000] Cannot add or update a child row: a foreign key constraint fails
+    public final static int ER_NO_REFERENCED_ROW = 1216; // [23000] Cannot add or updateOrder a child row: a foreign key constraint fails
     public final static int ER_IB_MSG_335 = 12160; // [HY000] %s
     public final static int ER_IB_MSG_336 = 12161; // [HY000] %s
     public final static int ER_IB_MSG_337 = 12162; // [HY000] %s
@@ -2075,7 +2075,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_IB_MSG_342 = 12167; // [HY000] %s
     public final static int ER_IB_MSG_343 = 12168; // [HY000] %s
     public final static int ER_IB_MSG_344 = 12169; // [HY000] %s
-    public final static int ER_ROW_IS_REFERENCED = 1217; // [23000] Cannot delete or update a parent row: a foreign key constraint fails
+    public final static int ER_ROW_IS_REFERENCED = 1217; // [23000] Cannot deleteOrder or updateOrder a parent row: a foreign key constraint fails
     public final static int ER_IB_MSG_345 = 12170; // [HY000] %s
     public final static int ER_IB_MSG_346 = 12171; // [HY000] %s
     public final static int ER_IB_MSG_347 = 12172; // [HY000] %s
@@ -2836,7 +2836,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_IB_MSG_1091 = 12916; // [HY000] Unable to create encrypted undo tablespace number %lu. please check if the keyring is initiali...
     public final static int ER_IB_MSG_1092 = 12917; // [HY000] Encryption is enabled for undo tablespace number %lu.
     public final static int ER_IB_MSG_1093 = 12918; // [HY000] Unable to initialize the header page in undo tablespace number %lu.
-    public final static int ER_IB_MSG_1094 = 12919; // [HY000] Cannot delete old undo tablespaces because they contain undo logs for XA PREPARED transactions.
+    public final static int ER_IB_MSG_1094 = 12919; // [HY000] Cannot deleteOrder old undo tablespaces because they contain undo logs for XA PREPARED transactions.
     public final static int ER_TRUNCATED_WRONG_VALUE = 1292; // [22007] Truncated incorrect %s value: '%s'
     public final static int ER_IB_MSG_1095 = 12920; // [HY000] Upgrading %zu existing undo tablespaces that were tracked in the system tablespace to %lu new ...
     public final static int ER_IB_MSG_1096 = 12921; // [HY000] Deleting %llu new independent undo tablespaces that we just created.
@@ -2847,7 +2847,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_IB_MSG_1101 = 12926; // [HY000] Unable to create the shared %s.
     public final static int ER_IB_MSG_1102 = 12927; // [HY000] The %s data file cannot be re-opened after check_file_spec() succeeded!
     public final static int ER_IB_MSG_1103 = 12928; // [HY000] %d threads created by InnoDB had not exited at shutdown!
-    public final static int ER_IB_MSG_1104 = 12929; // [HY000] InnoDB Database creation was aborted %swith error %s. You may need to delete the ibdata1 file ...
+    public final static int ER_IB_MSG_1104 = 12929; // [HY000] InnoDB Database creation was aborted %swith error %s. You may need to deleteOrder the ibdata1 file ...
     public final static int ER_IB_MSG_1105 = 12930; // [HY000] Plugin initialization aborted %swith error %s.
     public final static int ER_IB_MSG_BUF_PENDING_IO = 12931; // [HY000] Waiting for %zu buffer page I/Os to complete.
     public final static int ER_IB_MSG_1107 = 12932; // [HY000] PUNCH HOLE support available
@@ -2887,7 +2887,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_IB_MSG_1139 = 12964; // [HY000] Use --innodb-directories to find the tablespace files. If that fails then use --innodb-force-r...
     public final static int ER_IB_MSG_RECOVERY_CORRUPT = 12965; // [HY000] The redo log file may have been corrupt and it is possible that the log scan or pa...
     public final static int ER_IB_MSG_1142 = 12967; // [HY000] Cannot open DD tablespace.
-    public final static int ER_IB_MSG_LOG_FILES_REWRITING = 12968; // [HY000] Starting to delete and rewrite redo log files.
+    public final static int ER_IB_MSG_LOG_FILES_REWRITING = 12968; // [HY000] Starting to deleteOrder and rewrite redo log files.
     public final static int ER_IB_MSG_1144 = 12969; // [HY000] Undo from 5.7 found. It will be purged
     public final static int ER_GET_TEMPORARY_ERRMSG = 1297; // [HY000] Got temporary error %d '%s' from %s
     public final static int ER_IB_MSG_1145 = 12970; // [HY000] %s
@@ -2926,7 +2926,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_IB_MSG_1181 = 13006; // [HY000] %s
     public final static int ER_IB_MSG_1182 = 13007; // [HY000] %s
     public final static int ER_IB_MSG_1183 = 13008; // [HY000] %s
-    public final static int ER_IB_ERR_ACCESSING_OUT_OF_BOUND_FIELD_IN_INDEX = 13009; // [HY000] Trying to access update undo rec field %llu in index %s of ta...
+    public final static int ER_IB_ERR_ACCESSING_OUT_OF_BOUND_FIELD_IN_INDEX = 13009; // [HY000] Trying to access updateOrder undo rec field %llu in index %s of ta...
     public final static int ER_WARN_ALLOWED_PACKET_OVERFLOWED = 1301; // [HY000] Result of %s() was larger than max_allowed_packet (%ld) - truncated
     public final static int ER_IB_MSG_1185 = 13010; // [HY000] %s
     public final static int ER_IB_MSG_1186 = 13011; // [HY000] %s
@@ -3022,7 +3022,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_RPL_GTID_UNSAFE_STMT_ON_NON_TRANS_TABLE = 13098; // [HY000] Statement violates GTID consistency: Updates to non-transactional ...
     public final static int ER_RPL_GTID_UNSAFE_STMT_CREATE_SELECT = 13099; // [HY000] Statement violates GTID consistency: CREATE TABLE ... SELECT.
     public final static int ER_SP_LABEL_MISMATCH = 1310; // [42000] End-label %s without match
-    public final static int ER_BINLOG_ROW_VALUE_OPTION_IGNORED = 13101; // [HY000] When %s, the option binlog_row_value_options=%s will be ignored and update...
+    public final static int ER_BINLOG_ROW_VALUE_OPTION_IGNORED = 13101; // [HY000] When %s, the option binlog_row_value_options=%s will be ignored and updateOrder...
     public final static int ER_BINLOG_ROW_VALUE_OPTION_USED_ONLY_FOR_AFTER_IMAGES = 13103; // [HY000] When %s, the option binlog_row_value_options=%s will be...
     public final static int ER_CONNECTION_ABORTED = 13104; // [HY000] Aborted connection %u to db: '%s' user: '%s' host: '%s' (%s).
     public final static int ER_NORMAL_SERVER_SHUTDOWN = 13105; // [HY000] %s: Normal shutdown.
@@ -3072,7 +3072,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_SERVER_REPLICA_IGNORED_TABLE = 13147; // [HY000] Replica SQL thread ignored the query because of replicate-*-table rules
     public final static int ER_CANT_REPLICATE_ANONYMOUS_WITH_AUTO_POSITION = 13148; // [HY000] Cannot replicate anonymous transaction when AUTO_POSITION = 1,...
     public final static int ER_CANT_REPLICATE_ANONYMOUS_WITH_GTID_MODE_ON = 13149; // [HY000] Cannot replicate anonymous transaction when @@GLOBAL.GTID_MODE ...
-    public final static int ER_UPDATE_LOG_DEPRECATED_IGNORED = 1315; // [42000] The update log is deprecated and replaced by the binary log; SET SQL_LOG_UPDA...
+    public final static int ER_UPDATE_LOG_DEPRECATED_IGNORED = 1315; // [42000] The updateOrder log is deprecated and replaced by the binary log; SET SQL_LOG_UPDA...
     public final static int ER_CANT_REPLICATE_GTID_WITH_GTID_MODE_OFF = 13150; // [HY000] Cannot replicate GTID-transaction when @@GLOBAL.GTID_MODE = OFF, at...
     public final static int ER_SERVER_TEST_MESSAGE = 13151; // [HY000] Simulated error
     public final static int ER_AUDIT_LOG_JSON_FILTER_PARSING_ERROR = 13152; // [HY000] %s
@@ -3083,7 +3083,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_AUDIT_LOG_USER_NAME_INVALID_CHARACTER = 13157; // [HY000] Invalid character in the user name.
     public final static int ER_AUDIT_LOG_UDF_INSUFFICIENT_PRIVILEGE = 13158; // [HY000] Request ignored for '%s'@'%s'. SUPER or AUDIT_ADMIN needed to perform...
     public final static int ER_AUDIT_LOG_NO_KEYRING_PLUGIN_INSTALLED = 13159; // [HY000] No keyring installed.
-    public final static int ER_UPDATE_LOG_DEPRECATED_TRANSLATED = 1316; // [42000] The update log is deprecated and replaced by the binary log; SET SQL_LOG_U...
+    public final static int ER_UPDATE_LOG_DEPRECATED_TRANSLATED = 1316; // [42000] The updateOrder log is deprecated and replaced by the binary log; SET SQL_LOG_U...
     public final static int ER_AUDIT_LOG_HOST_NAME_INVALID_CHARACTER = 13160; // [HY000] Invalid character in the host name.
     public final static int ER_AUDIT_LOG_ENCRYPTION_PASSWORD_HAS_NOT_BEEN_SET = 13161; // [HY000] Audit log encryption password has not been set; it will be ...
     public final static int ER_AUDIT_LOG_COULD_NOT_CREATE_AES_KEY = 13162; // [HY000] Could not create AES key. OpenSSL's EVP_BytesToKey function failed.
@@ -3173,7 +3173,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_SP_CURSOR_ALREADY_OPEN = 1325; // [24000] Cursor is already open
     public final static int ER_IB_MSG_FAILED_TO_ALLOCATE_WAIT = 13250; // [HY000] Failed to allocate memory for a pool of size %zu bytes. Will wait for %zu s...
     public final static int ER_IB_MSG_USING_UNDO_SPACE = 13252; // [HY000] Using undo tablespace '%s'.
-    public final static int ER_IB_MSG_FAIL_TO_SAVE_SPACE_STATE = 13253; // [HY000] %s Unable to save the current state of tablespace '%s' to the data dictionary
+    public final static int ER_IB_MSG_FAIL_TO_SAVE_SPACE_STATE = 13253; // [HY000] %s Unable to insertUser the current state of tablespace '%s' to the data dictionary
     public final static int ER_IB_MSG_MAX_UNDO_SPACES_REACHED = 13254; // [HY000] Cannot create undo tablespace %s at %s because %d undo tablespaces already ...
     public final static int ER_IB_MSG_ERROR_OPENING_NEW_UNDO_SPACE = 13255; // [HY000] Error %d opening newly created undo tablespace %s.
     public final static int ER_IB_MSG_FAILED_SDI_Z_BUF_ERROR = 13256; // [HY000] SDI Compression failed, Z_BUF_ERROR
@@ -3445,7 +3445,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_MIGRATE_TABLE_TO_DD_OOM = 13528; // [HY000] Could not allocate memory for key_info when migrating table %s.%s
     public final static int ER_RPL_RELAY_LOG_RECOVERY_INFO_AFTER_CLONE = 13529; // [HY000] Applier metadata information for channel '%s' was found after a cl...
     public final static int ER_VIEW_WRONG_LIST = 1353; // [HY000] In definition of view, derived table or common table expression, SELECT list and column nam...
-    public final static int ER_IB_MSG_57_UNDO_SPACE_DELETE_FAIL = 13530; // [HY000] Failed to delete 5.7 undo tablespace: %s during upgrade
+    public final static int ER_IB_MSG_57_UNDO_SPACE_DELETE_FAIL = 13530; // [HY000] Failed to deleteOrder 5.7 undo tablespace: %s during upgrade
     public final static int ER_IB_MSG_DBLWR_1285 = 13531; // [HY000] Empty doublewrite file: %s
     public final static int ER_IB_MSG_DBLWR_1286 = 13532; // [HY000] Using '%s' for doublewrite
     public final static int ER_IB_MSG_DBLWR_1287 = 13533; // [HY000] Error reading doublewrite buffer from the system tablespace
@@ -3489,7 +3489,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_IB_MSG_DBLWR_1327 = 13569; // [HY000] %s
     public final static int ER_SP_NO_DROP_SP = 1357; // [HY000] Can't drop or alter a %s from within another stored routine
     public final static int ER_IB_MSG_GTID_FLUSH_AT_SHUTDOWN = 13570; // [HY000] Could not flush all GTIDs during slow shutdown. Will recover GTIDs when serv...
-    public final static int ER_IB_MSG_57_STAT_SPACE_DELETE_FAIL = 13571; // [HY000] Failed to delete 5.7 stat tablespace: %s during upgrade
+    public final static int ER_IB_MSG_57_STAT_SPACE_DELETE_FAIL = 13571; // [HY000] Failed to deleteOrder 5.7 stat tablespace: %s during upgrade
     public final static int ER_NDBINFO_UPGRADING_SCHEMA = 13572; // [HY000] Installing ndbinfo schema version %s
     public final static int ER_NDBINFO_NOT_UPGRADING_SCHEMA = 13573; // [HY000] Installed ndbinfo schema is current. Not upgrading.
     public final static int ER_NDBINFO_UPGRADING_SCHEMA_FAIL = 13574; // [HY000] Failed to upgrade ndbinfo schema.
@@ -3532,7 +3532,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_AUTHCACHE_ROLE_EDGES_UNKNOWN_AUTHORIZATION_ID = 13610; // [HY000] Found an entry in the 'role_edges' table with unknown author...
     public final static int ER_AUTHCACHE_DEFAULT_ROLES_IGNORED_EMPTY_NAME = 13611; // [HY000] Found an entry in the 'default_roles' table with empty authoriz...
     public final static int ER_AUTHCACHE_DEFAULT_ROLES_UNKNOWN_AUTHORIZATION_ID = 13612; // [HY000] Found an entry in the 'default_roles' table with unknown ...
-    public final static int ER_IB_ERR_DDL_LOG_INSERT_FAILURE = 13613; // [HY000] Couldn't insert entry in ddl log for ddl.
+    public final static int ER_IB_ERR_DDL_LOG_INSERT_FAILURE = 13613; // [HY000] Couldn't insertUser entry in ddl log for ddl.
     public final static int ER_IB_LOCK_VALIDATE_LATCH_ORDER_VIOLATION = 13614; // [HY000] %s
     public final static int ER_IB_RELOCK_LATCH_ORDER_VIOLATION = 13615; // [HY000] %s
     public final static int ER_TRG_CANT_CHANGE_ROW = 1362; // [HY000] Updating of %s row is not allowed in %strigger
@@ -3659,13 +3659,13 @@ public final class MysqlErrorNumbers {
     public final static int ER_GRP_RPL_MEMBER_ACTION_FAILURE_IGNORE = 13732; // [HY000] The member action "%s" for event "%s" with priority "%u" failed, this...
     public final static int ER_GRP_RPL_MEMBER_ACTION_FAILURE = 13733; // [HY000] The member action "%s" for event "%s" with priority "%u" failed. Please chec...
     public final static int ER_GRP_RPL_MEMBER_ACTION_PARSE_ON_RECEIVE = 13734; // [HY000] Unable to parse the member actions configuration sent by the primary.
-    public final static int ER_GRP_RPL_MEMBER_ACTION_UPDATE_ACTIONS = 13735; // [HY000] Unable to update the member actions configuration with the one sent b...
+    public final static int ER_GRP_RPL_MEMBER_ACTION_UPDATE_ACTIONS = 13735; // [HY000] Unable to updateOrder the member actions configuration with the one sent b...
     public final static int ER_GRP_RPL_MEMBER_ACTION_GET_EXCHANGEABLE_DATA = 13736; // [HY000] Unable to read the member actions configuration during group m...
     public final static int ER_GRP_RPL_MEMBER_ACTION_DEFAULT_CONFIGURATION = 13737; // [HY000] This member joined a group on which all members do not support...
     public final static int ER_GRP_RPL_MEMBER_ACTION_UNABLE_TO_SET_DEFAULT_CONFIGURATION = 13738; // [HY000] Unable to reset to member actions default config...
     public final static int ER_GRP_RPL_MEMBER_ACTION_PARSE_ON_MEMBER_JOIN = 13739; // [HY000] Unable to parse the member actions configuration sent by the gr...
     public final static int ER_IO_ERR_LOG_INDEX_READ = 1374; // [HY000] I/O error reading log index file
-    public final static int ER_GRP_RPL_MEMBER_ACTION_UPDATE_ACTIONS_ON_MEMBER_JOIN = 13740; // [HY000] Unable to update the member actions configuration on m...
+    public final static int ER_GRP_RPL_MEMBER_ACTION_UPDATE_ACTIONS_ON_MEMBER_JOIN = 13740; // [HY000] Unable to updateOrder the member actions configuration on m...
     public final static int ER_GRP_RPL_MEMBER_ACTION_INVALID_ACTIONS_ON_MEMBER_JOIN = 13741; // [HY000] The group members were unable to send their member ac...
     public final static int ER_GRP_RPL_MEMBER_ACTION_ENABLED = 13742; // [HY000] Member action enabled: "%s", type: "%s", event: "%s", priority: "%u", error_...
     public final static int ER_GRP_RPL_MEMBER_ACTION_DISABLED = 13743; // [HY000] Member action disabled: "%s", type: "%s", event: "%s", priority: "%u", erro...
@@ -3869,7 +3869,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_IB_MSG_LOG_WRITER_WAIT_ON_CONSUMER = 13934; // [HY000] Redo log writer is waiting for %s redo log consumer which is currently ...
     public final static int ER_CONDITIONAL_DEBUG = 13935; // [HY000] %s
     public final static int ER_IB_MSG_PARSE_OLD_REDO_INDEX_VERSION = 13936; // [HY000] Recovery: Generating index information for INSTANT DDL Table in 8.0.29...
-    public final static int ER_VIEW_NO_INSERT_FIELD_LIST = 1394; // [HY000] Can not insert into join view '%s.%s' without fields list
+    public final static int ER_VIEW_NO_INSERT_FIELD_LIST = 1394; // [HY000] Can not insertUser into join view '%s.%s' without fields list
     public final static int ER_IB_MSG_CLEAR_INSTANT_DROP_COLUMN_METADATA = 13941; // [HY000] Failed to clear instant drop column metadata for table %s
     public final static int ER_COMPONENT_KEYRING_OCI_OPEN_KEY_FILE = 13942; // [HY000] Cannot open signing key file %s.
     public final static int ER_COMPONENT_KEYRING_OCI_CREATE_PRIVATE_KEY = 13943; // [HY000] Out of memory! Cannot create private key.
@@ -3879,7 +3879,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_KEYRING_OCI_PARSE_JSON = 13947; // [HY000] Error parsing JSON response %s.
     public final static int ER_KEYRING_OCI_INVALID_JSON = 13948; // [HY000] Invalid JSON response!
     public final static int ER_KEYRING_OCI_HTTP_REQUEST = 13949; // [HY000] HTTP request failed with error: '%s'
-    public final static int ER_VIEW_DELETE_MERGE_VIEW = 1395; // [HY000] Can not delete from join view '%s.%s'
+    public final static int ER_VIEW_DELETE_MERGE_VIEW = 1395; // [HY000] Can not deleteOrder from join view '%s.%s'
     public final static int ER_THREAD_POOL_SYSVAR_CHANGE = 13950; // [HY000] Variable thread_pool.%s was updated: %s
     public final static int ER_STACK_BACKTRACE = 13951; // [HY000] %s
     public final static int ER_IB_MSG_BUF_POOL_RESIZE_COMPLETE_CUR_CODE = 13952; // [HY000] Status code %u: Completed
@@ -4043,7 +4043,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_TOO_BIG_DISPLAYWIDTH = 1439; // [42000] Display width out of range for column '%s' (max = %lu)
     public final static int ER_XAER_DUPID = 1440; // [XAE08] XAER_DUPID: The XID already exists
     public final static int ER_DATETIME_FUNCTION_OVERFLOW = 1441; // [22008] Datetime function: %s field overflow
-    public final static int ER_CANT_UPDATE_USED_TABLE_IN_SF_OR_TRG = 1442; // [HY000] Can't update table '%s' in stored function/trigger because it is alread...
+    public final static int ER_CANT_UPDATE_USED_TABLE_IN_SF_OR_TRG = 1442; // [HY000] Can't updateOrder table '%s' in stored function/trigger because it is alread...
     public final static int ER_VIEW_PREVENT_UPDATE = 1443; // [HY000] The definition of table '%s' prevents operation %s on table '%s'.
     public final static int ER_PS_NO_RECURSION = 1444; // [HY000] The prepared statement contains a stored routine call that refers to that same statement. I...
     public final static int ER_SP_CANT_SET_AUTOCOMMIT = 1445; // [HY000] Not allowed to set autocommit from a stored function or trigger
@@ -4051,8 +4051,8 @@ public final class MysqlErrorNumbers {
     public final static int ER_VIEW_OTHER_USER = 1448; // [HY000] You need the SUPER privilege for creation view with '%s'@'%s' definer
     public final static int ER_NO_SUCH_USER = 1449; // [HY000] The user specified as a definer ('%s'@'%s') does not exist
     public final static int ER_FORBID_SCHEMA_CHANGE = 1450; // [HY000] Changing schema from '%s' to '%s' is not allowed.
-    public final static int ER_ROW_IS_REFERENCED_2 = 1451; // [23000] Cannot delete or update a parent row: a foreign key constraint fails%s
-    public final static int ER_NO_REFERENCED_ROW_2 = 1452; // [23000] Cannot add or update a child row: a foreign key constraint fails%s
+    public final static int ER_ROW_IS_REFERENCED_2 = 1451; // [23000] Cannot deleteOrder or updateOrder a parent row: a foreign key constraint fails%s
+    public final static int ER_NO_REFERENCED_ROW_2 = 1452; // [23000] Cannot add or updateOrder a child row: a foreign key constraint fails%s
     public final static int ER_SP_BAD_VAR_SHADOW = 1453; // [42000] Variable '%s' must be quoted with `...`, or renamed
     public final static int ER_TRG_NO_DEFINER = 1454; // [HY000] No definer attribute for trigger '%s'.'%s'. It's disallowed to create trigger without definer.
     public final static int ER_OLD_FILE_FORMAT = 1455; // [HY000] '%s' has an old format, you should re-create the '%s' object(s)
@@ -4196,7 +4196,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_RPL_ASYNC_GET_GROUP_MEMBERSHIP_DETAILS_ERROR = 15089; // [HY000] The Monitor IO thread failed to get group membership details....
     public final static int ER_COALESCE_ONLY_ON_HASH_PARTITION = 1509; // [HY000] COALESCE PARTITION can only be used on HASH/KEY partitions
     public final static int ER_IB_ERR_CORRUPT_TABLESPACE_UNRECOVERABLE = 15090; // [HY000] Tablespace '%u' mentioned in the redo log is corrupted in a way it...
-    public final static int ER_IB_BULK_LOAD_STATS_WARN = 15091; // [HY000] %s: Failed to save statistics for table=%s err=%zu
+    public final static int ER_IB_BULK_LOAD_STATS_WARN = 15091; // [HY000] %s: Failed to insertUser statistics for table=%s err=%zu
     public final static int ER_COMPONENT_MASKING_INVALID_FLUSH_INTERVAL_VALUE = 15092; // [HY000] Invalid flush interval specified: %lu. Valid values are 0 (...
     public final static int ER_COMPONENT_MASKING_VAR_REGISTRATION_FAILURE = 15093; // [HY000] Cannot register variable '%s'.'%s'.
     public final static int ER_COMPONENT_MASKING_NOTIFICATION_REGISTRATION_FAILURE = 15094; // [HY000] Masking component failed to register notification serv...
@@ -4404,7 +4404,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_REPLICA_HEARTBEAT_VALUE_OUT_OF_RANGE_MIN = 1703; // [HY000] The requested value for the heartbeat period is less than 1 millis...
     public final static int ER_REPLICA_HEARTBEAT_VALUE_OUT_OF_RANGE_MAX = 1704; // [HY000] The requested value for the heartbeat period exceeds the value of ...
     public final static int ER_STMT_CACHE_FULL = 1705; // [HY000] Multi-row statements required more than 'max_binlog_stmt_cache_size' bytes of storage; incr...
-    public final static int ER_MULTI_UPDATE_KEY_CONFLICT = 1706; // [HY000] Primary key/partition key update is not allowed since the table is updated both a...
+    public final static int ER_MULTI_UPDATE_KEY_CONFLICT = 1706; // [HY000] Primary key/partition key updateOrder is not allowed since the table is updated both a...
     public final static int ER_TABLE_NEEDS_REBUILD = 1707; // [HY000] Table rebuild required. Please do "ALTER TABLE `%s` FORCE" or dump/reload to fix it!
     public final static int WARN_OPTION_BELOW_LIMIT = 1708; // [HY000] The value of '%s' should be no less than the value of '%s'
     public final static int ER_INDEX_COLUMN_TOO_LONG = 1709; // [HY000] Index column size too large. The maximum column size is %lu bytes.
@@ -4441,7 +4441,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_PARTITION_EXCHANGE_FOREIGN_KEY = 1740; // [HY000] Table to exchange with partition has foreign key references: '%s'
     public final static int ER_RPL_INFO_DATA_TOO_LONG = 1742; // [HY000] Data for column '%s' too long
     public final static int ER_BINLOG_STMT_CACHE_SIZE_GREATER_THAN_MAX = 1745; // [HY000] Option binlog_stmt_cache_size (%lu) is greater than max_binlog_stmt...
-    public final static int ER_CANT_UPDATE_TABLE_IN_CREATE_TABLE_SELECT = 1746; // [HY000] Can't update table '%s' while '%s' is being created.
+    public final static int ER_CANT_UPDATE_TABLE_IN_CREATE_TABLE_SELECT = 1746; // [HY000] Can't updateOrder table '%s' while '%s' is being created.
     public final static int ER_PARTITION_CLAUSE_ON_NONPARTITIONED = 1747; // [HY000] PARTITION () clause on non partitioned table
     public final static int ER_ROW_DOES_NOT_MATCH_GIVEN_PARTITION_SET = 1748; // [HY000] Found a row not matching the given partition set
     public final static int ER_CHANGE_RPL_INFO_REPOSITORY_FAILURE = 1750; // [HY000] Failure while changing the type of replication repository: %s.
@@ -4578,7 +4578,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_WARN_LEGACY_SYNTAX_CONVERTED = 3005; // [HY000] %s is no longer supported. The statement was converted to %s.
     public final static int ER_BINLOG_UNSAFE_FULLTEXT_PLUGIN = 3006; // [HY000] Statement is unsafe because it uses a fulltext parser plugin which may not re...
     public final static int ER_CANNOT_DISCARD_TEMPORARY_TABLE = 3007; // [HY000] Cannot DISCARD/IMPORT tablespace associated with temporary table
-    public final static int ER_FK_DEPTH_EXCEEDED = 3008; // [HY000] Foreign key cascade delete/update exceeds max depth of %d.
+    public final static int ER_FK_DEPTH_EXCEEDED = 3008; // [HY000] Foreign key cascade deleteOrder/updateOrder exceeds max depth of %d.
     public final static int ER_COL_COUNT_DOESNT_MATCH_PLEASE_UPDATE_V2 = 3009; // [HY000] The column count of %s.%s is wrong. Expected %d, found %d. Created ...
     public final static int ER_WARN_TRIGGER_DOESNT_HAVE_CREATED = 3010; // [HY000] Trigger %s.%s.%s does not have CREATED attribute.
     public final static int ER_REFERENCED_TRG_DOES_NOT_EXIST = 3011; // [HY000] Referenced trigger '%s' for the given action time and event type does not exist.
@@ -4775,7 +4775,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_TOO_BIG_ENUM = 3504; // [HY000] Too many enumeration values for column %s.
     public final static int ER_TOO_LONG_SET_ENUM_VALUE = 3505; // [HY000] Too long enumeration/set value for column %s.
     public final static int ER_INVALID_DD_OBJECT = 3506; // [HY000] %s dictionary object is invalid. (%s)
-    public final static int ER_UPDATING_DD_TABLE = 3507; // [HY000] Failed to update %s dictionary object.
+    public final static int ER_UPDATING_DD_TABLE = 3507; // [HY000] Failed to updateOrder %s dictionary object.
     public final static int ER_INVALID_DD_OBJECT_ID = 3508; // [HY000] Dictionary object id (%lu) does not exist.
     public final static int ER_INVALID_DD_OBJECT_NAME = 3509; // [HY000] Dictionary object name '%s' is invalid. (%s)
     public final static int ER_TABLESPACE_MISSING_WITH_NAME = 3510; // [HY000] Tablespace %s doesn't exist.
@@ -4893,7 +4893,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_PART_EXPR_TOO_LONG = 3622; // [HY000] Partitioning expression is too long.
     public final static int ER_UDF_DROP_DYNAMICALLY_REGISTERED = 3623; // [HY000] DROP FUNCTION can't drop a dynamically registered user defined function
     public final static int ER_UNABLE_TO_STORE_COLUMN_STATISTICS = 3624; // [HY000] Unable to store column statistics for column '%s' in table '%s'.'%s'
-    public final static int ER_UNABLE_TO_UPDATE_COLUMN_STATISTICS = 3625; // [HY000] Unable to update column statistics for column '%s' in table '%s'.'%s'
+    public final static int ER_UNABLE_TO_UPDATE_COLUMN_STATISTICS = 3625; // [HY000] Unable to updateOrder column statistics for column '%s' in table '%s'.'%s'
     public final static int ER_UNABLE_TO_DROP_COLUMN_STATISTICS = 3626; // [HY000] Unable to remove column statistics for column '%s' in table '%s'.'%s'
     public final static int ER_UNABLE_TO_BUILD_HISTOGRAM = 3627; // [HY000] Unable to build histogram statistics for column '%s' in table '%s'.'%s'
     public final static int ER_MANDATORY_ROLE = 3628; // [HY000] The role %s is a mandatory role and can't be revoked or dropped. The restriction can be lift...
@@ -5176,7 +5176,7 @@ public final class MysqlErrorNumbers {
     public final static int ER_WRONG_MVI_VALUE = 3908; // [HY000] Cannot store an array or an object in a scalar key part of the index '%s'.
     public final static int ER_WARN_FUNC_INDEX_NOT_APPLICABLE = 3909; // [HY000] Cannot use functional index '%s' due to type or collation conversion.
     public final static int ER_GRP_RPL_UDF_ERROR = 3910; // [HY000] The function '%s' failed. %s
-    public final static int ER_UPDATE_GTID_PURGED_WITH_GR = 3911; // [HY000] Cannot update GTID_PURGED with the Group Replication plugin running
+    public final static int ER_UPDATE_GTID_PURGED_WITH_GR = 3911; // [HY000] Cannot updateOrder GTID_PURGED with the Group Replication plugin running
     public final static int ER_GROUPING_ON_TIMESTAMP_IN_DST = 3912; // [HY000] Grouping on temporal is non-deterministic for timezones having DST. Please con...
     public final static int ER_TABLE_NAME_CAUSES_TOO_LONG_PATH = 3913; // [HY000] Long database name and identifier for object resulted in a path length too ...
     public final static int ER_AUDIT_LOG_INSUFFICIENT_PRIVILEGE = 3914; // [HY000] Request ignored for '%s'@'%s'. Role needed to perform operation: '%s'

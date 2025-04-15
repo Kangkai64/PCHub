@@ -1,52 +1,59 @@
 package pchub.utils;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-
+/**
+ * Utility class for handling password hashing and verification
+ * using the BCrypt algorithm.
+ */
 public class PasswordUtils {
-    private static final SecureRandom RANDOM = new SecureRandom();
-    private static final int SALT_LENGTH = 16;
 
+    /**
+     * Default log rounds for BCrypt hashing.
+     * This controls the computational complexity.
+     * Higher values are more secure but slower.
+     */
+    private static final int DEFAULT_LOG_ROUNDS = 12;
+
+    /**
+     * Hashes a password using BCrypt with a randomly generated salt.
+     *
+     * @param password The plaintext password to hash
+     * @return The BCrypt hashed password including salt and parameters
+     */
     public static String hashPassword(String password) {
-        byte[] salt = new byte[SALT_LENGTH];
-        RANDOM.nextBytes(salt);
+        // Generate a salt with the default strength
+        String salt = BCrypt.gensalt(DEFAULT_LOG_ROUNDS);
 
-        String saltString = bytesToHex(salt);
-        String hashedPasswordWithSalt = hashWithSalt(password, saltString);
-
-        return saltString + ":" + hashedPasswordWithSalt;
+        // Hash the password with the generated salt
+        return BCrypt.hashpw(password, salt);
     }
 
+    /**
+     * Hashes a password using BCrypt with a specified log rounds value.
+     *
+     * @param password The plaintext password to hash
+     * @param logRounds The computational complexity parameter (4-30)
+     * @return The BCrypt hashed password including salt and parameters
+     */
+    public static String hashPassword(String password, int logRounds) {
+        if (logRounds < 4 || logRounds > 30) {
+            throw new IllegalArgumentException("Log rounds must be between 4 and 30");
+        }
+
+        // Generate a salt with the specified strength
+        String salt = BCrypt.gensalt(logRounds);
+
+        // Hash the password with the generated salt
+        return BCrypt.hashpw(password, salt);
+    }
+
+    /**
+     * Verifies a plaintext password against a previously hashed one.
+     *
+     * @param password The plaintext password to verify
+     * @param storedHash The previously hashed password
+     * @return true if the passwords match, false otherwise
+     */
     public static boolean verifyPassword(String password, String storedHash) {
-        String[] parts = storedHash.split(":");
-        if (parts.length != 2) {
-            return false;
-        }
-
-        String salt = parts[0];
-        String expectedHash = parts[1];
-
-        String actualHash = hashWithSalt(password, salt);
-        return actualHash.equals(expectedHash);
-    }
-
-    private static String hashWithSalt(String password, String salt) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(salt.getBytes());
-            byte[] hashedPassword = md.digest(password.getBytes());
-            return bytesToHex(hashedPassword);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error hashing password", e);
-        }
-    }
-
-    private static String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02x", b));
-        }
-        return sb.toString();
+        return BCrypt.checkpw(password, storedHash);
     }
 }

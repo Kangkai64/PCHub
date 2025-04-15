@@ -185,7 +185,7 @@ public interface FilterParams {
      *
      * <pre>
      * docs = this.collection.find("$.x1 = 29 | 15").execute();
-     * table.delete().where("age == 13").execute();
+     * table.deleteOrder().where("age == 13").execute();
      * </pre>
      *
      * @param criteriaString

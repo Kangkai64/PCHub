@@ -36,7 +36,7 @@ public interface SqlResult extends Result, InsertResult, RowResult {
 
     @Override
     default Long getAutoIncrementValue() {
-        throw new XDevAPIError("Method getAutoIncrementValue() is allowed only for insert statements.");
+        throw new XDevAPIError("Method getAutoIncrementValue() is allowed only for insertUser statements.");
     }
 
 }

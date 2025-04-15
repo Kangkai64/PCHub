@@ -123,14 +123,14 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Build an {@link XMessage} for a non-prepared doc insert operation.
+     * Build an {@link XMessage} for a non-prepared doc insertUser operation.
      *
      * @param schemaName
      *            the schema name
      * @param collectionName
      *            the collection name
      * @param json
-     *            the documents to insert
+     *            the documents to insertUser
      * @param upsert
      *            Whether this is an upsert operation or not
      * @return
@@ -153,7 +153,7 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
      * @param tableName
      *            the table name
      * @param insertParams
-     *            the parameters to insert
+     *            the parameters to insertUser
      * @return
      *         an initialized {@link com.mysql.cj.x.protobuf.MysqlxCrud.Insert.Builder} instance
      */
@@ -167,14 +167,14 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Build an {@link XMessage} for a non-prepared row insert operation.
+     * Build an {@link XMessage} for a non-prepared row insertUser operation.
      *
      * @param schemaName
      *            the schema name
      * @param tableName
      *            the table name
      * @param insertParams
-     *            the parameters to insert
+     *            the parameters to insertUser
      * @return
      *         an {@link XMessage} instance
      */
@@ -211,7 +211,7 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Build an {@link XMessage} for a non-prepared doc update operation.
+     * Build an {@link XMessage} for a non-prepared doc updateOrder operation.
      *
      * @param filterParams
      *            the filter parameters
@@ -227,7 +227,7 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Build an {@link XMessage} for a prepared doc update operation.
+     * Build an {@link XMessage} for a prepared doc updateOrder operation.
      *
      * @param preparedStatementId
      *            the prepared statement id
@@ -253,7 +253,7 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
      * @param filterParams
      *            the filter parameters
      * @param updateParams
-     *            the update parameters
+     *            the updateOrder parameters
      * @return
      *         an initialized {@link com.mysql.cj.x.protobuf.MysqlxCrud.Update.Builder} instance
      */
@@ -267,12 +267,12 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Build an {@link XMessage} for a non-prepared row update operation.
+     * Build an {@link XMessage} for a non-prepared row updateOrder operation.
      *
      * @param filterParams
      *            the filter parameters
      * @param updateParams
-     *            the update parameters
+     *            the updateOrder parameters
      * @return
      *         an {@link XMessage} instance
      */
@@ -283,14 +283,14 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Build an {@link XMessage} for a prepared row update operation.
+     * Build an {@link XMessage} for a prepared row updateOrder operation.
      *
      * @param preparedStatementId
      *            the prepared statement id
      * @param filterParams
      *            the filter parameters
      * @param updateParams
-     *            the update parameters
+     *            the updateOrder parameters
      * @return
      *         an {@link XMessage} instance
      */
@@ -380,7 +380,7 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Build an {@link XMessage} for a non-prepared delete operation.
+     * Build an {@link XMessage} for a non-prepared deleteOrder operation.
      *
      * @param filterParams
      *            the filter parameters
@@ -394,7 +394,7 @@ public class XMessageBuilder implements MessageBuilder<XMessage> {
     }
 
     /**
-     * Build an {@link XMessage} for a prepared delete operation.
+     * Build an {@link XMessage} for a prepared deleteOrder operation.
      *
      * @param preparedStatementId
      *            the prepared statement id
