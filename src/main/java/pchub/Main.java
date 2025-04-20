@@ -1,26 +1,20 @@
 package pchub;
 
-import pchub.dao.*;
-import pchub.dao.impl.*;
-import pchub.model.*;
-import pchub.model.enums.OrderStatus;
-import pchub.model.enums.PaymentType;
-import pchub.model.enums.UserRole;
-import pchub.service.*;
-import pchub.service.impl.*;
-import pchub.utils.*;
-
-import java.util.List;
 import java.util.Scanner;
+import pchub.model.*;
+import pchub.model.enums.*;
+import pchub.service.*;
+import pchub.dao.*;
+import pchub.utils.*;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static User currentUser = null;
     private static ShoppingCart currentCart = null;
-    private static ProductService productService = new ProductServiceImpl();
-    private static UserService userService = new UserServiceImpl();
-    private static OrderService orderService = new OrderServiceImpl();
-    private static ShoppingCartServiceImpl cartService = new ShoppingCartServiceImpl();
+    private static ProductService productService = new ProductService();
+    private static UserService userService = new UserService();
+    private static OrderService orderService = new OrderService();
+    private static ShoppingCartService cartService = new ShoppingCartService();
 
     public static void main(String[] args) {
         ConsoleUtils.displayLogo();
@@ -65,7 +59,7 @@ public class Main {
     private static void initializeDatabase() {
         try {
             // Update all passwords to encrypted version of "123456"
-            UserDao userDAO = new UserDaoImpl();
+            UserDao userDAO = new UserDao();
             userDAO.updateAllPasswords("123456");
             System.out.println("Database initialized successfully.");
         } catch (Exception e) {
@@ -214,7 +208,7 @@ public class Main {
             case 2: // Manage Users
                 manageUsers();
                 break;
-            case 3: // View All Orders
+            case 3: // View All Order
                 viewAllOrders();
                 break;
             case 4: // Generate Reports
@@ -229,8 +223,8 @@ public class Main {
     private static void displayAllProducts() {
         ConsoleUtils.printHeader("      Product Catalog      ");
         try {
-            List<Product> products = productService.getAllProducts();
-            if (products.isEmpty()) {
+            Product[] products = productService.getAllProducts();
+            if (products == null) {
                 System.out.println("No products available.");
             } else {
                 displayProductList(products);
@@ -245,11 +239,11 @@ public class Main {
         String keyword = ConsoleUtils.getStringInput(scanner, "Enter search keyword: ");
 
         try {
-            java.util.List<Product> products = productService.searchProducts(keyword);
-            if (products.isEmpty()) {
+            Product[] products = productService.searchProducts(keyword);
+            if (products == null) {
                 System.out.println("No products found matching: " + keyword);
             } else {
-                System.out.println("Found " + products.size() + " products matching: " + keyword);
+                System.out.println("Found " + products.length + " products matching: " + keyword);
                 displayProductList(products);
             }
         } catch (Exception e) {
@@ -257,7 +251,7 @@ public class Main {
         }
     }
 
-    private static void displayProductList(java.util.List<Product> products) {
+    private static void displayProductList(Product[] products) {
         System.out.println("\nID | Name | Category | Price | Stock");
         System.out.println("------------------------------------------");
         for (Product product : products) {
@@ -295,7 +289,7 @@ public class Main {
 
     private static void viewCart() {
         System.out.println("\n===== Your Shopping Cart =====");
-        if (currentCart == null || currentCart.getItems().isEmpty()) {
+        if (currentCart == null || currentCart.getItems() == null) {
             System.out.println("Your cart is empty.");
             return;
         }
@@ -344,13 +338,13 @@ public class Main {
     }
 
     private static void updateCartItemQuantity() {
-        int itemId = ConsoleUtils.getIntInput(scanner, "Enter item ID to updateOrder: ", 1, Integer.MAX_VALUE);
+        String itemId = ConsoleUtils.getStringInput(scanner, "Enter item ID to updateOrder: ");
         int newQuantity = ConsoleUtils.getIntInput(scanner, "Enter new quantity: ", 1, 100);
 
         try {
-            boolean updated = cartService.updateCartItemQuantity(currentCart.getId(), itemId, newQuantity);
+            boolean updated = cartService.updateCartItemQuantity(currentCart.getCartId(), itemId, newQuantity);
             if (updated) {
-                currentCart = cartService.getCart(currentCart.getId()); // Refresh cart
+                currentCart = cartService.getCart(currentCart.getCartId()); // Refresh cart
                 System.out.println("Cart updated successfully!");
                 displayCart();
             } else {
@@ -362,7 +356,7 @@ public class Main {
     }
 
     private static void removeCartItem() {
-        int itemId = ConsoleUtils.getIntInput(scanner, "Enter item ID to remove: ", 1, Integer.MAX_VALUE);
+        String itemId = ConsoleUtils.getStringInput(scanner, "Enter item ID to remove: ");
 
         try {
             boolean removed = cartService.removeFromCart(currentCart.getCartId(), itemId);
@@ -380,9 +374,9 @@ public class Main {
 
     private static void clearCart() {
         try {
-            boolean cleared = cartService.clearCart(currentCart.getId());
+            boolean cleared = cartService.clearCart(currentCart.getCartId());
             if (cleared) {
-                currentCart = cartService.getCart(currentCart.getId()); // Refresh cart
+                currentCart = cartService.getCart(currentCart.getCartId()); // Refresh cart
                 System.out.println("Cart cleared successfully!");
             } else {
                 System.out.println("Failed to clear cart.");
@@ -393,7 +387,7 @@ public class Main {
     }
 
     private static void checkout() {
-        if (currentCart == null || currentCart.getItems().isEmpty()) {
+        if (currentCart == null || currentCart.getItems() == null) {
             System.out.println("Your cart is empty. Cannot proceed to checkout.");
             return;
         }
