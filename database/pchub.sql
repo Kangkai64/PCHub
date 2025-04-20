@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 13, 2025 at 05:11 PM
+-- Generation Time: Apr 20, 2025 at 06:04 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -48,6 +48,19 @@ INSERT INTO `adminrole` (`adminID`, `userID`, `department`, `accessLevel`) VALUE
 ('ADM004', 'A0004', 'Sales', 'Admin'),
 ('ADM005', 'A0005', 'Marketing', 'Manager');
 
+--
+-- Triggers `adminrole`
+--
+DROP TRIGGER IF EXISTS `before_insert_adminrole`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_adminrole` BEFORE INSERT ON `adminrole` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(adminID, 4)), 0) + 1 FROM adminrole);
+    SET NEW.adminID = CONCAT('ADM', LPAD(next_id, 3, '0'));
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -63,6 +76,19 @@ CREATE TABLE `cartitem` (
   `price` decimal(10,2) NOT NULL,
   `subtotal` decimal(10,2) GENERATED ALWAYS AS (`price` * `quantity`) STORED
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `cartitem`
+--
+DROP TRIGGER IF EXISTS `before_insert_cartitem`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_cartitem` BEFORE INSERT ON `cartitem` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(cartItemID, 3)), 0) + 1 FROM cartitem);
+    SET NEW.cartItemID = CONCAT('CI', LPAD(next_id, 6, '0'));
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -114,54 +140,15 @@ INSERT INTO `category` (`categoryID`, `name`, `parentCategory`, `description`) V
 ('CAT029', 'Security Software', 'CAT004', 'Antivirus and security applications'),
 ('CAT030', 'Gaming Accessories', 'CAT005', 'Gaming mice keyboards and controllers');
 
--- --------------------------------------------------------
-
 --
--- Table structure for table `customer`
+-- Triggers `category`
 --
-
-DROP TABLE IF EXISTS `customer`;
-CREATE TABLE `customer` (
-  `customerID` varchar(10) NOT NULL CHECK (`customerID` regexp 'C[0-9]{4}'),
-  `userID` varchar(10) NOT NULL,
-  `shippingAddresses` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `customer`
---
-
-INSERT INTO `customer` (`customerID`, `userID`, `shippingAddresses`) VALUES
-('C0001', 'C0001', '[{\"address\":\"123 Main St, Anytown, USA\",\"default\":true},{\"address\":\"123 Work Building, Downtown, USA\",\"default\":false}]'),
-('C0002', 'C0002', '[{\"address\":\"456 Oak Ave, Sometown, USA\",\"default\":true}]'),
-('C0003', 'C0003', '[{\"address\":\"789 Pine Rd, Othertown, USA\",\"default\":true},{\"address\":\"789 Office Complex, Business District, USA\",\"default\":false}]'),
-('C0004', 'C0004', '[{\"address\":\"101 Maple Dr, Newtown, USA\",\"default\":true}]'),
-('C0005', 'C0005', '[{\"address\":\"202 Birch Ln, Oldtown, USA\",\"default\":true}]'),
-('C0006', 'C0006', '[{\"address\":\"303 Cedar St, Hometown, USA\",\"default\":true},{\"address\":\"303 Second Home, Vacation Spot, USA\",\"default\":false}]'),
-('C0007', 'C0007', '[{\"address\":\"404 Elm Pl, Yourtown, USA\",\"default\":true}]'),
-('C0008', 'C0008', '[{\"address\":\"505 Pine Ave, Theirtown, USA\",\"default\":true}]'),
-('C0009', 'C0009', '[{\"address\":\"606 Oak St, Thattown, USA\",\"default\":true}]'),
-('C0010', 'C0010', '[{\"address\":\"707 Maple Ave, Thistown, USA\",\"default\":true},{\"address\":\"707 Secondary Address, Nearby, USA\",\"default\":false}]'),
-('C0011', 'C0011', '[{\"address\":\"809 Elm St, Anyplace, USA\",\"default\":true}]'),
-('C0012', 'C0012', '[{\"address\":\"910 Cedar Rd, Someplace, USA\",\"default\":true}]'),
-('C0013', 'C0013', '[{\"address\":\"1011 Birch Dr, Otherplace, USA\",\"default\":true}]'),
-('C0014', 'C0014', '[{\"address\":\"1112 Oak Lane, Newplace, USA\",\"default\":true},{\"address\":\"1112 Work Place, Business Park, USA\",\"default\":false}]'),
-('C0015', 'C0015', '[{\"address\":\"1213 Pine St, Oldplace, USA\",\"default\":true}]'),
-('C0016', 'C0016', '[{\"address\":\"1314 Maple Blvd, Homeplace, USA\",\"default\":true}]'),
-('C0017', 'C0017', '[{\"address\":\"1415 Cedar Ave, Yourplace, USA\",\"default\":true}]'),
-('C0018', 'C0018', '[{\"address\":\"1516 Elm Rd, Theirplace, USA\",\"default\":true},{\"address\":\"1516 PO Box, Mail Center, USA\",\"default\":false}]'),
-('C0019', 'C0019', '[{\"address\":\"1617 Birch Ave, Thatplace, USA\",\"default\":true}]'),
-('C0020', 'C0020', '[{\"address\":\"1718 Cedar Blvd, Thistown, USA\",\"default\":true}]');
-
---
--- Triggers `customer`
---
-DROP TRIGGER IF EXISTS `before_insert_customer`;
+DROP TRIGGER IF EXISTS `before_insert_category`;
 DELIMITER $$
-CREATE TRIGGER `before_insert_customer` BEFORE INSERT ON `customer` FOR EACH ROW BEGIN
+CREATE TRIGGER `before_insert_category` BEFORE INSERT ON `category` FOR EACH ROW BEGIN
     DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(customerID, 2)), 0) + 1 FROM Customer);
-    SET NEW.customerID = CONCAT('C', LPAD(next_id, 4, '0'));
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(categoryID, 4)), 0) + 1 FROM category);
+    SET NEW.categoryID = CONCAT('CAT', LPAD(next_id, 3, '0'));
 END
 $$
 DELIMITER ;
@@ -183,6 +170,19 @@ CREATE TABLE `order` (
   `paymentMethodID` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Triggers `order`
+--
+DROP TRIGGER IF EXISTS `before_insert_order`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_order` BEFORE INSERT ON `order` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(orderID, 2)), 0) + 1 FROM `order`);
+    SET NEW.orderID = CONCAT('O', LPAD(next_id, 4, '0'));
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -194,6 +194,19 @@ CREATE TABLE `orderhistory` (
   `historyID` varchar(10) NOT NULL,
   `customerID` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `orderhistory`
+--
+DROP TRIGGER IF EXISTS `before_insert_orderhistory`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_orderhistory` BEFORE INSERT ON `orderhistory` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(historyID, 3)), 0) + 1 FROM orderhistory);
+    SET NEW.historyID = CONCAT('OH', LPAD(next_id, 7, '0'));
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -209,6 +222,19 @@ CREATE TABLE `orderitem` (
   `quantity` int(11) NOT NULL,
   `price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `orderitem`
+--
+DROP TRIGGER IF EXISTS `before_insert_orderitem`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_orderitem` BEFORE INSERT ON `orderitem` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(orderItemID, 3)), 0) + 1 FROM orderitem);
+    SET NEW.orderItemID = CONCAT('OI', LPAD(next_id, 7, '0'));
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -227,6 +253,19 @@ CREATE TABLE `payment` (
   `date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Triggers `payment`
+--
+DROP TRIGGER IF EXISTS `before_insert_payment`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_payment` BEFORE INSERT ON `payment` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(billID, 2)), 0) + 1 FROM payment);
+    SET NEW.billID = CONCAT('B', LPAD(next_id, 6, '0'));
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -241,6 +280,19 @@ CREATE TABLE `paymentmethod` (
   `description` text DEFAULT NULL,
   `addedDate` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `paymentmethod`
+--
+DROP TRIGGER IF EXISTS `before_insert_paymentmethod`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_paymentmethod` BEFORE INSERT ON `paymentmethod` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(paymentMethodID, 3)), 0) + 1 FROM paymentmethod);
+    SET NEW.paymentMethodID = CONCAT('PM', LPAD(next_id, 3, '0'));
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -260,6 +312,19 @@ CREATE TABLE `product` (
   `specifications` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Triggers `product`
+--
+DROP TRIGGER IF EXISTS `before_insert_product`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_product` BEFORE INSERT ON `product` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(productID, 2)), 0) + 1 FROM product);
+    SET NEW.productID = CONCAT('P', LPAD(next_id, 5, '0'));
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -273,6 +338,71 @@ CREATE TABLE `productcatalog` (
   `brands` text DEFAULT NULL,
   `filters` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `productcatalog`
+--
+DROP TRIGGER IF EXISTS `before_insert_productcatalog`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_productcatalog` BEFORE INSERT ON `productcatalog` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(catalogID, 3)), 0) + 1 FROM productcatalog);
+    SET NEW.catalogID = CONCAT('PC', LPAD(next_id, 5, '0'));
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `shippingaddress`
+--
+
+DROP TABLE IF EXISTS `shippingaddress`;
+CREATE TABLE `shippingaddress` (
+  `shippingaddressID` varchar(10) NOT NULL CHECK (`shippingaddressID` regexp 'SA[0-9]{6}'),
+  `customerID` varchar(10) NOT NULL,
+  `shippingAddresses` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `shippingaddress`
+--
+
+INSERT INTO `shippingaddress` (`shippingaddressID`, `customerID`, `shippingAddresses`) VALUES
+('SA000001', 'C0001', '[{\"address\":\"123 Main St, Anytown, USA\",\"default\":true},{\"address\":\"123 Work Building, Downtown, USA\",\"default\":false}]'),
+('SA000002', 'C0002', '[{\"address\":\"456 Oak Ave, Sometown, USA\",\"default\":true}]'),
+('SA000003', 'C0003', '[{\"address\":\"789 Pine Rd, Othertown, USA\",\"default\":true},{\"address\":\"789 Office Complex, Business District, USA\",\"default\":false}]'),
+('SA000004', 'C0004', '[{\"address\":\"101 Maple Dr, Newtown, USA\",\"default\":true}]'),
+('SA000005', 'C0005', '[{\"address\":\"202 Birch Ln, Oldtown, USA\",\"default\":true}]'),
+('SA000006', 'C0006', '[{\"address\":\"303 Cedar St, Hometown, USA\",\"default\":true},{\"address\":\"303 Second Home, Vacation Spot, USA\",\"default\":false}]'),
+('SA000007', 'C0007', '[{\"address\":\"404 Elm Pl, Yourtown, USA\",\"default\":true}]'),
+('SA000008', 'C0008', '[{\"address\":\"505 Pine Ave, Theirtown, USA\",\"default\":true}]'),
+('SA000009', 'C0009', '[{\"address\":\"606 Oak St, Thattown, USA\",\"default\":true}]'),
+('SA000010', 'C0010', '[{\"address\":\"707 Maple Ave, Thistown, USA\",\"default\":true},{\"address\":\"707 Secondary Address, Nearby, USA\",\"default\":false}]'),
+('SA000011', 'C0011', '[{\"address\":\"809 Elm St, Anyplace, USA\",\"default\":true}]'),
+('SA000012', 'C0012', '[{\"address\":\"910 Cedar Rd, Someplace, USA\",\"default\":true}]'),
+('SA000013', 'C0013', '[{\"address\":\"1011 Birch Dr, Otherplace, USA\",\"default\":true}]'),
+('SA000014', 'C0014', '[{\"address\":\"1112 Oak Lane, Newplace, USA\",\"default\":true},{\"address\":\"1112 Work Place, Business Park, USA\",\"default\":false}]'),
+('SA000015', 'C0015', '[{\"address\":\"1213 Pine St, Oldplace, USA\",\"default\":true}]'),
+('SA000016', 'C0016', '[{\"address\":\"1314 Maple Blvd, Homeplace, USA\",\"default\":true}]'),
+('SA000017', 'C0017', '[{\"address\":\"1415 Cedar Ave, Yourplace, USA\",\"default\":true}]'),
+('SA000018', 'C0018', '[{\"address\":\"1516 Elm Rd, Theirplace, USA\",\"default\":true},{\"address\":\"1516 PO Box, Mail Center, USA\",\"default\":false}]'),
+('SA000019', 'C0019', '[{\"address\":\"1617 Birch Ave, Thatplace, USA\",\"default\":true}]'),
+('SA000020', 'C0020', '[{\"address\":\"1718 Cedar Blvd, Thistown, USA\",\"default\":true}]');
+
+--
+-- Triggers `shippingaddress`
+--
+DROP TRIGGER IF EXISTS `before_insert_shippingaddress`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_shippingaddress` BEFORE INSERT ON `shippingaddress` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(CAST(SUBSTRING(shippingaddressID, 3) AS UNSIGNED)), 0) + 1 FROM shippingaddress);
+    SET NEW.shippingaddressID = CONCAT('SA', LPAD(next_id, 6, '0'));
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -289,6 +419,19 @@ CREATE TABLE `shoppingcart` (
   `itemCount` int(11) DEFAULT 0,
   `subtotal` decimal(10,2) DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `shoppingcart`
+--
+DROP TRIGGER IF EXISTS `before_insert_shoppingcart`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_shoppingcart` BEFORE INSERT ON `shoppingcart` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(cartID, 3)), 0) + 1 FROM shoppingcart);
+    SET NEW.cartID = CONCAT('CA', LPAD(next_id, 5, '0'));
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -347,6 +490,39 @@ INSERT INTO `user` (`userID`, `username`, `email`, `password`, `registrationDate
 ('C0025', 'eric_nelson', 'eric.n@email.com', '$2a$12$rM7fPZsYqKjQYZaVNODWk.VhPWS4aJmPdpbRQ25qxZVG8Z9E4tl.O', '2024-10-25 14:45:00', '2025-03-18 13:25:00', 'active', '555-567-2345', 'Eric Nelson', 'Customer');
 
 --
+-- Triggers `user`
+--
+DROP TRIGGER IF EXISTS `before_insert_user`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_user` BEFORE INSERT ON `user` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    DECLARE prefix CHAR(1);
+    
+    -- Convert role to lowercase for case-insensitive comparison
+    IF LOWER(NEW.role) = 'admin' THEN
+        -- Get the highest existing admin ID number
+        SELECT IFNULL(MAX(CAST(SUBSTRING(userID, 2, 4) AS UNSIGNED)), 0) + 1 INTO next_id
+        FROM `user`
+        WHERE userID LIKE 'A%';
+        
+        SET prefix = 'A';
+    ELSE 
+        -- Default to customer for all other roles
+        -- Get the highest existing customer ID number
+        SELECT IFNULL(MAX(CAST(SUBSTRING(userID, 2, 4) AS UNSIGNED)), 0) + 1 INTO next_id
+        FROM `user`
+        WHERE userID LIKE 'C%';
+        
+        SET prefix = 'C';
+    END IF;
+    
+    -- Format the ID with leading zeros to ensure 4 digits
+    SET NEW.userID = CONCAT(prefix, LPAD(next_id, 4, '0'));
+END
+$$
+DELIMITER ;
+
+--
 -- Indexes for dumped tables
 --
 
@@ -371,13 +547,6 @@ ALTER TABLE `cartitem`
 ALTER TABLE `category`
   ADD PRIMARY KEY (`categoryID`),
   ADD KEY `parentCategory` (`parentCategory`);
-
---
--- Indexes for table `customer`
---
-ALTER TABLE `customer`
-  ADD PRIMARY KEY (`customerID`),
-  ADD KEY `userID` (`userID`);
 
 --
 -- Indexes for table `order`
@@ -432,6 +601,13 @@ ALTER TABLE `productcatalog`
 ALTER TABLE `productcatalog` ADD FULLTEXT KEY `search_idx` (`categories`,`brands`,`filters`);
 
 --
+-- Indexes for table `shippingaddress`
+--
+ALTER TABLE `shippingaddress`
+  ADD PRIMARY KEY (`shippingaddressID`),
+  ADD KEY `customerID` (`customerID`);
+
+--
 -- Indexes for table `shoppingcart`
 --
 ALTER TABLE `shoppingcart`
@@ -470,23 +646,17 @@ ALTER TABLE `category`
   ADD CONSTRAINT `category_ibfk_1` FOREIGN KEY (`parentCategory`) REFERENCES `category` (`categoryID`);
 
 --
--- Constraints for table `customer`
---
-ALTER TABLE `customer`
-  ADD CONSTRAINT `customer_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`);
-
---
 -- Constraints for table `order`
 --
 ALTER TABLE `order`
-  ADD CONSTRAINT `order_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `customer` (`customerID`),
+  ADD CONSTRAINT `order_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `shippingaddress` (`customerID`),
   ADD CONSTRAINT `order_ibfk_2` FOREIGN KEY (`paymentMethodID`) REFERENCES `paymentmethod` (`paymentMethodID`);
 
 --
 -- Constraints for table `orderhistory`
 --
 ALTER TABLE `orderhistory`
-  ADD CONSTRAINT `orderhistory_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `customer` (`customerID`);
+  ADD CONSTRAINT `orderhistory_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `shippingaddress` (`customerID`);
 
 --
 -- Constraints for table `orderitem`
@@ -506,7 +676,7 @@ ALTER TABLE `payment`
 -- Constraints for table `paymentmethod`
 --
 ALTER TABLE `paymentmethod`
-  ADD CONSTRAINT `paymentmethod_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `customer` (`customerID`);
+  ADD CONSTRAINT `paymentmethod_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `shippingaddress` (`customerID`);
 
 --
 -- Constraints for table `product`
@@ -515,10 +685,16 @@ ALTER TABLE `product`
   ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`category`) REFERENCES `category` (`categoryID`);
 
 --
+-- Constraints for table `shippingaddress`
+--
+ALTER TABLE `shippingaddress`
+  ADD CONSTRAINT `customer_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `user` (`userID`);
+
+--
 -- Constraints for table `shoppingcart`
 --
 ALTER TABLE `shoppingcart`
-  ADD CONSTRAINT `shoppingcart_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `customer` (`customerID`);
+  ADD CONSTRAINT `shoppingcart_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `shippingaddress` (`customerID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
