@@ -1,8 +1,11 @@
 package pchub.dao;
 
+import pchub.model.Address;
 import pchub.model.Order;
 import pchub.model.OrderItem;
+import pchub.model.PaymentMethod;
 import pchub.model.enums.OrderStatus;
+import pchub.utils.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,23 +13,28 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.Arrays;
 
 public class OrderDao {
+    private static final int MAX_ITEMS = 30;
+    private final PaymentMethodDao paymentMethodDao;
+
+    public OrderDao() {
+        this.paymentMethodDao = new PaymentMethodDao();
+    }
+
     public Order findById(String orderId) {
-        String sql = "SELECT * FROM orders WHERE id = ?";
+        String sql = "SELECT * FROM `order` WHERE orderID = ?";
 
-        try (Connection conn = pchub.utils.DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            pstmt.setInt(1, orderId);
-            ResultSet rs = pstmt.executeQuery();
+            preparedStatement.setString(1, orderId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (rs.next()) {
-                Order order = mapResultSetToOrder(rs);
-                loadOrderItems(conn, order);
+            if (resultSet.next()) {
+                Order order = mapResultSetToOrder(resultSet);
+                loadOrderItems(connection, order);
                 return order;
             }
         } catch (SQLException e) {
@@ -36,20 +44,22 @@ public class OrderDao {
         return null;
     }
 
-    public List<Order> findByUserId(int userId) {
-        List<Order> orders = new ArrayList<>();
-        String sql = "SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC";
+    public Order[] findByUserId(String customerId) {
+        Order[] orders = new Order[30];
+        String sql = "SELECT * FROM `order` WHERE customerID = ? ORDER BY orderDate DESC";
 
-        try (Connection conn = pchub.utils.DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            pstmt.setInt(1, userId);
-            ResultSet rs = pstmt.executeQuery();
+            preparedStatement.setString(1, customerId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (rs.next()) {
-                Order order = mapResultSetToOrder(rs);
-                loadOrderItems(conn, order);
-                orders.add(order);
+            int index = 0;
+
+            while (resultSet.next() && index < orders.length) {
+                Order order = mapResultSetToOrder(resultSet);
+                loadOrderItems(connection, order);
+                orders[index++] = order;
             }
         } catch (SQLException e) {
             System.err.println("Error finding orders by user ID: " + e.getMessage());
@@ -58,18 +68,20 @@ public class OrderDao {
         return orders;
     }
 
-    public List<Order> findAll() {
-        List<Order> orders = new ArrayList<>();
-        String sql = "SELECT * FROM orders ORDER BY order_date DESC";
+    public Order[] findAll() {
+        Order[] orders = new Order[30];
+        String sql = "SELECT * FROM `order` ORDER BY orderDate DESC";
 
-        try (Connection conn = pchub.utils.DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
 
-            while (rs.next()) {
-                Order order = mapResultSetToOrder(rs);
-                loadOrderItems(conn, order);
-                orders.add(order);
+            int index = 0;
+
+            while (resultSet.next() && index < orders.length) {
+                Order order = mapResultSetToOrder(resultSet);
+                loadOrderItems(connection, order);
+                orders[index++] = order;
             }
         } catch (SQLException e) {
             System.err.println("Error finding all orders: " + e.getMessage());
@@ -79,82 +91,79 @@ public class OrderDao {
     }
 
     public boolean insertOrder(Order order) {
-        String sql = "INSERT INTO orders (user_id, user_name, order_date, status, total_amount, " +
-                "shipping_address_id, payment_method_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO `order` (customerID, orderDate, status, totalAmount, " +
+                "shippingAddress, paymentMethodID) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = pchub.utils.DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            connection.setAutoCommit(false);
 
-            try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                pstmt.setInt(1, order.getCustomerId());
-                pstmt.setString(2, order.getUserName());
-                pstmt.setTimestamp(3, new Timestamp(new Date().getTime()));
-                pstmt.setString(4, OrderStatus.PENDING.name());
-                pstmt.setDouble(5, order.getTotalAmount());
-                pstmt.setInt(6, order.getShippingAddress().getId());
-                pstmt.setInt(7, order.getPaymentMethod().getId());
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, order.getCustomerId());
+                preparedStatement.setTimestamp(2, new Timestamp(order.getOrderDate().getTime()));
+                preparedStatement.setString(3, order.getStatus().name().toLowerCase());
+                preparedStatement.setDouble(4, order.getTotalAmount());
+                preparedStatement.setString(5, formatAddressToString(order.getShippingAddress()));
+                preparedStatement.setString(6, order.getPaymentMethod().getPaymentMethodId());
 
-                int affectedRows = pstmt.executeUpdate();
+                int affectedRows = preparedStatement.executeUpdate();
 
                 if (affectedRows > 0) {
-                    ResultSet generatedKeys = pstmt.getGeneratedKeys();
+                    ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
                     if (generatedKeys.next()) {
-                        int orderId = generatedKeys.getInt(1);
+                        String orderId = generatedKeys.getString(1);
                         order.setOrderId(orderId);
 
                         // Save order items
-                        if (saveOrderItems(conn, order)) {
-                            conn.commit();
+                        if (saveOrderItems(connection, order)) {
+                            connection.commit();
                             return true;
                         }
                     }
                 }
 
-                conn.rollback();
+                connection.rollback();
                 return false;
             } catch (SQLException e) {
-                conn.rollback();
+                connection.rollback();
                 System.err.println("Error saving order: " + e.getMessage());
                 return false;
-            } finally {
-                conn.setAutoCommit(true);
             }
         } catch (SQLException e) {
-            System.err.println("Error with connection while saving order: " + e.getMessage());
+            System.err.println("Error connecting to database: " + e.getMessage());
             return false;
         }
     }
 
     public boolean updateOrder(Order order) {
-        String sql = "UPDATE orders SET status = ?, total_amount = ? WHERE id = ?";
+        String sql = "UPDATE `order` SET status = ?, totalAmount = ? WHERE orderID = ?";
 
-        try (Connection conn = pchub.utils.DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            connection.setAutoCommit(false);
 
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, order.getStatus().name());
-                pstmt.setDouble(2, order.getTotalAmount());
-                pstmt.setInt(3, order.getOrderId());
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, order.getStatus().name().toLowerCase());
+                preparedStatement.setDouble(2, order.getTotalAmount());
+                preparedStatement.setString(3, order.getOrderId());
 
-                int affectedRows = pstmt.executeUpdate();
+                int affectedRows = preparedStatement.executeUpdate();
 
                 if (affectedRows > 0) {
-                    // Delete existing order items and insertUser new ones
-                    deleteOrderItems(conn, order.getOrderId());
-                    if (saveOrderItems(conn, order)) {
-                        conn.commit();
+                    // Delete existing order items and insert new ones
+                    deleteOrderItems(connection, order.getOrderId());
+                    if (saveOrderItems(connection, order)) {
+                        connection.commit();
                         return true;
                     }
                 }
 
-                conn.rollback();
+                connection.rollback();
                 return false;
             } catch (SQLException e) {
-                conn.rollback();
+                connection.rollback();
                 System.err.println("Error updating order: " + e.getMessage());
                 return false;
             } finally {
-                conn.setAutoCommit(true);
+                connection.setAutoCommit(true);
             }
         } catch (SQLException e) {
             System.err.println("Error with connection while updating order: " + e.getMessage());
@@ -163,34 +172,34 @@ public class OrderDao {
     }
 
     public boolean deleteOrder(String orderId) {
-        String sql = "DELETE FROM orders WHERE id = ?";
+        String sql = "DELETE FROM `order` WHERE orderID = ?";
 
-        try (Connection conn = pchub.utils.DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            connection.setAutoCommit(false);
 
             try {
                 // Delete order items first
-                deleteOrderItems(conn, orderId);
+                deleteOrderItems(connection, orderId);
 
                 // Delete the order
-                try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                    pstmt.setInt(1, orderId);
-                    int affectedRows = pstmt.executeUpdate();
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                    preparedStatement.setString(1, orderId);
+                    int affectedRows = preparedStatement.executeUpdate();
 
                     if (affectedRows > 0) {
-                        conn.commit();
+                        connection.commit();
                         return true;
                     }
 
-                    conn.rollback();
+                    connection.rollback();
                     return false;
                 }
             } catch (SQLException e) {
-                conn.rollback();
+                connection.rollback();
                 System.err.println("Error deleting order: " + e.getMessage());
                 return false;
             } finally {
-                conn.setAutoCommit(true);
+                connection.setAutoCommit(true);
             }
         } catch (SQLException e) {
             System.err.println("Error with connection while deleting order: " + e.getMessage());
@@ -198,75 +207,107 @@ public class OrderDao {
         }
     }
 
-    private Order mapResultSetToOrder(ResultSet rs) throws SQLException {
+    private Order mapResultSetToOrder(ResultSet resultSet) throws SQLException {
         Order order = new Order();
-        order.setOrderId(rs.getInt("id"));
-        order.setCustomerId(rs.getInt("user_id"));
-        order.setUserName(rs.getString("user_name"));
-        order.setOrderDate(rs.getTimestamp("order_date"));
-        order.setStatus(OrderStatus.valueOf(rs.getString("status")));
-        order.setTotalAmount(rs.getDouble("total_amount"));
-
-        // Load shipping address and payment method (you would need to implement these methods)
-        // loadShippingAddress(order, rs.getInt("shipping_address_id"));
-        // loadPaymentMethod(order, rs.getInt("payment_method_id"));
-
+        order.setOrderId(resultSet.getString("orderID"));
+        order.setCustomerId(resultSet.getString("customerID"));
+        order.setOrderDate(resultSet.getTimestamp("orderDate"));
+        order.setStatus(OrderStatus.valueOf(resultSet.getString("status").toUpperCase()));
+        order.setTotalAmount(resultSet.getDouble("totalAmount"));
+        order.setShippingAddress(convertStringToAddress(resultSet.getString("shippingAddress")));
+        order.setPaymentMethod(lookupPaymentMethodById(resultSet.getString("paymentMethodID")));
         return order;
     }
 
-    private void loadOrderItems(Connection conn, Order order) throws SQLException {
-        String sql = "SELECT * FROM order_items WHERE order_id = ?";
+    private void loadOrderItems(Connection connection, Order order) throws SQLException {
+        String sql = "SELECT * FROM order_item WHERE orderID = ?";
+        OrderItem[] items = new OrderItem[MAX_ITEMS];
+        int index = 0;
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, order.getOrderId());
-            ResultSet rs = pstmt.executeQuery();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, order.getOrderId());
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (rs.next()) {
+            while (resultSet.next() && index < MAX_ITEMS) {
                 OrderItem item = new OrderItem();
-                item.setOrderItemId(rs.getInt("id"));
-                item.setOrderId(rs.getInt("order_id"));
-                item.setProductId(rs.getInt("product_id"));
-                item.setProductName(rs.getString("product_name"));
-                item.setUnitPrice(rs.getDouble("unit_price"));
-                item.setQuantity(rs.getInt("quantity"));
-
-                order.getItems().add(item);
+                item.setProductId(resultSet.getString("productID"));
+                item.setQuantity(resultSet.getInt("quantity"));
+                item.setUnitPrice(resultSet.getDouble("price"));
+                items[index++] = item;
             }
         }
+
+        order.setItems(Arrays.copyOf(items, index));
     }
 
-    private boolean saveOrderItems(Connection conn, Order order) throws SQLException {
-        String sql = "INSERT INTO order_items (order_id, product_id, product_name, unit_price, quantity) " +
-                "VALUES (?, ?, ?, ?, ?)";
+    private boolean saveOrderItems(Connection connection, Order order) throws SQLException {
+        String sql = "INSERT INTO order_item (orderID, productID, quantity, price) VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (OrderItem item : order.getItems()) {
-                pstmt.setInt(1, order.getOrderId());
-                pstmt.setInt(2, item.getProductId());
-                pstmt.setString(3, item.getProductName());
-                pstmt.setDouble(4, item.getUnitPrice());
-                pstmt.setInt(5, item.getQuantity());
+                if (item == null) continue;
 
-                pstmt.addBatch();
+                preparedStatement.setString(1, order.getOrderId());
+                preparedStatement.setString(2, item.getProductId());
+                preparedStatement.setInt(3, item.getQuantity());
+                preparedStatement.setDouble(4, item.getUnitPrice());
+                preparedStatement.addBatch();
             }
 
-            int[] results = pstmt.executeBatch();
+            int[] results = preparedStatement.executeBatch();
             for (int result : results) {
                 if (result <= 0) {
                     return false;
                 }
             }
-
             return true;
         }
     }
 
-    private void deleteOrderItems(Connection conn, int orderId) throws SQLException {
-        String sql = "DELETE FROM order_items WHERE order_id = ?";
+    private void deleteOrderItems(Connection connection, String orderId) throws SQLException {
+        String sql = "DELETE FROM order_item WHERE orderID = ?";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, orderId);
-            pstmt.executeUpdate();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, orderId);
+            preparedStatement.executeUpdate();
         }
+    }
+
+    private String formatAddressToString(Address address) {
+        if (address == null) {
+            return "";
+        }
+        return String.format("%s|%s|%s|%s|%s",
+                address.getStreet(),
+                address.getCity(),
+                address.getState(),
+                address.getZipCode(),
+                address.getCountry());
+    }
+
+    private Address convertStringToAddress(String addressString) {
+        if (addressString == null || addressString.trim().isEmpty()) {
+            return null;
+        }
+
+        String[] parts = addressString.split("\\|");
+        if (parts.length != 5) {
+            return null;
+        }
+
+        Address address = new Address();
+        address.setStreet(parts[0]);
+        address.setCity(parts[1]);
+        address.setState(parts[2]);
+        address.setZipCode(parts[3]);
+        address.setCountry(parts[4]);
+        return address;
+    }
+
+    private PaymentMethod lookupPaymentMethodById(String paymentMethodId) {
+        if (paymentMethodId == null || paymentMethodId.trim().isEmpty()) {
+            return null;
+        }
+        return paymentMethodDao.getPaymentMethodById(paymentMethodId.trim());
     }
 }

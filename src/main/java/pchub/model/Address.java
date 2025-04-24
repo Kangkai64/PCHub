@@ -1,7 +1,7 @@
 package pchub.model;
 
 public class Address {
-    private int id;
+    private String addressId;
     private String userId;
     private String street;
     private String city;
@@ -10,12 +10,12 @@ public class Address {
     private String country;
 
     // Getters and setters
-    public int getId() {
-        return id;
+    public String getAddressId() {
+        return addressId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setAddressId(String addressId) {
+        this.addressId = addressId;
     }
 
     public String getUserId() {

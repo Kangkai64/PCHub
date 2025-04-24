@@ -19,8 +19,8 @@ public class UserDao {
     public User findById(String userId) {
         String sql = "SELECT * FROM user WHERE userID = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -38,8 +38,8 @@ public class UserDao {
     public User findByUsername(String username) {
         String sql = "SELECT * FROM user WHERE username = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -57,8 +57,8 @@ public class UserDao {
     public User findByEmail(String email) {
         String sql = "SELECT * FROM user WHERE email = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, email);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -77,8 +77,8 @@ public class UserDao {
         List<User> users = new ArrayList<>();
         String sql = "SELECT * FROM user";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             Statement statement = conn.createStatement();
+        try (Connection connection = DatabaseConnection.getConnection();
+             Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
 
             while (resultSet.next()) {
@@ -96,8 +96,8 @@ public class UserDao {
                 "phone, fullName, role) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, user.getUserId());
             preparedStatement.setString(2, user.getUsername());
@@ -123,8 +123,8 @@ public class UserDao {
         String sql = "UPDATE user SET username = ?, email = ?, password = ?, lastLogin = ?, " +
                 "status = ?, phone = ?, fullName = ?, role = ? WHERE userID = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, user.getUsername());
             preparedStatement.setString(2, user.getEmail());
@@ -165,8 +165,8 @@ public class UserDao {
     public boolean deleteUser(String userId) {
         String sql = "DELETE FROM user WHERE userID = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, userId);
 

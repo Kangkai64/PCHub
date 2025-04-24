@@ -16,15 +16,15 @@ public class CartDao {
     public ShoppingCart findByUserId(String customerId) throws SQLException {
         String sql = "SELECT * FROM shoppingcart WHERE customerID = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, customerId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 ShoppingCart cart = extractCartFromResultSet(resultSet);
-                loadCartItems(conn, cart);
+                loadCartItems(connection, cart);
                 return cart;
             } else {
                 // No cart found, create a new one
@@ -43,15 +43,15 @@ public class CartDao {
     public ShoppingCart getCartById(String cartId) throws SQLException {
         String sql = "SELECT * FROM shoppingcart WHERE cartID = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, cartId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 ShoppingCart cart = extractCartFromResultSet(resultSet);
-                loadCartItems(conn, cart);
+                loadCartItems(connection, cart);
                 return cart;
             }
         } catch (SQLException e) {
@@ -69,10 +69,10 @@ public class CartDao {
         // Generate a unique cart ID (10 characters)
         String cartId = generateCartId();
 
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            connection.setAutoCommit(false);
 
-            try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 LocalDateTime now = LocalDateTime.now();
                 Timestamp timestamp = Timestamp.valueOf(now);
 
@@ -95,23 +95,23 @@ public class CartDao {
                         for (CartItem cartItem: cartItemArrays){
                             cartItemDao.addCartItem(cartItem);
                         }
-                        conn.commit();
+                        connection.commit();
                         return cartId;
                     } else if (cart.getItems() == null) {
                         // No items to insertOrder
-                        conn.commit();
+                        connection.commit();
                         return cartId;
                     }
                 }
 
-                conn.rollback();
+                connection.rollback();
                 throw new SQLException("Failed to create cart");
             } catch (SQLException e) {
-                conn.rollback();
+                connection.rollback();
                 System.err.println("Error saving cart: " + e.getMessage());
                 throw e;
             } finally {
-                conn.setAutoCommit(true);
+                connection.setAutoCommit(true);
             }
         } catch (SQLException e) {
             System.err.println("Error with connection while saving cart: " + e.getMessage());
@@ -122,10 +122,10 @@ public class CartDao {
     public boolean updateCart(ShoppingCart cart) throws SQLException {
         String sql = "UPDATE shoppingcart SET lastUpdated = ?, itemCount = ?, subtotal = ? WHERE cartID = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            connection.setAutoCommit(false);
 
-            try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
 
                 preparedStatement.setTimestamp(1, timestamp);
@@ -146,23 +146,23 @@ public class CartDao {
                         for (CartItem cartItem: cartItemArrays){
                             cartItemDao.addCartItem(cartItem);
                         }
-                        conn.commit();
+                        connection.commit();
                         return true;
                     } else {
                         // No items to insertOrder
-                        conn.commit();
+                        connection.commit();
                         return true;
                     }
                 }
 
-                conn.rollback();
+                connection.rollback();
                 return false;
             } catch (SQLException e) {
-                conn.rollback();
+                connection.rollback();
                 System.err.println("Error updating cart: " + e.getMessage());
                 throw e;
             } finally {
-                conn.setAutoCommit(true);
+                connection.setAutoCommit(true);
             }
         } catch (SQLException e) {
             System.err.println("Error with connection while updating cart: " + e.getMessage());
@@ -173,8 +173,8 @@ public class CartDao {
     public boolean deleteCart(String cartId) throws SQLException {
         String sql = "DELETE FROM shoppingcart WHERE cartID = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            connection.setAutoCommit(false);
 
             try {
                 // Delete cart items first
@@ -182,24 +182,24 @@ public class CartDao {
                 cartItemDao.deleteAllCartItems(cartId);
 
                 // Delete the cart
-                try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                     preparedStatement.setString(1, cartId);
                     int affectedRows = preparedStatement.executeUpdate();
 
                     if (affectedRows > 0) {
-                        conn.commit();
+                        connection.commit();
                         return true;
                     }
 
-                    conn.rollback();
+                    connection.rollback();
                     return false;
                 }
             } catch (SQLException e) {
-                conn.rollback();
+                connection.rollback();
                 System.err.println("Error deleting cart: " + e.getMessage());
                 throw e;
             } finally {
-                conn.setAutoCommit(true);
+                connection.setAutoCommit(true);
             }
         } catch (SQLException e) {
             System.err.println("Error with connection while deleting cart: " + e.getMessage());

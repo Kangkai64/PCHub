@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+1. Always replace list or arraylist with array.
+2. Declare an arbitrary value for the array size, like I do 30 for CartItem and OrderItem
+3. Use descriptive naming. Replace "conn" with "connection", "rs" with "resultset".
+4. Remove the pchub.{something}, import the class package directly instead
+5. The database used for this project is MySQL
+6. Always use ConsoleUtils printHeader function for printing menu header.
+7. Always use ConsoleUtils input function to get user input.
+8. All the IDs for each table are String. It will be left padded with "0", like "C0001" for customer ID.
+9. Always check the database schema when you need to generate code related to database operation / dao.

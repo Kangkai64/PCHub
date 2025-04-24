@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "java": {
+      "command": "java",
+      "args": ["-jar", "target/PCHub-1.0-SNAPSHOT.jar"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "JAVA_HOME": "${env:JAVA_HOME}"
+      }
+    }
+  }
+} 

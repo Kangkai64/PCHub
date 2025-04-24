@@ -220,7 +220,7 @@ CREATE TABLE `orderitem` (
   `orderID` varchar(10) NOT NULL,
   `productID` varchar(10) NOT NULL,
   `quantity` int(11) NOT NULL,
-  `price` decimal(10,2) NOT NULL
+  `unitPrice` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -275,8 +275,8 @@ DELIMITER ;
 DROP TABLE IF EXISTS `paymentmethod`;
 CREATE TABLE `paymentmethod` (
   `paymentMethodID` varchar(10) NOT NULL,
-  `customerID` varchar(10) NOT NULL,
   `name` varchar(50) NOT NULL,
+  `type` varchar(20) NOT NULL,
   `description` text DEFAULT NULL,
   `addedDate` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -523,6 +523,38 @@ $$
 DELIMITER ;
 
 --
+-- Table structure for table `user_payment_method`
+--
+
+DROP TABLE IF EXISTS `user_payment_method`;
+CREATE TABLE `user_payment_method` (
+  `userPaymentMethodID` varchar(10) NOT NULL,
+  `userID` varchar(10) NOT NULL,
+  `paymentMethodID` varchar(10) NOT NULL,
+  `details` text DEFAULT NULL,
+  `isDefault` tinyint(1) NOT NULL DEFAULT 0,
+  `addedDate` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`userPaymentMethodID`),
+  KEY `userID` (`userID`),
+  KEY `paymentMethodID` (`paymentMethodID`),
+  CONSTRAINT `user_payment_method_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`),
+  CONSTRAINT `user_payment_method_ibfk_2` FOREIGN KEY (`paymentMethodID`) REFERENCES `paymentmethod` (`paymentMethodID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `user_payment_method`
+--
+DROP TRIGGER IF EXISTS `before_insert_user_payment_method`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_user_payment_method` BEFORE INSERT ON `user_payment_method` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(userPaymentMethodID, 3)), 0) + 1 FROM user_payment_method);
+    SET NEW.userPaymentMethodID = CONCAT('UP', LPAD(next_id, 7, '0'));
+END
+$$
+DELIMITER ;
+
+--
 -- Indexes for dumped tables
 --
 
@@ -663,40 +695,4 @@ ALTER TABLE `orderhistory`
 --
 ALTER TABLE `orderitem`
   ADD CONSTRAINT `orderitem_ibfk_1` FOREIGN KEY (`orderID`) REFERENCES `order` (`orderID`),
-  ADD CONSTRAINT `orderitem_ibfk_2` FOREIGN KEY (`productID`) REFERENCES `product` (`productID`);
-
---
--- Constraints for table `payment`
---
-ALTER TABLE `payment`
-  ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`orderID`) REFERENCES `order` (`orderID`),
-  ADD CONSTRAINT `payment_ibfk_2` FOREIGN KEY (`paymentMethodID`) REFERENCES `paymentmethod` (`paymentMethodID`);
-
---
--- Constraints for table `paymentmethod`
---
-ALTER TABLE `paymentmethod`
-  ADD CONSTRAINT `paymentmethod_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `shippingaddress` (`customerID`);
-
---
--- Constraints for table `product`
---
-ALTER TABLE `product`
-  ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`category`) REFERENCES `category` (`categoryID`);
-
---
--- Constraints for table `shippingaddress`
---
-ALTER TABLE `shippingaddress`
-  ADD CONSTRAINT `customer_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `user` (`userID`);
-
---
--- Constraints for table `shoppingcart`
---
-ALTER TABLE `shoppingcart`
-  ADD CONSTRAINT `shoppingcart_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `shippingaddress` (`customerID`);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+  ADD CONSTRAINT `orderitem_ibfk_2` FOREIGN KEY (`productID`) REFERENCES `product`
