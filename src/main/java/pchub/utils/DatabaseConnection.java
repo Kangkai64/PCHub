@@ -13,36 +13,33 @@ public class DatabaseConnection {
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
-    private static Connection connection = null;
-
     /**
      * Establishes and returns a connection to the database
      * @return Connection object for database operations
      */
     public static Connection getConnection() {
-        if (connection == null) {
-            try {
-                // Load the MySQL JDBC driver
-                Class.forName("com.mysql.cj.jdbc.Driver");
+        try {
+            // Load the MySQL JDBC driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
 
-                // Establish the connection
-                connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                System.out.println("Database connection established successfully");
-            } catch (ClassNotFoundException e) {
-                System.err.println("MySQL JDBC driver not found");
-                e.printStackTrace();
-            } catch (SQLException e) {
-                System.err.println("Database connection failed");
-                e.printStackTrace();
-            }
+            // Create a new connection each time
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            return connection;
+        } catch (ClassNotFoundException e) {
+            System.err.println("MySQL JDBC driver not found");
+            e.printStackTrace();
+            return null;
+        } catch (SQLException e) {
+            System.err.println("Database connection failed");
+            e.printStackTrace();
+            return null;
         }
-        return connection;
     }
 
     /**
      * Closes the database connection
      */
-    public static void closeConnection() {
+    public static void closeConnection(Connection connection) {
         if (connection != null) {
             try {
                 connection.close();
@@ -50,8 +47,6 @@ public class DatabaseConnection {
             } catch (SQLException e) {
                 System.err.println("Error closing database connection");
                 e.printStackTrace();
-            } finally {
-                connection = null;
             }
         }
     }

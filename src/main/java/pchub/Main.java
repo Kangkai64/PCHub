@@ -257,12 +257,14 @@ public class Main {
         System.out.println("\nID | Name | Category | Price | Stock");
         System.out.println("------------------------------------------");
         for (Product product : products) {
-            System.out.printf("%s | %s | %s | $%.2f | %d\n",
-                    product.getProductID(),
-                    product.getName(),
-                    product.getCategory(),
-                    product.getUnitPrice(),
-                    product.getCurrentQuantity());
+            if (product != null) {
+                System.out.printf("%s | %s | %s | $%.2f | %d\n",
+                        product.getProductID(),
+                        product.getName(),
+                        product.getCategory(),
+                        product.getUnitPrice(),
+                        product.getCurrentQuantity());
+            }
         }
     }
 

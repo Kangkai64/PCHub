@@ -12,18 +12,33 @@ import java.sql.Statement;
 public class ProductDao {
     public Product findById(String productID) {
         String sql = "SELECT * FROM product WHERE productID = ?";
+        Connection conn = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try {
+            conn = DatabaseConnection.getConnection();
+            if (conn == null) {
+                throw new SQLException("Failed to establish database connection");
+            }
 
+            preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, productID);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 return mapResultSetToProduct(resultSet);
             }
         } catch (SQLException e) {
             System.err.println("Error finding product by ID: " + e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) resultSet.close();
+                if (preparedStatement != null) preparedStatement.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                System.err.println("Error closing database resources: " + e.getMessage());
+            }
         }
 
         return null;
@@ -32,11 +47,19 @@ public class ProductDao {
     public Product[] findAll() {
         Product[] products = new Product[100];
         String sql = "SELECT * FROM product";
+        Connection conn = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
         int index = 0;
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
+        try {
+            conn = DatabaseConnection.getConnection();
+            if (conn == null) {
+                throw new SQLException("Failed to establish database connection");
+            }
+
+            statement = conn.createStatement();
+            resultSet = statement.executeQuery(sql);
 
             while (resultSet.next()) {
                 products[index] = mapResultSetToProduct(resultSet);
@@ -44,6 +67,14 @@ public class ProductDao {
             }
         } catch (SQLException e) {
             System.err.println("Error finding all products: " + e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) resultSet.close();
+                if (statement != null) statement.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                System.err.println("Error closing database resources: " + e.getMessage());
+            }
         }
 
         return products;
@@ -52,13 +83,20 @@ public class ProductDao {
     public Product[] findByCategory(String category) {
         Product[] products = new Product[100];
         String sql = "SELECT * FROM product WHERE category = ?";
+        Connection conn = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         int index = 0;
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try {
+            conn = DatabaseConnection.getConnection();
+            if (conn == null) {
+                throw new SQLException("Failed to establish database connection");
+            }
 
+            preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, category);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 products[index] = mapResultSetToProduct(resultSet);
@@ -66,6 +104,14 @@ public class ProductDao {
             }
         } catch (SQLException e) {
             System.err.println("Error finding products by category: " + e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) resultSet.close();
+                if (preparedStatement != null) preparedStatement.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                System.err.println("Error closing database resources: " + e.getMessage());
+            }
         }
 
         return products;
@@ -74,10 +120,16 @@ public class ProductDao {
     public boolean insertProduct(Product product) {
         String sql = "INSERT INTO product (productID, name, description, brand, category, unitPrice, currentQuantity, specifications) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        Connection conn = null;
+        PreparedStatement preparedStatement = null;
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try {
+            conn = DatabaseConnection.getConnection();
+            if (conn == null) {
+                throw new SQLException("Failed to establish database connection");
+            }
 
+            preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, product.getProductID());
             preparedStatement.setString(2, product.getName());
             preparedStatement.setString(3, product.getDescription());
@@ -91,18 +143,30 @@ public class ProductDao {
             return affectedRows > 0;
         } catch (SQLException e) {
             System.err.println("Error saving product: " + e.getMessage());
+            return false;
+        } finally {
+            try {
+                if (preparedStatement != null) preparedStatement.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                System.err.println("Error closing database resources: " + e.getMessage());
+            }
         }
-
-        return false;
     }
 
     public boolean updateProduct(Product product) {
         String sql = "UPDATE product SET name = ?, description = ?, brand = ?, category = ?, " +
                 "unitPrice = ?, currentQuantity = ?, specifications = ? WHERE productID = ?";
+        Connection conn = null;
+        PreparedStatement preparedStatement = null;
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try {
+            conn = DatabaseConnection.getConnection();
+            if (conn == null) {
+                throw new SQLException("Failed to establish database connection");
+            }
 
+            preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, product.getName());
             preparedStatement.setString(2, product.getDescription());
             preparedStatement.setString(3, product.getBrand());
@@ -117,15 +181,28 @@ public class ProductDao {
         } catch (SQLException e) {
             System.err.println("Error updating product: " + e.getMessage());
             return false;
+        } finally {
+            try {
+                if (preparedStatement != null) preparedStatement.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                System.err.println("Error closing database resources: " + e.getMessage());
+            }
         }
     }
 
     public boolean deleteProduct(String productID) {
         String sql = "DELETE FROM product WHERE productID = ?";
+        Connection conn = null;
+        PreparedStatement preparedStatement = null;
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try {
+            conn = DatabaseConnection.getConnection();
+            if (conn == null) {
+                throw new SQLException("Failed to establish database connection");
+            }
 
+            preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, productID);
 
             int affectedRows = preparedStatement.executeUpdate();
@@ -133,6 +210,13 @@ public class ProductDao {
         } catch (SQLException e) {
             System.err.println("Error deleting product: " + e.getMessage());
             return false;
+        } finally {
+            try {
+                if (preparedStatement != null) preparedStatement.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                System.err.println("Error closing database resources: " + e.getMessage());
+            }
         }
     }
 

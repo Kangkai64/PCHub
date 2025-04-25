@@ -11,97 +11,250 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
+-- Disable foreign key checks
+SET FOREIGN_KEY_CHECKS = 0;
+
 --
 -- Database: `pchub`
 --
+DROP DATABASE IF EXISTS `pchub`;
 CREATE DATABASE IF NOT EXISTS `pchub` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `pchub`;
 
+-- Drop all tables in correct order
+DROP TABLE IF EXISTS `user_payment_method`;
+DROP TABLE IF EXISTS `payment`;
+DROP TABLE IF EXISTS `orderitem`;
+DROP TABLE IF EXISTS `order`;
+DROP TABLE IF EXISTS `cartitem`;
+DROP TABLE IF EXISTS `shoppingcart`;
+DROP TABLE IF EXISTS `shippingaddress`;
+DROP TABLE IF EXISTS `orderhistory`;
+DROP TABLE IF EXISTS `adminrole`;
+DROP TABLE IF EXISTS `product`;
+DROP TABLE IF EXISTS `category`;
+DROP TABLE IF EXISTS `paymentmethod`;
+DROP TABLE IF EXISTS `user`;
+
+-- Re-enable foreign key checks
+SET FOREIGN_KEY_CHECKS = 1;
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `adminrole`
+-- Table structure for table `user`
 --
 
-DROP TABLE IF EXISTS `adminrole`;
-CREATE TABLE `adminrole` (
-  `adminID` varchar(10) NOT NULL,
+CREATE TABLE `user` (
   `userID` varchar(10) NOT NULL,
-  `department` varchar(50) DEFAULT NULL,
-  `accessLevel` varchar(30) DEFAULT NULL
+  `username` varchar(50) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `registrationDate` datetime NOT NULL DEFAULT current_timestamp(),
+  `lastLogin` datetime DEFAULT NULL,
+  `status` varchar(20) DEFAULT 'active',
+  `phone` varchar(20) DEFAULT NULL,
+  `fullName` varchar(255) DEFAULT NULL,
+  `role` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`userID`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `adminrole`
+-- Table structure for table `category`
 --
 
-INSERT INTO `adminrole` (`adminID`, `userID`, `department`, `accessLevel`) VALUES
-('ADM001', 'A0001', 'IT', 'Super Admin'),
-('ADM002', 'A0002', 'Customer Service', 'Admin'),
-('ADM003', 'A0003', 'Inventory', 'Manager'),
-('ADM004', 'A0004', 'Sales', 'Admin'),
-('ADM005', 'A0005', 'Marketing', 'Manager');
+CREATE TABLE `category` (
+  `categoryID` varchar(10) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `parentCategory` varchar(10) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  PRIMARY KEY (`categoryID`),
+  KEY `parentCategory` (`parentCategory`),
+  CONSTRAINT `category_ibfk_1` FOREIGN KEY (`parentCategory`) REFERENCES `category` (`categoryID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Triggers `adminrole`
+-- Table structure for table `paymentmethod`
 --
-DROP TRIGGER IF EXISTS `before_insert_adminrole`;
-DELIMITER $$
-CREATE TRIGGER `before_insert_adminrole` BEFORE INSERT ON `adminrole` FOR EACH ROW BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(adminID, 4)), 0) + 1 FROM adminrole);
-    SET NEW.adminID = CONCAT('ADM', LPAD(next_id, 3, '0'));
-END
-$$
-DELIMITER ;
 
--- --------------------------------------------------------
+CREATE TABLE `paymentmethod` (
+  `paymentMethodID` varchar(10) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `description` text DEFAULT NULL,
+  `addedDate` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`paymentMethodID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `product`
+--
+
+CREATE TABLE `product` (
+  `productID` varchar(10) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `brand` varchar(50) DEFAULT NULL,
+  `category` varchar(10) DEFAULT NULL,
+  `unitPrice` decimal(10,2) NOT NULL,
+  `currentQuantity` int(11) NOT NULL DEFAULT 0,
+  `specifications` text DEFAULT NULL,
+  PRIMARY KEY (`productID`),
+  KEY `category` (`category`),
+  CONSTRAINT `product_ibfk_1` FOREIGN KEY (`category`) REFERENCES `category` (`categoryID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `shoppingcart`
+--
+
+CREATE TABLE `shoppingcart` (
+  `cartID` varchar(10) NOT NULL,
+  `customerID` varchar(10) NOT NULL,
+  `createdDate` datetime NOT NULL DEFAULT current_timestamp(),
+  `lastUpdated` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `itemCount` int(11) DEFAULT 0,
+  `subtotal` decimal(10,2) DEFAULT 0.00,
+  PRIMARY KEY (`cartID`),
+  KEY `customerID` (`customerID`),
+  CONSTRAINT `shoppingcart_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `user` (`userID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Table structure for table `cartitem`
 --
 
-DROP TABLE IF EXISTS `cartitem`;
 CREATE TABLE `cartitem` (
   `cartItemID` varchar(10) NOT NULL,
   `cartID` varchar(10) NOT NULL,
   `productID` varchar(10) NOT NULL,
   `quantity` int(11) NOT NULL DEFAULT 1,
   `price` decimal(10,2) NOT NULL,
-  `subtotal` decimal(10,2) GENERATED ALWAYS AS (`price` * `quantity`) STORED
+  `subtotal` decimal(10,2) GENERATED ALWAYS AS (`price` * `quantity`) STORED,
+  PRIMARY KEY (`cartItemID`),
+  KEY `cartID` (`cartID`),
+  KEY `productID` (`productID`),
+  CONSTRAINT `cartitem_ibfk_1` FOREIGN KEY (`cartID`) REFERENCES `shoppingcart` (`cartID`),
+  CONSTRAINT `cartitem_ibfk_2` FOREIGN KEY (`productID`) REFERENCES `product` (`productID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Triggers `cartitem`
---
-DROP TRIGGER IF EXISTS `before_insert_cartitem`;
-DELIMITER $$
-CREATE TRIGGER `before_insert_cartitem` BEFORE INSERT ON `cartitem` FOR EACH ROW BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(cartItemID, 3)), 0) + 1 FROM cartitem);
-    SET NEW.cartItemID = CONCAT('CI', LPAD(next_id, 6, '0'));
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `category`
+-- Table structure for table `order`
 --
 
-DROP TABLE IF EXISTS `category`;
-CREATE TABLE `category` (
-  `categoryID` varchar(10) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `parentCategory` varchar(10) DEFAULT NULL,
-  `description` text DEFAULT NULL
+CREATE TABLE `order` (
+  `orderID` varchar(10) NOT NULL,
+  `customerID` varchar(10) NOT NULL,
+  `orderDate` datetime NOT NULL DEFAULT current_timestamp(),
+  `status` varchar(20) NOT NULL DEFAULT 'pending',
+  `totalAmount` decimal(10,2) NOT NULL,
+  `shippingAddress` varchar(255) NOT NULL,
+  `paymentMethodID` varchar(10) NOT NULL,
+  PRIMARY KEY (`orderID`),
+  KEY `customerID` (`customerID`),
+  KEY `paymentMethodID` (`paymentMethodID`),
+  CONSTRAINT `order_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `user` (`userID`),
+  CONSTRAINT `order_ibfk_2` FOREIGN KEY (`paymentMethodID`) REFERENCES `paymentmethod` (`paymentMethodID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `orderitem`
+--
+
+CREATE TABLE `orderitem` (
+  `orderItemID` varchar(10) NOT NULL,
+  `orderID` varchar(10) NOT NULL,
+  `productID` varchar(10) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `unitPrice` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`orderItemID`),
+  KEY `orderID` (`orderID`),
+  KEY `productID` (`productID`),
+  CONSTRAINT `orderitem_ibfk_1` FOREIGN KEY (`orderID`) REFERENCES `order` (`orderID`),
+  CONSTRAINT `orderitem_ibfk_2` FOREIGN KEY (`productID`) REFERENCES `product` (`productID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `payment`
+--
+
+CREATE TABLE `payment` (
+  `billID` varchar(10) NOT NULL,
+  `orderID` varchar(10) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `paymentMethodID` varchar(10) NOT NULL,
+  `transactionID` varchar(50) DEFAULT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'pending',
+  `date` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`billID`),
+  KEY `orderID` (`orderID`),
+  KEY `paymentMethodID` (`paymentMethodID`),
+  CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`orderID`) REFERENCES `order` (`orderID`),
+  CONSTRAINT `payment_ibfk_2` FOREIGN KEY (`paymentMethodID`) REFERENCES `paymentmethod` (`paymentMethodID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `user_payment_method`
+--
+
+CREATE TABLE `user_payment_method` (
+  `userPaymentMethodID` varchar(10) NOT NULL,
+  `userID` varchar(10) NOT NULL,
+  `paymentMethodID` varchar(10) NOT NULL,
+  `details` text DEFAULT NULL,
+  `isDefault` tinyint(1) NOT NULL DEFAULT 0,
+  `addedDate` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`userPaymentMethodID`),
+  KEY `userID` (`userID`),
+  KEY `paymentMethodID` (`paymentMethodID`),
+  CONSTRAINT `user_payment_method_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`),
+  CONSTRAINT `user_payment_method_ibfk_2` FOREIGN KEY (`paymentMethodID`) REFERENCES `paymentmethod` (`paymentMethodID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `shippingaddress`
+--
+
+CREATE TABLE `shippingaddress` (
+  `shippingaddressID` varchar(10) NOT NULL CHECK (`shippingaddressID` regexp 'SA[0-9]{6}'),
+  `customerID` varchar(10) NOT NULL,
+  `shippingAddresses` text DEFAULT NULL,
+  PRIMARY KEY (`shippingaddressID`),
+  KEY `customerID` (`customerID`),
+  CONSTRAINT `shippingaddress_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `user` (`userID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `orderhistory`
+--
+
+CREATE TABLE `orderhistory` (
+  `historyID` varchar(10) NOT NULL,
+  `customerID` varchar(10) NOT NULL,
+  PRIMARY KEY (`historyID`),
+  KEY `customerID` (`customerID`),
+  CONSTRAINT `orderhistory_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `user` (`userID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `adminrole`
+--
+
+CREATE TABLE `adminrole` (
+  `adminID` varchar(10) NOT NULL,
+  `userID` varchar(10) NOT NULL,
+  `role` varchar(50) NOT NULL,
+  `permissions` text DEFAULT NULL,
+  PRIMARY KEY (`adminID`),
+  KEY `userID` (`userID`),
+  CONSTRAINT `adminrole_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -123,335 +276,23 @@ INSERT INTO `category` (`categoryID`, `name`, `parentCategory`, `description`) V
 ('CAT012', 'Graphics Cards', 'CAT001', 'Video cards for gaming and professional work'),
 ('CAT013', 'Power Supplies', 'CAT001', 'Power supply units for computers'),
 ('CAT014', 'Cases', 'CAT001', 'Computer tower cases in various sizes'),
-('CAT015', 'Cooling', 'CAT001', 'Fans and cooling systems for computers'),
-('CAT016', 'Monitors', 'CAT002', 'Computer displays of various sizes and resolutions'),
-('CAT017', 'Keyboards', 'CAT002', 'Computer keyboards including mechanical and membrane'),
-('CAT018', 'Mice', 'CAT002', 'Computer mice and trackpads'),
-('CAT019', 'Printers', 'CAT002', 'Inkjet and laser printers and scanners'),
-('CAT020', 'Speakers', 'CAT002', 'Computer speakers and audio systems'),
-('CAT021', 'Headsets', 'CAT002', 'Headphones and headsets with microphones'),
-('CAT022', 'Webcams', 'CAT002', 'Cameras for video conferencing and streaming'),
-('CAT023', 'Routers', 'CAT003', 'Wired and wireless routers'),
-('CAT024', 'Switches', 'CAT003', 'Network switches for home and office'),
-('CAT025', 'Network Cards', 'CAT003', 'Ethernet and WiFi network adapter cards'),
-('CAT026', 'Cables', 'CAT003', 'Networking and computer cables'),
-('CAT027', 'Operating Systems', 'CAT004', 'Windows Linux and other OS'),
-('CAT028', 'Office Software', 'CAT004', 'Productivity software suites'),
-('CAT029', 'Security Software', 'CAT004', 'Antivirus and security applications'),
-('CAT030', 'Gaming Accessories', 'CAT005', 'Gaming mice keyboards and controllers');
+('CAT015', 'Cooling', 'CAT001', 'Fans and cooling systems for computers');
 
 --
--- Triggers `category`
---
-DROP TRIGGER IF EXISTS `before_insert_category`;
-DELIMITER $$
-CREATE TRIGGER `before_insert_category` BEFORE INSERT ON `category` FOR EACH ROW BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(categoryID, 4)), 0) + 1 FROM category);
-    SET NEW.categoryID = CONCAT('CAT', LPAD(next_id, 3, '0'));
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `order`
+-- Dumping data for table `product`
 --
 
-DROP TABLE IF EXISTS `order`;
-CREATE TABLE `order` (
-  `orderID` varchar(10) NOT NULL,
-  `customerID` varchar(10) NOT NULL,
-  `orderDate` datetime NOT NULL DEFAULT current_timestamp(),
-  `status` varchar(20) NOT NULL DEFAULT 'pending',
-  `totalAmount` decimal(10,2) NOT NULL,
-  `shippingAddress` varchar(255) NOT NULL,
-  `paymentMethodID` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Triggers `order`
---
-DROP TRIGGER IF EXISTS `before_insert_order`;
-DELIMITER $$
-CREATE TRIGGER `before_insert_order` BEFORE INSERT ON `order` FOR EACH ROW BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(orderID, 2)), 0) + 1 FROM `order`);
-    SET NEW.orderID = CONCAT('O', LPAD(next_id, 4, '0'));
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `orderhistory`
---
-
-DROP TABLE IF EXISTS `orderhistory`;
-CREATE TABLE `orderhistory` (
-  `historyID` varchar(10) NOT NULL,
-  `customerID` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Triggers `orderhistory`
---
-DROP TRIGGER IF EXISTS `before_insert_orderhistory`;
-DELIMITER $$
-CREATE TRIGGER `before_insert_orderhistory` BEFORE INSERT ON `orderhistory` FOR EACH ROW BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(historyID, 3)), 0) + 1 FROM orderhistory);
-    SET NEW.historyID = CONCAT('OH', LPAD(next_id, 7, '0'));
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `orderitem`
---
-
-DROP TABLE IF EXISTS `orderitem`;
-CREATE TABLE `orderitem` (
-  `orderItemID` varchar(10) NOT NULL,
-  `orderID` varchar(10) NOT NULL,
-  `productID` varchar(10) NOT NULL,
-  `quantity` int(11) NOT NULL,
-  `unitPrice` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Triggers `orderitem`
---
-DROP TRIGGER IF EXISTS `before_insert_orderitem`;
-DELIMITER $$
-CREATE TRIGGER `before_insert_orderitem` BEFORE INSERT ON `orderitem` FOR EACH ROW BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(orderItemID, 3)), 0) + 1 FROM orderitem);
-    SET NEW.orderItemID = CONCAT('OI', LPAD(next_id, 7, '0'));
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `payment`
---
-
-DROP TABLE IF EXISTS `payment`;
-CREATE TABLE `payment` (
-  `billID` varchar(10) NOT NULL,
-  `orderID` varchar(10) NOT NULL,
-  `amount` decimal(10,2) NOT NULL,
-  `paymentMethodID` varchar(10) NOT NULL,
-  `transactionID` varchar(50) DEFAULT NULL,
-  `status` varchar(20) NOT NULL DEFAULT 'pending',
-  `date` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Triggers `payment`
---
-DROP TRIGGER IF EXISTS `before_insert_payment`;
-DELIMITER $$
-CREATE TRIGGER `before_insert_payment` BEFORE INSERT ON `payment` FOR EACH ROW BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(billID, 2)), 0) + 1 FROM payment);
-    SET NEW.billID = CONCAT('B', LPAD(next_id, 6, '0'));
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `paymentmethod`
---
-
-DROP TABLE IF EXISTS `paymentmethod`;
-CREATE TABLE `paymentmethod` (
-  `paymentMethodID` varchar(10) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `type` varchar(20) NOT NULL,
-  `description` text DEFAULT NULL,
-  `addedDate` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Triggers `paymentmethod`
---
-DROP TRIGGER IF EXISTS `before_insert_paymentmethod`;
-DELIMITER $$
-CREATE TRIGGER `before_insert_paymentmethod` BEFORE INSERT ON `paymentmethod` FOR EACH ROW BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(paymentMethodID, 3)), 0) + 1 FROM paymentmethod);
-    SET NEW.paymentMethodID = CONCAT('PM', LPAD(next_id, 3, '0'));
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `product`
---
-
-DROP TABLE IF EXISTS `product`;
-CREATE TABLE `product` (
-  `productID` varchar(10) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `description` text DEFAULT NULL,
-  `brand` varchar(50) DEFAULT NULL,
-  `category` varchar(10) DEFAULT NULL,
-  `unitPrice` decimal(10,2) NOT NULL,
-  `currentQuantity` int(11) NOT NULL DEFAULT 0,
-  `specifications` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Triggers `product`
---
-DROP TRIGGER IF EXISTS `before_insert_product`;
-DELIMITER $$
-CREATE TRIGGER `before_insert_product` BEFORE INSERT ON `product` FOR EACH ROW BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(productID, 2)), 0) + 1 FROM product);
-    SET NEW.productID = CONCAT('P', LPAD(next_id, 5, '0'));
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `productcatalog`
---
-
-DROP TABLE IF EXISTS `productcatalog`;
-CREATE TABLE `productcatalog` (
-  `catalogID` varchar(10) NOT NULL,
-  `categories` text DEFAULT NULL,
-  `brands` text DEFAULT NULL,
-  `filters` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Triggers `productcatalog`
---
-DROP TRIGGER IF EXISTS `before_insert_productcatalog`;
-DELIMITER $$
-CREATE TRIGGER `before_insert_productcatalog` BEFORE INSERT ON `productcatalog` FOR EACH ROW BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(catalogID, 3)), 0) + 1 FROM productcatalog);
-    SET NEW.catalogID = CONCAT('PC', LPAD(next_id, 5, '0'));
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `shippingaddress`
---
-
-DROP TABLE IF EXISTS `shippingaddress`;
-CREATE TABLE `shippingaddress` (
-  `shippingaddressID` varchar(10) NOT NULL CHECK (`shippingaddressID` regexp 'SA[0-9]{6}'),
-  `customerID` varchar(10) NOT NULL,
-  `shippingAddresses` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `shippingaddress`
---
-
-INSERT INTO `shippingaddress` (`shippingaddressID`, `customerID`, `shippingAddresses`) VALUES
-('SA000001', 'C0001', '[{\"address\":\"123 Main St, Anytown, USA\",\"default\":true},{\"address\":\"123 Work Building, Downtown, USA\",\"default\":false}]'),
-('SA000002', 'C0002', '[{\"address\":\"456 Oak Ave, Sometown, USA\",\"default\":true}]'),
-('SA000003', 'C0003', '[{\"address\":\"789 Pine Rd, Othertown, USA\",\"default\":true},{\"address\":\"789 Office Complex, Business District, USA\",\"default\":false}]'),
-('SA000004', 'C0004', '[{\"address\":\"101 Maple Dr, Newtown, USA\",\"default\":true}]'),
-('SA000005', 'C0005', '[{\"address\":\"202 Birch Ln, Oldtown, USA\",\"default\":true}]'),
-('SA000006', 'C0006', '[{\"address\":\"303 Cedar St, Hometown, USA\",\"default\":true},{\"address\":\"303 Second Home, Vacation Spot, USA\",\"default\":false}]'),
-('SA000007', 'C0007', '[{\"address\":\"404 Elm Pl, Yourtown, USA\",\"default\":true}]'),
-('SA000008', 'C0008', '[{\"address\":\"505 Pine Ave, Theirtown, USA\",\"default\":true}]'),
-('SA000009', 'C0009', '[{\"address\":\"606 Oak St, Thattown, USA\",\"default\":true}]'),
-('SA000010', 'C0010', '[{\"address\":\"707 Maple Ave, Thistown, USA\",\"default\":true},{\"address\":\"707 Secondary Address, Nearby, USA\",\"default\":false}]'),
-('SA000011', 'C0011', '[{\"address\":\"809 Elm St, Anyplace, USA\",\"default\":true}]'),
-('SA000012', 'C0012', '[{\"address\":\"910 Cedar Rd, Someplace, USA\",\"default\":true}]'),
-('SA000013', 'C0013', '[{\"address\":\"1011 Birch Dr, Otherplace, USA\",\"default\":true}]'),
-('SA000014', 'C0014', '[{\"address\":\"1112 Oak Lane, Newplace, USA\",\"default\":true},{\"address\":\"1112 Work Place, Business Park, USA\",\"default\":false}]'),
-('SA000015', 'C0015', '[{\"address\":\"1213 Pine St, Oldplace, USA\",\"default\":true}]'),
-('SA000016', 'C0016', '[{\"address\":\"1314 Maple Blvd, Homeplace, USA\",\"default\":true}]'),
-('SA000017', 'C0017', '[{\"address\":\"1415 Cedar Ave, Yourplace, USA\",\"default\":true}]'),
-('SA000018', 'C0018', '[{\"address\":\"1516 Elm Rd, Theirplace, USA\",\"default\":true},{\"address\":\"1516 PO Box, Mail Center, USA\",\"default\":false}]'),
-('SA000019', 'C0019', '[{\"address\":\"1617 Birch Ave, Thatplace, USA\",\"default\":true}]'),
-('SA000020', 'C0020', '[{\"address\":\"1718 Cedar Blvd, Thistown, USA\",\"default\":true}]');
-
---
--- Triggers `shippingaddress`
---
-DROP TRIGGER IF EXISTS `before_insert_shippingaddress`;
-DELIMITER $$
-CREATE TRIGGER `before_insert_shippingaddress` BEFORE INSERT ON `shippingaddress` FOR EACH ROW BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(CAST(SUBSTRING(shippingaddressID, 3) AS UNSIGNED)), 0) + 1 FROM shippingaddress);
-    SET NEW.shippingaddressID = CONCAT('SA', LPAD(next_id, 6, '0'));
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `shoppingcart`
---
-
-DROP TABLE IF EXISTS `shoppingcart`;
-CREATE TABLE `shoppingcart` (
-  `cartID` varchar(10) NOT NULL,
-  `customerID` varchar(10) NOT NULL,
-  `createdDate` datetime NOT NULL DEFAULT current_timestamp(),
-  `lastUpdated` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `itemCount` int(11) DEFAULT 0,
-  `subtotal` decimal(10,2) DEFAULT 0.00
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Triggers `shoppingcart`
---
-DROP TRIGGER IF EXISTS `before_insert_shoppingcart`;
-DELIMITER $$
-CREATE TRIGGER `before_insert_shoppingcart` BEFORE INSERT ON `shoppingcart` FOR EACH ROW BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(cartID, 3)), 0) + 1 FROM shoppingcart);
-    SET NEW.cartID = CONCAT('CA', LPAD(next_id, 5, '0'));
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `user`
---
-
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
-  `userID` varchar(10) NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `registrationDate` datetime NOT NULL DEFAULT current_timestamp(),
-  `lastLogin` datetime DEFAULT NULL,
-  `status` varchar(20) DEFAULT 'active',
-  `phone` varchar(20) DEFAULT NULL,
-  `fullName` varchar(255) DEFAULT NULL,
-  `role` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `product` (`productID`, `name`, `description`, `brand`, `category`, `unitPrice`, `currentQuantity`, `specifications`) VALUES
+('P00001', 'Intel Core i9-13900K', '14th Gen Intel Core i9 Processor', 'Intel', 'CAT008', 599.99, 50, '{"cores":24,"threads":32,"base_clock":"3.0GHz","boost_clock":"5.8GHz"}'),
+('P00002', 'AMD Ryzen 9 7950X', 'AMD Ryzen 9 Processor', 'AMD', 'CAT008', 549.99, 45, '{"cores":16,"threads":32,"base_clock":"4.5GHz","boost_clock":"5.7GHz"}'),
+('P00003', 'NVIDIA RTX 4090', 'NVIDIA GeForce RTX 4090 Graphics Card', 'NVIDIA', 'CAT012', 1599.99, 30, '{"vram":"24GB","memory_type":"GDDR6X","boost_clock":"2.52GHz"}'),
+('P00004', 'AMD RX 7900 XTX', 'AMD Radeon RX 7900 XTX Graphics Card', 'AMD', 'CAT012', 999.99, 35, '{"vram":"24GB","memory_type":"GDDR6","boost_clock":"2.5GHz"}'),
+('P00005', 'Samsung 980 Pro 2TB', 'Samsung 980 Pro NVMe SSD', 'Samsung', 'CAT011', 199.99, 100, '{"capacity":"2TB","interface":"PCIe 4.0","read_speed":"7000MB/s","write_speed":"5000MB/s"}'),
+('P00006', 'Corsair Vengeance RGB 32GB', 'DDR5 Memory Kit', 'Corsair', 'CAT010', 149.99, 75, '{"capacity":"32GB","speed":"6000MHz","latency":"CL36"}'),
+('P00007', 'ASUS ROG Strix Z790-E', 'Intel Z790 Motherboard', 'ASUS', 'CAT009', 399.99, 40, '{"socket":"LGA1700","chipset":"Z790","memory_slots":4}'),
+('P00008', 'MSI MPG B650 Carbon', 'AMD B650 Motherboard', 'MSI', 'CAT009', 299.99, 45, '{"socket":"AM5","chipset":"B650","memory_slots":4}'),
+('P00009', 'Corsair RM1000x', '1000W Power Supply', 'Corsair', 'CAT013', 189.99, 60, '{"wattage":"1000W","efficiency":"80+ Gold","modular":"Full"}'),
+('P00010', 'NZXT H7 Elite', 'Mid-Tower Case', 'NZXT', 'CAT014', 179.99, 55, '{"form_factor":"Mid-Tower","material":"Steel/Tempered Glass","fans_included":3}');
 
 --
 -- Dumping data for table `user`
@@ -523,176 +364,8 @@ $$
 DELIMITER ;
 
 --
--- Table structure for table `user_payment_method`
+-- Add missing indexes for frequently queried columns
 --
-
-DROP TABLE IF EXISTS `user_payment_method`;
-CREATE TABLE `user_payment_method` (
-  `userPaymentMethodID` varchar(10) NOT NULL,
-  `userID` varchar(10) NOT NULL,
-  `paymentMethodID` varchar(10) NOT NULL,
-  `details` text DEFAULT NULL,
-  `isDefault` tinyint(1) NOT NULL DEFAULT 0,
-  `addedDate` datetime NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`userPaymentMethodID`),
-  KEY `userID` (`userID`),
-  KEY `paymentMethodID` (`paymentMethodID`),
-  CONSTRAINT `user_payment_method_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`),
-  CONSTRAINT `user_payment_method_ibfk_2` FOREIGN KEY (`paymentMethodID`) REFERENCES `paymentmethod` (`paymentMethodID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Triggers `user_payment_method`
---
-DROP TRIGGER IF EXISTS `before_insert_user_payment_method`;
-DELIMITER $$
-CREATE TRIGGER `before_insert_user_payment_method` BEFORE INSERT ON `user_payment_method` FOR EACH ROW BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(userPaymentMethodID, 3)), 0) + 1 FROM user_payment_method);
-    SET NEW.userPaymentMethodID = CONCAT('UP', LPAD(next_id, 7, '0'));
-END
-$$
-DELIMITER ;
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `adminrole`
---
-ALTER TABLE `adminrole`
-  ADD PRIMARY KEY (`adminID`),
-  ADD KEY `userID` (`userID`);
-
---
--- Indexes for table `cartitem`
---
-ALTER TABLE `cartitem`
-  ADD PRIMARY KEY (`cartItemID`),
-  ADD KEY `cartID` (`cartID`),
-  ADD KEY `productID` (`productID`);
-
---
--- Indexes for table `category`
---
-ALTER TABLE `category`
-  ADD PRIMARY KEY (`categoryID`),
-  ADD KEY `parentCategory` (`parentCategory`);
-
---
--- Indexes for table `order`
---
-ALTER TABLE `order`
-  ADD PRIMARY KEY (`orderID`),
-  ADD KEY `customerID` (`customerID`),
-  ADD KEY `paymentMethodID` (`paymentMethodID`);
-
---
--- Indexes for table `orderhistory`
---
-ALTER TABLE `orderhistory`
-  ADD PRIMARY KEY (`historyID`),
-  ADD KEY `customerID` (`customerID`);
-
---
--- Indexes for table `orderitem`
---
-ALTER TABLE `orderitem`
-  ADD PRIMARY KEY (`orderItemID`),
-  ADD KEY `orderID` (`orderID`),
-  ADD KEY `productID` (`productID`);
-
---
--- Indexes for table `payment`
---
-ALTER TABLE `payment`
-  ADD PRIMARY KEY (`billID`),
-  ADD KEY `orderID` (`orderID`),
-  ADD KEY `paymentMethodID` (`paymentMethodID`);
-
---
--- Indexes for table `paymentmethod`
---
-ALTER TABLE `paymentmethod`
-  ADD PRIMARY KEY (`paymentMethodID`),
-  ADD KEY `customerID` (`customerID`);
-
---
--- Indexes for table `product`
---
-ALTER TABLE `product`
-  ADD PRIMARY KEY (`productID`),
-  ADD KEY `category` (`category`);
-
---
--- Indexes for table `productcatalog`
---
-ALTER TABLE `productcatalog`
-  ADD PRIMARY KEY (`catalogID`);
-ALTER TABLE `productcatalog` ADD FULLTEXT KEY `search_idx` (`categories`,`brands`,`filters`);
-
---
--- Indexes for table `shippingaddress`
---
-ALTER TABLE `shippingaddress`
-  ADD PRIMARY KEY (`shippingaddressID`),
-  ADD KEY `customerID` (`customerID`);
-
---
--- Indexes for table `shoppingcart`
---
-ALTER TABLE `shoppingcart`
-  ADD PRIMARY KEY (`cartID`),
-  ADD KEY `customerID` (`customerID`);
-
---
--- Indexes for table `user`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`userID`),
-  ADD UNIQUE KEY `username` (`username`),
-  ADD UNIQUE KEY `email` (`email`);
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `adminrole`
---
-ALTER TABLE `adminrole`
-  ADD CONSTRAINT `admin_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`);
-
---
--- Constraints for table `cartitem`
---
-ALTER TABLE `cartitem`
-  ADD CONSTRAINT `cartitem_ibfk_1` FOREIGN KEY (`cartID`) REFERENCES `shoppingcart` (`cartID`),
-  ADD CONSTRAINT `cartitem_ibfk_2` FOREIGN KEY (`productID`) REFERENCES `product` (`productID`);
-
---
--- Constraints for table `category`
---
-ALTER TABLE `category`
-  ADD CONSTRAINT `category_ibfk_1` FOREIGN KEY (`parentCategory`) REFERENCES `category` (`categoryID`);
-
---
--- Constraints for table `order`
---
-ALTER TABLE `order`
-  ADD CONSTRAINT `order_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `shippingaddress` (`customerID`),
-  ADD CONSTRAINT `order_ibfk_2` FOREIGN KEY (`paymentMethodID`) REFERENCES `paymentmethod` (`paymentMethodID`);
-
---
--- Constraints for table `orderhistory`
---
-ALTER TABLE `orderhistory`
-  ADD CONSTRAINT `orderhistory_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `shippingaddress` (`customerID`);
-
---
--- Constraints for table `orderitem`
---
-ALTER TABLE `orderitem`
-  ADD CONSTRAINT `orderitem_ibfk_1` FOREIGN KEY (`orderID`) REFERENCES `order` (`orderID`),
-  ADD CONSTRAINT `orderitem_ibfk_2` FOREIGN KEY (`productID`) REFERENCES `product`
+ALTER TABLE `product` ADD INDEX `idx_category` (`category`);
+ALTER TABLE `order` ADD INDEX `idx_customer_date` (`customerID`, `orderDate`);
+ALTER TABLE `cartitem` ADD INDEX `idx_cart_product` (`cartID`, `productID`);
