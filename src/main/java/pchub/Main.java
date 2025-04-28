@@ -1,12 +1,27 @@
 package pchub;
 
-import java.util.Scanner;
-import pchub.model.*;
-import pchub.model.enums.*;
-import pchub.service.*;
-import pchub.dao.*;
-import pchub.utils.*;
 import java.sql.SQLException;
+import java.util.Scanner;
+
+import pchub.dao.UserDao;
+import pchub.model.Address;
+import pchub.model.Bill;
+import pchub.model.CartItem;
+import pchub.model.Order;
+import pchub.model.OrderItem;
+import pchub.model.PaymentMethod;
+import pchub.model.Product;
+import pchub.model.ShoppingCart;
+import pchub.model.User;
+import pchub.model.enums.OrderStatus;
+import pchub.model.enums.PaymentType;
+import pchub.model.enums.UserRole;
+import pchub.service.AddressService;
+import pchub.service.CartService;
+import pchub.service.OrderService;
+import pchub.service.ProductService;
+import pchub.service.UserService;
+import pchub.utils.ConsoleUtils;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
@@ -121,8 +136,10 @@ public class Main {
 
     private static void register() {
         ConsoleUtils.printHeader("      Register      ");
+        String fullname = ConsoleUtils.getStringInput(scanner, "Enter full name: ");
         String username = ConsoleUtils.getStringInput(scanner, "Enter username: ");
         String email = ConsoleUtils.getStringInput(scanner, "Enter email: ");
+        String phone = ConsoleUtils.getStringInput(scanner, "Enter phone number (format: 0XX-XXXXXXX): ");
         String password = ConsoleUtils.getPasswordInput(scanner, "Enter password: ");
         String confirmPassword = ConsoleUtils.getPasswordInput(scanner, "Confirm password: ");
 
@@ -134,7 +151,9 @@ public class Main {
         try {
             User newUser = new User();
             newUser.setUsername(username);
+            newUser.setFullName(fullname);
             newUser.setEmail(email);
+            newUser.setPhone(phone);
             newUser.setPassword(password); // Will be hashed in the service
             newUser.setRole(UserRole.CUSTOMER); // Default role for new registrations
 
