@@ -3,11 +3,10 @@ package pchub.service;
 import pchub.dao.PaymentDao;
 import pchub.dao.PaymentMethodDao;
 import pchub.model.PaymentMethod;
-import pchub.model.enums.PaymentStatus;
+import pchub.model.Payment;
 import pchub.model.enums.PaymentType;
 
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * Service class for managing payments and payment methods in the PC Hub system.
@@ -29,9 +28,9 @@ public class PaymentService {
      * Retrieves all payment methods
      * @return List of all payment methods
      */
-    public List<PaymentMethod> getAllPaymentMethods() {
+    public PaymentMethod[] getAllPaymentMethods() {
         try {
-            return paymentMethodDao.getAllPaymentMethods();
+            return paymentMethodDao.findAll();
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve payment methods: " + e.getMessage(), e);
         }
@@ -49,7 +48,7 @@ public class PaymentService {
         }
 
         try {
-            return paymentMethodDao.getPaymentMethodById(paymentMethodId.trim());
+            return paymentMethodDao.findById(paymentMethodId.trim());
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve payment method: " + e.getMessage(), e);
         }
@@ -80,7 +79,7 @@ public class PaymentService {
             paymentMethod.setType(type);
             paymentMethod.setDescription(description.trim());
             paymentMethod.setAddedDate(LocalDate.now());
-            return paymentMethodDao.save(paymentMethod);
+            return paymentMethodDao.insert(paymentMethod);
         } catch (Exception e) {
             throw new RuntimeException("Failed to add payment method: " + e.getMessage(), e);
         }
@@ -110,7 +109,7 @@ public class PaymentService {
         }
 
         try {
-            PaymentMethod paymentMethod = paymentMethodDao.getPaymentMethodById(paymentMethodId.trim());
+            PaymentMethod paymentMethod = paymentMethodDao.findById(paymentMethodId.trim());
             if (paymentMethod == null) {
                 return false;
             }
@@ -144,17 +143,17 @@ public class PaymentService {
 
     /**
      * Processes a payment
-     * @param paymentId The ID of the payment to process
+     * @param payment The payment to process
      * @return true if the payment was processed successfully, false otherwise
-     * @throws IllegalArgumentException if paymentId is invalid
+     * @throws IllegalArgumentException if payment is invalid
      */
-    public boolean processPayment(String paymentId) {
-        if (paymentId == null || paymentId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Payment ID cannot be null or empty");
+    public boolean processPayment(Payment payment) {
+        if (payment == null) {
+            throw new IllegalArgumentException("Payment cannot be null");
         }
 
         try {
-            return paymentDao.updatePaymentStatus(paymentId.trim(), PaymentStatus.COMPLETED);
+            return paymentDao.update(payment);
         } catch (Exception e) {
             throw new RuntimeException("Failed to process payment: " + e.getMessage(), e);
         }
@@ -162,17 +161,17 @@ public class PaymentService {
 
     /**
      * Refunds a payment
-     * @param paymentId The ID of the payment to refund
+     * @param payment The payment to refund
      * @return true if the refund was processed successfully, false otherwise
-     * @throws IllegalArgumentException if paymentId is invalid
+     * @throws IllegalArgumentException if payment is invalid
      */
-    public boolean refundPayment(String paymentId) {
-        if (paymentId == null || paymentId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Payment ID cannot be null or empty");
+    public boolean refundPayment(Payment payment) {
+        if (payment == null) {
+            throw new IllegalArgumentException("Payment cannot be null");
         }
 
         try {
-            return paymentDao.updatePaymentStatus(paymentId.trim(), PaymentStatus.REFUNDED);
+            return paymentDao.update(payment);
         } catch (Exception e) {
             throw new RuntimeException("Failed to refund payment: " + e.getMessage(), e);
         }

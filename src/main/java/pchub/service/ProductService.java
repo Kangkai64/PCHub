@@ -105,7 +105,7 @@ public class ProductService {
         }
 
         try {
-            return productDao.insertProduct(product);
+            return productDao.insert(product);
         } catch (Exception e) {
             throw new RuntimeException("Failed to add product: " + e.getMessage(), e);
         }
@@ -123,7 +123,7 @@ public class ProductService {
         }
 
         try {
-            return productDao.updateProduct(product);
+            return productDao.update(product);
         } catch (Exception e) {
             throw new RuntimeException("Failed to update product: " + e.getMessage(), e);
         }
@@ -141,7 +141,7 @@ public class ProductService {
         }
 
         try {
-            return productDao.deleteProduct(productId.trim());
+            return productDao.delete(productId.trim());
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete product: " + e.getMessage(), e);
         }

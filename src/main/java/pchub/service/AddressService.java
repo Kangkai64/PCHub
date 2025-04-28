@@ -73,7 +73,7 @@ public class AddressService {
         }
 
         try {
-            return addressDao.save(address);
+            return addressDao.insert(address);
         } catch (SQLException e) {
             throw new SQLException("Failed to add address: " + e.getMessage(), e);
         }

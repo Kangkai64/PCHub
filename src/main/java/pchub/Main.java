@@ -21,6 +21,7 @@ public class Main {
     public static void main(String[] args) {
         ConsoleUtils.displayLogo();
 
+        // Only run this if you want to initialize the database
         initializeDatabase();
 
         boolean exit = false;

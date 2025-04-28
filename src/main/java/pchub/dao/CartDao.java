@@ -12,35 +12,9 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class CartDao {
-    public ShoppingCart findByUserId(String customerId) throws SQLException {
-        String sql = "SELECT * FROM shoppingcart WHERE customerID = ?";
-
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
-            preparedStatement.setString(1, customerId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                ShoppingCart cart = extractCartFromResultSet(resultSet);
-                loadCartItems(connection, cart);
-                return cart;
-            } else {
-                // No cart found, create a new one
-                ShoppingCart cart = new ShoppingCart();
-                cart.setCustomerId(customerId);
-                String cartId = createCart(cart);
-                cart.setCartId(cartId);
-                return cart;
-            }
-        } catch (SQLException e) {
-            System.err.println("Error finding cart by user ID: " + e.getMessage());
-            throw e;
-        }
-    }
-
-    public ShoppingCart getCartById(String cartId) throws SQLException {
+public class CartDao extends DaoTemplate<ShoppingCart> {
+    @Override
+    public ShoppingCart findById(String cartId) throws SQLException {
         String sql = "SELECT * FROM shoppingcart WHERE cartID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -50,7 +24,7 @@ public class CartDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                ShoppingCart cart = extractCartFromResultSet(resultSet);
+                ShoppingCart cart = mapResultSet(resultSet);
                 loadCartItems(connection, cart);
                 return cart;
             }
@@ -62,7 +36,39 @@ public class CartDao {
         return null;
     }
 
-    public String createCart(ShoppingCart cart) throws SQLException {
+    public ShoppingCart findByUserId(String customerId) throws SQLException {
+        String sql = "SELECT * FROM shoppingcart WHERE customerID = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, customerId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                ShoppingCart cart = mapResultSet(resultSet);
+                loadCartItems(connection, cart);
+                return cart;
+            } else {
+                // No cart found, create a new one
+                ShoppingCart cart = new ShoppingCart();
+                cart.setCustomerId(customerId);
+                if (insert(cart)) {
+                    // Get the newly created cart with the cartID
+                    ShoppingCart newCart = findByUserId(customerId);
+                    cart.setCartId(newCart.getCartId());
+                    return newCart;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error finding cart by user ID: " + e.getMessage());
+            throw e;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean insert(ShoppingCart cart) throws SQLException {
         String sql = "INSERT INTO shoppingcart (cartID, customerID, createdDate, lastUpdated, itemCount, subtotal) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -93,14 +99,14 @@ public class CartDao {
                         CartItem[] cartItemArrays = cart.getItems();
                         CartItemDao cartItemDao = new CartItemDao();
                         for (CartItem cartItem: cartItemArrays){
-                            cartItemDao.addCartItem(cartItem);
+                            cartItemDao.insert(cartItem);
                         }
                         connection.commit();
-                        return cartId;
+                        return true;
                     } else if (cart.getItems() == null) {
                         // No items to insertOrder
                         connection.commit();
-                        return cartId;
+                        return true;
                     }
                 }
 
@@ -119,7 +125,8 @@ public class CartDao {
         }
     }
 
-    public boolean updateCart(ShoppingCart cart) throws SQLException {
+    @Override
+    public boolean update(ShoppingCart cart) throws SQLException {
         String sql = "UPDATE shoppingcart SET lastUpdated = ?, itemCount = ?, subtotal = ? WHERE cartID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -144,7 +151,7 @@ public class CartDao {
                     if (cart.getItems() != null) {
                         CartItem[] cartItemArrays = cart.getItems();
                         for (CartItem cartItem: cartItemArrays){
-                            cartItemDao.addCartItem(cartItem);
+                            cartItemDao.insert(cartItem);
                         }
                         connection.commit();
                         return true;
@@ -170,7 +177,8 @@ public class CartDao {
         }
     }
 
-    public boolean deleteCart(String cartId) throws SQLException {
+    @Override
+    public boolean delete(String cartId) throws SQLException {
         String sql = "DELETE FROM shoppingcart WHERE cartID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -207,7 +215,8 @@ public class CartDao {
         }
     }
 
-    private ShoppingCart extractCartFromResultSet(ResultSet resultSet) throws SQLException {
+    @Override
+    public ShoppingCart mapResultSet(ResultSet resultSet) throws SQLException {
         ShoppingCart cart = new ShoppingCart();
         cart.setCartId(resultSet.getString("cartID"));
         cart.setCustomerId(resultSet.getString("customerID"));

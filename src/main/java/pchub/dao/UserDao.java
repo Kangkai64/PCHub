@@ -11,12 +11,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.sql.Date;
-import java.util.List;
 
-public class UserDao {
-    public User findById(String userId) {
+public class UserDao extends DaoTemplate<User> {
+    @Override
+    public User findById(String userId) throws SQLException {
         String sql = "SELECT * FROM user WHERE userID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -26,7 +25,7 @@ public class UserDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                return mapResultSetToUser(resultSet);
+                return mapResultSet(resultSet);
             }
         } catch (SQLException e) {
             System.err.println("Error finding user by ID: " + e.getMessage());
@@ -35,7 +34,7 @@ public class UserDao {
         return null;
     }
 
-    public User findByUsername(String username) {
+    public User findByUsername(String username) throws SQLException {
         String sql = "SELECT * FROM user WHERE username = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -45,7 +44,7 @@ public class UserDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                return mapResultSetToUser(resultSet);
+                return mapResultSet(resultSet);
             }
         } catch (SQLException e) {
             System.err.println("Error finding user by username: " + e.getMessage());
@@ -54,7 +53,7 @@ public class UserDao {
         return null;
     }
 
-    public User findByEmail(String email) {
+    public User findByEmail(String email) throws SQLException {
         String sql = "SELECT * FROM user WHERE email = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -64,7 +63,7 @@ public class UserDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                return mapResultSetToUser(resultSet);
+                return mapResultSet(resultSet);
             }
         } catch (SQLException e) {
             System.err.println("Error finding user by email: " + e.getMessage());
@@ -73,8 +72,9 @@ public class UserDao {
         return null;
     }
 
-    public List<User> findAll() {
-        List<User> users = new ArrayList<>();
+    public User[] findAll() throws SQLException {
+        User[] users = new User[999];
+        int index = 0;
         String sql = "SELECT * FROM user";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -82,7 +82,8 @@ public class UserDao {
              ResultSet resultSet = statement.executeQuery(sql)) {
 
             while (resultSet.next()) {
-                users.add(mapResultSetToUser(resultSet));
+                users[index] = mapResultSet(resultSet);
+                index++;
             }
         } catch (SQLException e) {
             System.err.println("Error finding all users: " + e.getMessage());
@@ -91,7 +92,8 @@ public class UserDao {
         return users;
     }
 
-    public boolean insertUser(User user) {
+    @Override
+    public boolean insert(User user) throws SQLException {
         String sql = "INSERT INTO user (userID, username, email, password, registrationDate, lastLogin, status, " +
                 "phone, fullName, role) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -119,7 +121,8 @@ public class UserDao {
         }
     }
 
-    public boolean updateUser(User user) {
+    @Override
+    public boolean update(User user) throws SQLException {
         String sql = "UPDATE user SET username = ?, email = ?, password = ?, lastLogin = ?, " +
                 "status = ?, phone = ?, fullName = ?, role = ? WHERE userID = ?";
 
@@ -162,7 +165,8 @@ public class UserDao {
         }
     }
 
-    public boolean deleteUser(String userId) {
+    @Override
+    public boolean delete(String userId) throws SQLException {
         String sql = "DELETE FROM user WHERE userID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -178,7 +182,8 @@ public class UserDao {
         }
     }
 
-    private User mapResultSetToUser(ResultSet resultSet) throws SQLException {
+    @Override
+    public User mapResultSet(ResultSet resultSet) throws SQLException {
         User user = new User();
         user.setUserId(resultSet.getString("userID"));
         user.setUsername(resultSet.getString("username"));

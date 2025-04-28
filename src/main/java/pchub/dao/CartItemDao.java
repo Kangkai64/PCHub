@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class CartItemDao {
+public class CartItemDao extends DaoTemplate<CartItem> {
 
     public CartItem[] getCartItems(String cartId) throws SQLException {
         String sql = "SELECT * FROM cartitem WHERE cartID = ?";
@@ -24,11 +24,7 @@ public class CartItemDao {
 
             while (resultSet.next()) {
                 CartItem item = new CartItem();
-                item.setCartItemId(resultSet.getString("cartItemID"));
-                item.setCartId(resultSet.getString("cartID"));
-                item.setProductId("productID");
-                item.setQuantity(resultSet.getInt("quantity"));
-                item.setUnitPrice(resultSet.getDouble("price"));
+                item = mapResultSet(resultSet);
                 // Note: subtotal is computed by the database as a generated column
 
                 items[index] = item;
@@ -41,7 +37,8 @@ public class CartItemDao {
         return items;
     }
 
-    public CartItem getCartItemById(String cartItemId) throws SQLException {
+    @Override
+    public CartItem findById(String cartItemId) throws SQLException {
         String sql = "SELECT * FROM cartitem WHERE cartItemID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -52,11 +49,7 @@ public class CartItemDao {
 
             if (resultSet.next()) {
                 CartItem item = new CartItem();
-                item.setCartItemId(resultSet.getString("cartItemID"));
-                item.setCartId(resultSet.getString("cartID"));
-                item.setProductId(resultSet.getString("productID"));
-                item.setQuantity(resultSet.getInt("quantity"));
-                item.setUnitPrice(resultSet.getDouble("price"));
+                item = mapResultSet(resultSet);
                 return item;
             }
         } catch (SQLException e) {
@@ -66,7 +59,7 @@ public class CartItemDao {
         return null;
     }
 
-    public CartItem getCartItemByProductId(String cartId, String productId) throws SQLException {
+    public CartItem findByProductId(String cartId, String productId) throws SQLException {
         String sql = "SELECT * FROM cartitem WHERE cartID = ? AND productID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -78,11 +71,7 @@ public class CartItemDao {
 
             if (resultSet.next()) {
                 CartItem item = new CartItem();
-                item.setCartItemId(resultSet.getString("cartItemID"));
-                item.setCartId(resultSet.getString("cartID"));
-                item.setProductId(resultSet.getString("productID"));
-                item.setQuantity(resultSet.getInt("quantity"));
-                item.setUnitPrice(resultSet.getDouble("price"));
+                item = mapResultSet(resultSet);
                 return item;
             }
         } catch (SQLException e) {
@@ -92,7 +81,8 @@ public class CartItemDao {
         return null;
     }
 
-    public String addCartItem(CartItem item) throws SQLException {
+    @Override
+    public boolean insert(CartItem item) throws SQLException {
         String sql = "INSERT INTO cartitem (cartItemID, cartID, productID, quantity, unitPrice) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -110,16 +100,17 @@ public class CartItemDao {
             int affectedRows = preparedStatement.executeUpdate();
 
             if (affectedRows > 0) {
-                return cartItemId;
+                return true;
             }
         } catch (SQLException e) {
             throw new SQLException("Error adding cart item: " + e.getMessage());
         }
 
-        return null;
+        return false;
     }
 
-    public boolean updateCartItem(CartItem item) throws SQLException {
+    @Override
+    public boolean update(CartItem item) throws SQLException {
         String sql = "UPDATE cartitem SET quantity = ?, unitPrice = ? WHERE cartItemID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -136,7 +127,8 @@ public class CartItemDao {
         }
     }
 
-    public boolean deleteCartItem(String cartItemId) throws SQLException {
+    @Override
+    public boolean delete(String cartItemId) throws SQLException {
         String sql = "DELETE FROM cartitem WHERE cartItemID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -164,6 +156,17 @@ public class CartItemDao {
         } catch (SQLException e) {
             throw new SQLException("Error deleting all cart items: " + e.getMessage());
         }
+    }
+
+    @Override
+    public CartItem mapResultSet(ResultSet resultSet) throws SQLException {
+        CartItem item = new CartItem();
+        item.setCartItemId(resultSet.getString("cartItemID"));
+        item.setCartId(resultSet.getString("cartID"));
+        item.setProductId(resultSet.getString("productID"));
+        item.setQuantity(resultSet.getInt("quantity"));
+        item.setUnitPrice(resultSet.getDouble("price"));
+        return item;
     }
 
     // Helper method to generate a simple cart item ID

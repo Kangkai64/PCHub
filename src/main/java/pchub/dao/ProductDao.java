@@ -9,8 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ProductDao {
-    public Product findById(String productID) {
+public class ProductDao extends DaoTemplate<Product> {
+    @Override
+    public Product findById(String productID) throws SQLException {
         String sql = "SELECT * FROM product WHERE productID = ?";
         Connection conn = null;
         PreparedStatement preparedStatement = null;
@@ -27,7 +28,7 @@ public class ProductDao {
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                return mapResultSetToProduct(resultSet);
+                return mapResultSet(resultSet);
             }
         } catch (SQLException e) {
             System.err.println("Error finding product by ID: " + e.getMessage());
@@ -44,7 +45,7 @@ public class ProductDao {
         return null;
     }
 
-    public Product[] findAll() {
+    public Product[] findAll() throws SQLException {
         Product[] products = new Product[100];
         String sql = "SELECT * FROM product";
         Connection conn = null;
@@ -62,7 +63,7 @@ public class ProductDao {
             resultSet = statement.executeQuery(sql);
 
             while (resultSet.next()) {
-                products[index] = mapResultSetToProduct(resultSet);
+                products[index] = mapResultSet(resultSet);
                 index++;
             }
         } catch (SQLException e) {
@@ -80,7 +81,7 @@ public class ProductDao {
         return products;
     }
 
-    public Product[] findByCategory(String category) {
+    public Product[] findByCategory(String category) throws SQLException {
         Product[] products = new Product[100];
         String sql = "SELECT * FROM product WHERE category = ?";
         Connection conn = null;
@@ -99,7 +100,7 @@ public class ProductDao {
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                products[index] = mapResultSetToProduct(resultSet);
+                products[index] = mapResultSet(resultSet);
                 index++;
             }
         } catch (SQLException e) {
@@ -117,7 +118,8 @@ public class ProductDao {
         return products;
     }
 
-    public boolean insertProduct(Product product) {
+    @Override
+    public boolean insert(Product product) {
         String sql = "INSERT INTO product (productID, name, description, brand, category, unitPrice, currentQuantity, specifications) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         Connection conn = null;
@@ -154,7 +156,8 @@ public class ProductDao {
         }
     }
 
-    public boolean updateProduct(Product product) {
+    @Override
+    public boolean update(Product product) throws SQLException {
         String sql = "UPDATE product SET name = ?, description = ?, brand = ?, category = ?, " +
                 "unitPrice = ?, currentQuantity = ?, specifications = ? WHERE productID = ?";
         Connection conn = null;
@@ -191,9 +194,10 @@ public class ProductDao {
         }
     }
 
-    public boolean deleteProduct(String productID) {
+    @Override
+    public boolean delete(String productID) throws SQLException {
         String sql = "DELETE FROM product WHERE productID = ?";
-        Connection conn = null;
+        Connection conn = null; 
         PreparedStatement preparedStatement = null;
 
         try {
@@ -220,7 +224,8 @@ public class ProductDao {
         }
     }
 
-    private Product mapResultSetToProduct(ResultSet resultSet) throws SQLException {
+    @Override
+    public Product mapResultSet(ResultSet resultSet) throws SQLException {
         Product product = new Product();
         product.setProductID(resultSet.getString("productID"));
         product.setName(resultSet.getString("name"));

@@ -136,14 +136,14 @@ public class OrderService {
                 if (item != null) {
                     Product product = productDao.findById(item.getProductId());
                     product.setCurrentQuantity(product.getCurrentQuantity() - item.getQuantity());
-                    if (!productDao.updateProduct(product)) {
+                    if (!productDao.update(product)) {
                         throw new RuntimeException("Failed to update product quantity");
                     }
                 }
             }
 
             // Save the order
-            boolean orderSaved = orderDao.insertOrder(order);
+            boolean orderSaved = orderDao.insert(order);
 
             // Clear the cart after successful order placement
             if (orderSaved) {
@@ -204,7 +204,7 @@ public class OrderService {
             payment.setPaymentMethodId(order.getPaymentMethod().getPaymentMethodId());
             payment.setStatus(PaymentStatus.PENDING);
 
-            if (paymentDao.insertPayment(payment)) {
+            if (paymentDao.insert(payment)) {
                 bill.setBillId(payment.getBillId());
                 bill.setPaymentStatus(payment.getStatus().toString());
             } else {
@@ -287,7 +287,7 @@ public class OrderService {
             }
 
             order.setStatus(newStatus);
-            return orderDao.updateOrder(order);
+            return orderDao.update(order);
         } catch (Exception e) {
             throw new RuntimeException("Failed to update order status: " + e.getMessage(), e);
         }
@@ -305,7 +305,7 @@ public class OrderService {
         }
 
         try {
-            return orderDao.deleteOrder(orderId.trim());
+            return orderDao.delete(orderId.trim());
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete order: " + e.getMessage(), e);
         }
@@ -333,12 +333,12 @@ public class OrderService {
             }
 
             // Update transaction ID
-            if (!paymentDao.updateTransactionId(billId.trim(), transactionId.trim())) {
+            if (!paymentDao.update(payment)) {
                 return false;
             }
 
             // Update payment status to COMPLETED
-            return paymentDao.updatePaymentStatus(billId.trim(), PaymentStatus.COMPLETED);
+            return paymentDao.update(payment);
         } catch (Exception e) {
             throw new RuntimeException("Failed to process payment: " + e.getMessage(), e);
         }

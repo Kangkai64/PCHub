@@ -10,43 +10,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
-public class PaymentMethodDao {
-    private Connection getConnection() throws SQLException {
-        return DatabaseConnection.getConnection();
-    }
+public class PaymentMethodDao extends DaoTemplate<PaymentMethod> {
 
-    public List<PaymentMethod> getAllPaymentMethods() {
-        List<PaymentMethod> paymentMethods = new ArrayList<>();
-        String sql = "SELECT * FROM payment_method";
-
-        try (Connection connection = getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-
-            while (resultSet.next()) {
-                paymentMethods.add(mapResultSetToPaymentMethod(resultSet));
-            }
-        } catch (SQLException e) {
-            System.err.println("Error retrieving all payment methods: " + e.getMessage());
-        }
-
-        return paymentMethods;
-    }
-
-    public PaymentMethod getPaymentMethodById(String paymentMethodId) {
+    @Override
+    public PaymentMethod findById(String paymentMethodId) {
         String sql = "SELECT * FROM payment_method WHERE paymentMethodID = ?";
 
-        try (Connection connection = getConnection();
+        try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, paymentMethodId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                return mapResultSetToPaymentMethod(resultSet);
+                return mapResultSet(resultSet);
             }
         } catch (SQLException e) {
             System.err.println("Error retrieving payment method by ID: " + e.getMessage());
@@ -55,10 +33,30 @@ public class PaymentMethodDao {
         return null;
     }
 
-    public boolean save(PaymentMethod paymentMethod) {
+    public PaymentMethod[] findAll() {
+        PaymentMethod[] paymentMethods = new PaymentMethod[50];
+        int index = 0;
+        String sql = "SELECT * FROM payment_method";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+
+            while (resultSet.next()) {
+                paymentMethods[index++] = mapResultSet(resultSet);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving all payment methods: " + e.getMessage());
+        }
+
+        return paymentMethods;
+    }
+
+    @Override
+    public boolean insert(PaymentMethod paymentMethod) {
         String sql = "INSERT INTO payment_method (paymentMethodID, name, description, type, addedDate) VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection connection = getConnection();
+        try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, paymentMethod.getPaymentMethodId());
@@ -75,10 +73,11 @@ public class PaymentMethodDao {
         }
     }
 
+    @Override
     public boolean update(PaymentMethod paymentMethod) {
         String sql = "UPDATE payment_method SET name = ?, description = ?, type = ? WHERE paymentMethodID = ?";
 
-        try (Connection connection = getConnection();
+        try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, paymentMethod.getName());
@@ -94,10 +93,11 @@ public class PaymentMethodDao {
         }
     }
 
+    @Override
     public boolean delete(String paymentMethodId) {
         String sql = "DELETE FROM payment_method WHERE paymentMethodID = ?";
 
-        try (Connection connection = getConnection();
+        try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, paymentMethodId);
@@ -109,7 +109,8 @@ public class PaymentMethodDao {
         }
     }
 
-    private PaymentMethod mapResultSetToPaymentMethod(ResultSet resultSet) throws SQLException {
+    @Override
+    public PaymentMethod mapResultSet(ResultSet resultSet) throws SQLException {
         PaymentMethod paymentMethod = new PaymentMethod();
         paymentMethod.setPaymentMethodId(resultSet.getString("paymentMethodID"));
         paymentMethod.setName(resultSet.getString("name"));

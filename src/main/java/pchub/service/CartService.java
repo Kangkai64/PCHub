@@ -11,10 +11,6 @@ import pchub.model.User;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
-/**
- * Service class for managing shopping carts in the PC Hub system.
- * This class provides methods for cart operations and item management.
- */
 public class CartService {
     private final CartDao cartDao;
     private final CartItemDao cartItemDao;
@@ -44,12 +40,14 @@ public class CartService {
         try {
             ShoppingCart cart = cartDao.findByUserId(user.getUserId());
             if (cart == null) {
+                // Create a new cart
                 cart = new ShoppingCart();
                 cart.setCustomerId(user.getUserId());
                 cart.setCreatedDate(LocalDateTime.now());
-                String cartId = cartDao.createCart(cart);
-                if (cartId != null) {
-                    cart.setCartId(cartId);
+                boolean cartFlag = cartDao.insert(cart);
+                if (cartFlag) {
+                    ShoppingCart newCart = cartDao.findByUserId(user.getUserId());
+                    cart.setCartId(newCart.getCartId());
                 } else {
                     throw new SQLException("Failed to create new shopping cart");
                 }
@@ -81,7 +79,7 @@ public class CartService {
         }
 
         try {
-            ShoppingCart cart = cartDao.getCartById(cartId.trim());
+            ShoppingCart cart = cartDao.findById(cartId.trim());
             if (cart != null) {
                 // Load cart items
                 CartItem[] items = cartItemDao.getCartItems(cartId.trim());
@@ -121,7 +119,7 @@ public class CartService {
 
         try {
             // Check if the product is already in the cart
-            CartItem existingItem = cartItemDao.getCartItemByProductId(cart.getCartId(), product.getProductID());
+            CartItem existingItem = cartItemDao.findByProductId(cart.getCartId(), product.getProductID());
 
             if (existingItem != null) {
                 int newQuantity = existingItem.getQuantity() + quantity;
@@ -137,7 +135,7 @@ public class CartService {
                 newItem.setUnitPrice(product.getUnitPrice());
                 newItem.setQuantity(quantity);
 
-                return cartItemDao.addCartItem(newItem) != null;
+                return cartItemDao.insert(newItem);
             }
         } catch (IllegalStateException e) {
             throw e;
@@ -171,7 +169,7 @@ public class CartService {
                 return removeItemFromCart(cart, productId);
             }
 
-            CartItem item = cartItemDao.getCartItemByProductId(cart.getCartId(), productId.trim());
+            CartItem item = cartItemDao.findByProductId(cart.getCartId(), productId.trim());
             if (item == null) {
                 return false;
             }
@@ -182,7 +180,7 @@ public class CartService {
             }
 
             item.setQuantity(quantity);
-            return cartItemDao.updateCartItem(item);
+            return cartItemDao.update(item);
         } catch (IllegalStateException e) {
             throw e;
         } catch (Exception e) {
@@ -207,12 +205,12 @@ public class CartService {
         }
 
         try {
-            CartItem item = cartItemDao.getCartItemByProductId(cart.getCartId(), productId.trim());
+            CartItem item = cartItemDao.findByProductId(cart.getCartId(), productId.trim());
             if (item == null) {
                 return false;
             }
 
-            return cartItemDao.deleteCartItem(item.getCartItemId());
+            return cartItemDao.delete(item.getCartItemId());
         } catch (Exception e) {
             throw new SQLException("Failed to remove item from cart: " + e.getMessage(), e);
         }
@@ -251,7 +249,7 @@ public class CartService {
         }
 
         try {
-            return cartDao.updateCart(cart);
+            return cartDao.update(cart);
         } catch (Exception e) {
             throw new SQLException("Failed to save cart: " + e.getMessage(), e);
         }

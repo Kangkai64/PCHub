@@ -15,7 +15,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Arrays;
 
-public class OrderDao {
+public class OrderDao extends DaoTemplate<Order> {
     private static final int MAX_ITEMS = 30;
     private final PaymentMethodDao paymentMethodDao;
 
@@ -23,7 +23,8 @@ public class OrderDao {
         this.paymentMethodDao = new PaymentMethodDao();
     }
 
-    public Order findById(String orderId) {
+    @Override
+    public Order findById(String orderId) throws SQLException {
         String sql = "SELECT * FROM `order` WHERE orderID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -33,7 +34,7 @@ public class OrderDao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                Order order = mapResultSetToOrder(resultSet);
+                Order order = mapResultSet(resultSet);
                 loadOrderItems(connection, order);
                 return order;
             }
@@ -44,8 +45,9 @@ public class OrderDao {
         return null;
     }
 
-    public Order[] findByUserId(String customerId) {
+    public Order[] findByUserId(String customerId) throws SQLException {
         Order[] orders = new Order[30];
+        int index = 0;
         String sql = "SELECT * FROM `order` WHERE customerID = ? ORDER BY orderDate DESC";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -54,10 +56,8 @@ public class OrderDao {
             preparedStatement.setString(1, customerId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            int index = 0;
-
             while (resultSet.next() && index < orders.length) {
-                Order order = mapResultSetToOrder(resultSet);
+                Order order = mapResultSet(resultSet);
                 loadOrderItems(connection, order);
                 orders[index++] = order;
             }
@@ -68,18 +68,17 @@ public class OrderDao {
         return orders;
     }
 
-    public Order[] findAll() {
+    public Order[] findAll() throws SQLException {
         Order[] orders = new Order[30];
+        int index = 0;
         String sql = "SELECT * FROM `order` ORDER BY orderDate DESC";
 
         try (Connection connection = DatabaseConnection.getConnection();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
 
-            int index = 0;
-
             while (resultSet.next() && index < orders.length) {
-                Order order = mapResultSetToOrder(resultSet);
+                Order order = mapResultSet(resultSet);
                 loadOrderItems(connection, order);
                 orders[index++] = order;
             }
@@ -90,7 +89,8 @@ public class OrderDao {
         return orders;
     }
 
-    public boolean insertOrder(Order order) {
+    @Override
+    public boolean insert(Order order) throws SQLException {
         String sql = "INSERT INTO `order` (customerID, orderDate, status, totalAmount, " +
                 "shippingAddress, paymentMethodID) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -114,7 +114,7 @@ public class OrderDao {
                         order.setOrderId(orderId);
 
                         // Save order items
-                        if (saveOrderItems(connection, order)) {
+                        if (insertOrderItems(connection, order)) {
                             connection.commit();
                             return true;
                         }
@@ -134,7 +134,8 @@ public class OrderDao {
         }
     }
 
-    public boolean updateOrder(Order order) {
+    @Override
+    public boolean update(Order order) throws SQLException {
         String sql = "UPDATE `order` SET status = ?, totalAmount = ? WHERE orderID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -150,7 +151,7 @@ public class OrderDao {
                 if (affectedRows > 0) {
                     // Delete existing order items and insert new ones
                     deleteOrderItems(connection, order.getOrderId());
-                    if (saveOrderItems(connection, order)) {
+                    if (insertOrderItems(connection, order)) {
                         connection.commit();
                         return true;
                     }
@@ -171,7 +172,8 @@ public class OrderDao {
         }
     }
 
-    public boolean deleteOrder(String orderId) {
+    @Override
+    public boolean delete(String orderId) throws SQLException {
         String sql = "DELETE FROM `order` WHERE orderID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -207,7 +209,8 @@ public class OrderDao {
         }
     }
 
-    private Order mapResultSetToOrder(ResultSet resultSet) throws SQLException {
+    @Override
+    public Order mapResultSet(ResultSet resultSet) throws SQLException {
         Order order = new Order();
         order.setOrderId(resultSet.getString("orderID"));
         order.setCustomerId(resultSet.getString("customerID"));
@@ -240,7 +243,7 @@ public class OrderDao {
         order.setItems(Arrays.copyOf(items, index));
     }
 
-    private boolean saveOrderItems(Connection connection, Order order) throws SQLException {
+    private boolean insertOrderItems(Connection connection, Order order) throws SQLException {
         String sql = "INSERT INTO order_item (orderID, productID, quantity, price) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -308,6 +311,6 @@ public class OrderDao {
         if (paymentMethodId == null || paymentMethodId.trim().isEmpty()) {
             return null;
         }
-        return paymentMethodDao.getPaymentMethodById(paymentMethodId.trim());
+        return paymentMethodDao.findById(paymentMethodId.trim());
     }
 }

@@ -4,7 +4,6 @@ import pchub.dao.UserDao;
 import pchub.model.User;
 import pchub.utils.PasswordUtils;
 
-import java.util.List;
 import java.util.Objects;
 import java.sql.SQLException;
 
@@ -68,7 +67,7 @@ public class UserService {
                 throw new IllegalStateException("Email already exists");
             }
 
-            return userDao.insertUser(user);
+            return userDao.insert(user);
         } catch (IllegalStateException e) {
             throw e;
         } catch (Exception e) {
@@ -99,8 +98,8 @@ public class UserService {
      * @return List of all users
      */
     public User[] getAllUsers() throws SQLException {
-        List<User> users = userDao.findAll();
-        return users.toArray(new User[0]);
+        User[] users = userDao.findAll();
+        return users;
     }
 
     /**
@@ -121,7 +120,7 @@ public class UserService {
                 throw new IllegalStateException("Email already in use by another user");
             }
 
-            return userDao.updateUser(user);
+            return userDao.update(user);
         } catch (IllegalStateException e) {
             throw e;
         } catch (Exception e) {
@@ -141,7 +140,7 @@ public class UserService {
         }
 
         try {
-            return userDao.deleteUser(userId.trim());
+            return userDao.delete(userId.trim());
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete user: " + e.getMessage(), e);
         }
@@ -170,7 +169,7 @@ public class UserService {
             User user = userDao.findById(userId.trim());
             if (user != null && PasswordUtils.verifyPassword(oldPassword.trim(), user.getPassword())) {
                 user.setPassword(newPassword.trim());
-                return userDao.updateUser(user);
+                return userDao.update(user);
             }
             return false;
         } catch (Exception e) {
