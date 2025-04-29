@@ -61,6 +61,9 @@ public class OrderDao extends DaoTemplate<Order> {
                 loadOrderItems(connection, order);
                 orders[index++] = order;
             }
+            if (index == 0) {
+                return new Order[0];
+            }
         } catch (SQLException e) {
             System.err.println("Error finding orders by user ID: " + e.getMessage());
         }

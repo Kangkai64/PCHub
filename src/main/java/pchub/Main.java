@@ -2,7 +2,6 @@ package pchub;
 
 import java.sql.SQLException;
 import java.util.Scanner;
-
 import pchub.dao.UserDao;
 import pchub.model.Address;
 import pchub.model.Bill;
@@ -22,6 +21,8 @@ import pchub.service.OrderService;
 import pchub.service.ProductService;
 import pchub.service.UserService;
 import pchub.utils.ConsoleUtils;
+import pchub.service.GenerateOTP;
+import pchub.service.EmailDeliveryService;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
@@ -78,7 +79,7 @@ public class Main {
         try {
             // Update all passwords to encrypted version of "123456"
             UserDao userDAO = new UserDao();
-            userDAO.updateAllPasswords("123456");
+            //userDAO.updateAllPasswords("123456");
             System.out.println("Database initialized successfully.");
         } catch (Exception e) {
             System.out.println("Error initializing database: " + e.getMessage());
@@ -249,136 +250,11 @@ public class Main {
             if (products == null) {
                 System.out.println("No products available.");
             } else {
-                System.out.println("\nSort by:");
-                System.out.println("1. Name (A-Z)");
-                System.out.println("2. Name (Z-A)");
-                System.out.println("3. Price (Low to High)");
-                System.out.println("4. Price (High to Low)");
-                System.out.println("5. Category");
-                System.out.println("6. Stock (High to Low)");
-                System.out.println("7. Stock (Low to High)");
-                System.out.println("8. No sorting");
-
-                int sortChoice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 8);
-                
-                switch (sortChoice) {
-                    case 1:
-                        products = sortProductsByName(products, true);
-                        break;
-                    case 2:
-                        products = sortProductsByName(products, false);
-                        break;
-                    case 3:
-                        products = sortProductsByPrice(products, true);
-                        break;
-                    case 4:
-                        products = sortProductsByPrice(products, false);
-                        break;
-                    case 5:
-                        products = sortProductsByCategory(products);
-                        break;
-                    case 6:
-                        products = sortProductsByStock(products, false);
-                        break;
-                    case 7:
-                        products = sortProductsByStock(products, true);
-                        break;
-                    case 8:
-                        // No sorting needed
-                        break;
-                }
-                
                 displayProductList(products);
             }
         } catch (Exception e) {
             System.out.println("Error fetching products: " + e.getMessage());
         }
-    }
-
-    private static Product[] sortProductsByName(Product[] products, boolean ascending) {
-        if (products == null || products.length <= 1) {
-            return products;
-        }
-
-        Product[] sortedProducts = products.clone();
-        for (int i = 0; i < sortedProducts.length - 1; i++) {
-            for (int j = 0; j < sortedProducts.length - i - 1; j++) {
-                if (sortedProducts[j] != null && sortedProducts[j + 1] != null) {
-                    int comparison = sortedProducts[j].getName().compareToIgnoreCase(sortedProducts[j + 1].getName());
-                    if (ascending ? comparison > 0 : comparison < 0) {
-                        Product temp = sortedProducts[j];
-                        sortedProducts[j] = sortedProducts[j + 1];
-                        sortedProducts[j + 1] = temp;
-                    }
-                }
-            }
-        }
-        return sortedProducts;
-    }
-
-    private static Product[] sortProductsByPrice(Product[] products, boolean ascending) {
-        if (products == null || products.length <= 1) {
-            return products;
-        }
-
-        Product[] sortedProducts = products.clone();
-        for (int i = 0; i < sortedProducts.length - 1; i++) {
-            for (int j = 0; j < sortedProducts.length - i - 1; j++) {
-                if (sortedProducts[j] != null && sortedProducts[j + 1] != null) {
-                    if (ascending ? 
-                        sortedProducts[j].getUnitPrice() > sortedProducts[j + 1].getUnitPrice() :
-                        sortedProducts[j].getUnitPrice() < sortedProducts[j + 1].getUnitPrice()) {
-                        Product temp = sortedProducts[j];
-                        sortedProducts[j] = sortedProducts[j + 1];
-                        sortedProducts[j + 1] = temp;
-                    }
-                }
-            }
-        }
-        return sortedProducts;
-    }
-
-    private static Product[] sortProductsByCategory(Product[] products) {
-        if (products == null || products.length <= 1) {
-            return products;
-        }
-
-        Product[] sortedProducts = products.clone();
-        for (int i = 0; i < sortedProducts.length - 1; i++) {
-            for (int j = 0; j < sortedProducts.length - i - 1; j++) {
-                if (sortedProducts[j] != null && sortedProducts[j + 1] != null) {
-                    int comparison = sortedProducts[j].getCategory().compareToIgnoreCase(sortedProducts[j + 1].getCategory());
-                    if (comparison > 0) {
-                        Product temp = sortedProducts[j];
-                        sortedProducts[j] = sortedProducts[j + 1];
-                        sortedProducts[j + 1] = temp;
-                    }
-                }
-            }
-        }
-        return sortedProducts;
-    }
-
-    private static Product[] sortProductsByStock(Product[] products, boolean ascending) {
-        if (products == null || products.length <= 1) {
-            return products;
-        }
-
-        Product[] sortedProducts = products.clone();
-        for (int i = 0; i < sortedProducts.length - 1; i++) {
-            for (int j = 0; j < sortedProducts.length - i - 1; j++) {
-                if (sortedProducts[j] != null && sortedProducts[j + 1] != null) {
-                    if (ascending ? 
-                        sortedProducts[j].getCurrentQuantity() > sortedProducts[j + 1].getCurrentQuantity() :
-                        sortedProducts[j].getCurrentQuantity() < sortedProducts[j + 1].getCurrentQuantity()) {
-                        Product temp = sortedProducts[j];
-                        sortedProducts[j] = sortedProducts[j + 1];
-                        sortedProducts[j + 1] = temp;
-                    }
-                }
-            }
-        }
-        return sortedProducts;
     }
 
     private static void searchProducts() {
@@ -567,6 +443,25 @@ public class Main {
             return; // User canceled checkout
         }
 
+        // Initialize OTP manager
+        GenerateOTP otpManager = new GenerateOTP();
+
+        // Initialize delivery service (e.g., email)
+        EmailDeliveryService emailService = new EmailDeliveryService(
+            "smtp.gmail.com", 587, "lcheekang33@gmail.com", "pdeu tpau dihs xdxz"
+        );
+
+        // Generate OTP and send it
+        String otp = otpManager.generateOTP(currentUser.getEmail());
+        emailService.sendOTP(currentUser.getEmail(), otp);
+
+        String userInputOtp = ConsoleUtils.getStringInput(scanner, "Enter OTP: ");
+        // Verify OTP
+        boolean isValid = otpManager.verifyOTP(currentUser.getEmail(), userInputOtp);
+        if (!isValid) {
+            return;
+        }
+        System.out.println("OTP verified successfully.");
         // Process order
         try {
             Order order = orderService.createOrderFromCart(currentUser, currentCart, shippingAddress, paymentMethod);
