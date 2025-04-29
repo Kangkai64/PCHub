@@ -81,22 +81,22 @@ public class ProductDao extends DaoTemplate<Product> {
         return products;
     }
 
-    public Product[] findByCategory(String category) throws SQLException {
+    public Product[] findByCategory(String product_categoryID) throws SQLException {
         Product[] products = new Product[100];
-        String sql = "SELECT * FROM product WHERE category = ?";
-        Connection conn = null;
+        String sql = "SELECT * FROM product WHERE product_categoryID = ?";
+        Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         int index = 0;
 
         try {
-            conn = DatabaseConnection.getConnection();
-            if (conn == null) {
+            connection = DatabaseConnection.getConnection();
+            if (connection == null) {
                 throw new SQLException("Failed to establish database connection");
             }
 
-            preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setString(1, category);
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, product_categoryID);
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -109,7 +109,7 @@ public class ProductDao extends DaoTemplate<Product> {
             try {
                 if (resultSet != null) resultSet.close();
                 if (preparedStatement != null) preparedStatement.close();
-                if (conn != null) conn.close();
+                if (connection != null) connection.close();
             } catch (SQLException e) {
                 System.err.println("Error closing database resources: " + e.getMessage());
             }
@@ -120,7 +120,7 @@ public class ProductDao extends DaoTemplate<Product> {
 
     @Override
     public boolean insert(Product product) {
-        String sql = "INSERT INTO product (productID, name, description, brand, category, unitPrice, currentQuantity, specifications) " +
+        String sql = "INSERT INTO product (productID, name, description, brand, product_categoryID, unitPrice, currentQuantity, specifications) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         Connection conn = null;
         PreparedStatement preparedStatement = null;
@@ -158,7 +158,7 @@ public class ProductDao extends DaoTemplate<Product> {
 
     @Override
     public boolean update(Product product) throws SQLException {
-        String sql = "UPDATE product SET name = ?, description = ?, brand = ?, category = ?, " +
+        String sql = "UPDATE product SET name = ?, description = ?, brand = ?, product_categoryID = ?, " +
                 "unitPrice = ?, currentQuantity = ?, specifications = ? WHERE productID = ?";
         Connection conn = null;
         PreparedStatement preparedStatement = null;
@@ -231,7 +231,7 @@ public class ProductDao extends DaoTemplate<Product> {
         product.setName(resultSet.getString("name"));
         product.setDescription(resultSet.getString("description"));
         product.setBrand(resultSet.getString("brand"));
-        product.setCategory(resultSet.getString("category"));
+        product.setCategory(resultSet.getString("product_categoryID"));
         product.setUnitPrice(resultSet.getDouble("unitPrice"));
         product.setCurrentQuantity(resultSet.getInt("currentQuantity"));
         product.setSpecifications(resultSet.getString("specifications"));

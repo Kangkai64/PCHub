@@ -5,7 +5,7 @@ import pchub.dao.CartItemDao;
 import pchub.dao.ProductDao;
 import pchub.model.CartItem;
 import pchub.model.Product;
-import pchub.model.ShoppingCart;
+import pchub.model.Cart;
 import pchub.model.User;
 
 import java.sql.SQLException;
@@ -32,21 +32,21 @@ public class CartService {
      * @throws IllegalArgumentException if user is null
      * @throws SQLException if there is a database error
      */
-    public ShoppingCart getCartForUser(User user) throws SQLException {
+    public Cart getCartForUser(User user) throws SQLException {
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
 
         try {
-            ShoppingCart cart = cartDao.findByUserId(user.getUserId());
+            Cart cart = cartDao.findByUserId(user.getUserId());
             if (cart == null) {
                 // Create a new cart
-                cart = new ShoppingCart();
+                cart = new Cart();
                 cart.setCustomerId(user.getUserId());
                 cart.setCreatedDate(LocalDateTime.now());
                 boolean cartFlag = cartDao.insert(cart);
                 if (cartFlag) {
-                    ShoppingCart newCart = cartDao.findByUserId(user.getUserId());
+                    Cart newCart = cartDao.findByUserId(user.getUserId());
                     cart.setCartId(newCart.getCartId());
                 } else {
                     throw new SQLException("Failed to create new shopping cart");
@@ -62,7 +62,7 @@ public class CartService {
             
             return cart;
         } catch (SQLException e) {
-            throw new SQLException("Failed to get/create cart for user: " + e.getMessage(), e);
+            throw new SQLException("Failed to get / create cart for user: " + e.getMessage(), e);
         }
     }
 
@@ -73,13 +73,13 @@ public class CartService {
      * @throws IllegalArgumentException if cartId is null or empty
      * @throws SQLException if there is a database error
      */
-    public ShoppingCart getCart(String cartId) throws SQLException {
+    public Cart getCart(String cartId) throws SQLException {
         if (cartId == null || cartId.trim().isEmpty()) {
             throw new IllegalArgumentException("Cart ID cannot be null or empty");
         }
 
         try {
-            ShoppingCart cart = cartDao.findById(cartId.trim());
+            Cart cart = cartDao.findById(cartId.trim());
             if (cart != null) {
                 // Load cart items
                 CartItem[] items = cartItemDao.getCartItems(cartId.trim());
@@ -103,7 +103,7 @@ public class CartService {
      * @throws IllegalArgumentException if cart, product, or quantity is invalid
      * @throws SQLException if there is a database error
      */
-    public boolean addItemToCart(ShoppingCart cart, Product product, int quantity) throws SQLException {
+    public boolean addItemToCart(Cart cart, Product product, int quantity) throws SQLException {
         if (cart == null) {
             throw new IllegalArgumentException("Cart cannot be null");
         }
@@ -153,7 +153,7 @@ public class CartService {
      * @throws IllegalArgumentException if cart, productId, or quantity is invalid
      * @throws SQLException if there is a database error
      */
-    public boolean updateItemQuantity(ShoppingCart cart, String productId, int quantity) throws SQLException {
+    public boolean updateItemQuantity(Cart cart, String productId, int quantity) throws SQLException {
         if (cart == null) {
             throw new IllegalArgumentException("Cart cannot be null");
         }
@@ -196,7 +196,7 @@ public class CartService {
      * @throws IllegalArgumentException if cart or productId is invalid
      * @throws SQLException if there is a database error
      */
-    public boolean removeItemFromCart(ShoppingCart cart, String productId) throws SQLException {
+    public boolean removeItemFromCart(Cart cart, String productId) throws SQLException {
         if (cart == null) {
             throw new IllegalArgumentException("Cart cannot be null");
         }
@@ -222,7 +222,7 @@ public class CartService {
      * @throws IllegalArgumentException if cart is null
      * @throws SQLException if there is a database error
      */
-    public void clearCart(ShoppingCart cart) throws SQLException {
+    public void clearCart(Cart cart) throws SQLException {
         if (cart == null) {
             throw new IllegalArgumentException("Cart cannot be null");
         }
@@ -243,7 +243,7 @@ public class CartService {
      * @throws IllegalArgumentException if cart is null
      * @throws SQLException if there is a database error
      */
-    public boolean saveCart(ShoppingCart cart) throws SQLException {
+    public boolean saveCart(Cart cart) throws SQLException {
         if (cart == null) {
             throw new IllegalArgumentException("Cart cannot be null");
         }

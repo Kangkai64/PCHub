@@ -10,10 +10,9 @@ import pchub.model.Order;
 import pchub.model.OrderItem;
 import pchub.model.PaymentMethod;
 import pchub.model.Product;
-import pchub.model.ShoppingCart;
+import pchub.model.Cart;
 import pchub.model.User;
 import pchub.model.enums.OrderStatus;
-import pchub.model.enums.PaymentType;
 import pchub.model.enums.UserRole;
 import pchub.service.AddressService;
 import pchub.service.CartService;
@@ -27,7 +26,7 @@ import pchub.service.EmailDeliveryService;
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static User currentUser = null;
-    private static ShoppingCart currentCart = null;
+    private static Cart currentCart = null;
     private static ProductService productService = new ProductService();
     private static UserService userService = new UserService();
     private static OrderService orderService = new OrderService();
@@ -35,10 +34,11 @@ public class Main {
     private static AddressService addressService = new AddressService();
 
     public static void main(String[] args) {
+        ConsoleUtils.clearScreen();
         ConsoleUtils.displayLogo();
 
-        // Only run this if you want to initialize the database
-        initializeDatabase();
+        // TODO: Only run this if you want to initialize the database
+        // initializeDatabase();
 
         boolean exit = false;
         while (!exit) {
@@ -79,7 +79,7 @@ public class Main {
         try {
             // Update all passwords to encrypted version of "123456"
             UserDao userDAO = new UserDao();
-            //userDAO.updateAllPasswords("123456");
+            userDAO.updateAllPasswords("123456");
             System.out.println("Database initialized successfully.");
         } catch (Exception e) {
             System.out.println("Error initializing database: " + e.getMessage());
@@ -352,7 +352,7 @@ public class Main {
         }
     }
 
-    private static void displayCart(ShoppingCart cart) {
+    private static void displayCart(Cart cart) {
         if (cart == null || cart.getItems() == null || cart.getItems().length == 0) {
             System.out.println("Your cart is empty.");
             return;
@@ -565,25 +565,6 @@ public class Main {
         PaymentMethod paymentMethod = new PaymentMethod();
         paymentMethod.setName(currentUser.getUserId());
 
-        switch (choice) {
-            case 1:
-                paymentMethod.setType(PaymentType.CREDIT_CARD);
-                paymentMethod.setDescription(processCardDetails());
-                break;
-            case 2:
-                paymentMethod.setType(PaymentType.PAYPAL);
-                paymentMethod.setDescription(ConsoleUtils.getStringInput(scanner, "Enter PayPal email: "));
-                break;
-            case 3:
-                paymentMethod.setType(PaymentType.BANK_TRANSFER);
-                paymentMethod.setDescription("Bank transfer details will be emailed");
-                break;
-            case 4:
-                paymentMethod.setType(PaymentType.CASH_ON_DELIVERY);
-                paymentMethod.setDescription("Payment will be collected at delivery");
-                break;
-        }
-
         return paymentMethod;
     }
 
@@ -684,7 +665,7 @@ public class Main {
             }
 
             System.out.println("\nShipping Address: " + order.getShippingAddress().getFormattedAddress());
-            System.out.println("Payment Method: " + order.getPaymentMethod().getType());
+            System.out.println("Payment Method: " + order.getPaymentMethod().getName());
             System.out.printf("Total Amount: $%.2f\n", order.getTotalAmount());
 
             // Option to view receipt/bill
@@ -1137,7 +1118,7 @@ public class Main {
                     if (order != null) {
                         System.out.printf("%s | %s | %s | %s | $%.2f\n",
                                 order.getOrderId(),
-                                order.getUserName(),
+                                order.getCustomerName(),
                                 order.getOrderDate(),
                                 order.getStatus(),
                                 order.getTotalAmount());

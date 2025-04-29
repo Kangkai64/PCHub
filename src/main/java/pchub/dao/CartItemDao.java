@@ -12,7 +12,7 @@ import java.sql.Statement;
 public class CartItemDao extends DaoTemplate<CartItem> {
 
     public CartItem[] getCartItems(String cartId) throws SQLException {
-        String sql = "SELECT * FROM cartitem WHERE cartID = ?";
+        String sql = "SELECT * FROM cart_item WHERE cartID = ?";
         CartItem[] items = new CartItem[30];
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -23,8 +23,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
             int index = 0;
 
             while (resultSet.next()) {
-                CartItem item = new CartItem();
-                item = mapResultSet(resultSet);
+                CartItem item = mapResultSet(resultSet);
                 // Note: subtotal is computed by the database as a generated column
 
                 items[index] = item;
@@ -39,7 +38,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
 
     @Override
     public CartItem findById(String cartItemId) throws SQLException {
-        String sql = "SELECT * FROM cartitem WHERE cartItemID = ?";
+        String sql = "SELECT * FROM cart_item WHERE cartItemID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -48,9 +47,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                CartItem item = new CartItem();
-                item = mapResultSet(resultSet);
-                return item;
+                return mapResultSet(resultSet);
             }
         } catch (SQLException e) {
             throw new SQLException("Error retrieving cart item: " + e.getMessage());
@@ -60,7 +57,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
     }
 
     public CartItem findByProductId(String cartId, String productId) throws SQLException {
-        String sql = "SELECT * FROM cartitem WHERE cartID = ? AND productID = ?";
+        String sql = "SELECT * FROM cart_item WHERE cartID = ? AND productID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -70,9 +67,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                CartItem item = new CartItem();
-                item = mapResultSet(resultSet);
-                return item;
+                return mapResultSet(resultSet);
             }
         } catch (SQLException e) {
             throw new SQLException("Error retrieving cart item by product ID: " + e.getMessage());
@@ -83,7 +78,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
 
     @Override
     public boolean insert(CartItem item) throws SQLException {
-        String sql = "INSERT INTO cartitem (cartItemID, cartID, productID, quantity, unitPrice) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO cart_item (cartItemID, cartID, productID, quantity, price) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -111,7 +106,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
 
     @Override
     public boolean update(CartItem item) throws SQLException {
-        String sql = "UPDATE cartitem SET quantity = ?, unitPrice = ? WHERE cartItemID = ?";
+        String sql = "UPDATE cart_item SET quantity = ?, price = ? WHERE cartItemID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -129,7 +124,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
 
     @Override
     public boolean delete(String cartItemId) throws SQLException {
-        String sql = "DELETE FROM cartitem WHERE cartItemID = ?";
+        String sql = "DELETE FROM cart_item WHERE cartItemID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -144,7 +139,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
     }
     
     public boolean deleteAllCartItems(String cartId) throws SQLException {
-        String sql = "DELETE FROM cartitem WHERE cartID = ?";
+        String sql = "DELETE FROM cart_item WHERE cartID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {

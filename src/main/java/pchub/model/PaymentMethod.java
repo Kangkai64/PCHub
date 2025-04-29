@@ -1,13 +1,10 @@
 package pchub.model;
 
-import pchub.model.enums.PaymentType;
-
 import java.time.LocalDate;
 
 public class PaymentMethod {
     private String paymentMethodId;
     private String name;
-    private PaymentType type;
     private String description;
     private LocalDate addedDate;
 
@@ -28,14 +25,6 @@ public class PaymentMethod {
         this.name = name;
     }
 
-    public PaymentType getType() {
-        return type;
-    }
-
-    public void setType(PaymentType type) {
-        this.type = type;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -52,16 +41,9 @@ public class PaymentMethod {
         this.addedDate = addedDate;
     }
 
-    public String getDisplayName() {
-        switch (type) {
-            case CREDIT_CARD:
-                return "Credit Card: " + description;
-            case PAYPAL:
-                return "PayPal: " + description;
-            case BANK_TRANSFER:
-                return "Bank Transfer";
-            default:
-                return "Cash on Delivery";
-        }
+    @Override
+    public String toString() {
+        return "Payment Method ID: " + paymentMethodId + ", Name: " + name + ", Description: " +
+                description + ", Added Date: " + addedDate;
     }
 }

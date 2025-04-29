@@ -2,7 +2,7 @@ package pchub.model;
 
 import java.time.LocalDateTime;
 
-public class ShoppingCart {
+public class Cart {
     private String cartId;
     private String customerId;
     private LocalDateTime createdDate;
@@ -11,7 +11,7 @@ public class ShoppingCart {
     private double subtotal = 0.0;
     private CartItem[] items;
 
-    public ShoppingCart() {
+    public Cart() {
         this.items = new CartItem[20];
         this.createdDate = LocalDateTime.now();
         this.lastUpdated = LocalDateTime.now();

@@ -1,7 +1,7 @@
 package pchub.service;
 
 import pchub.dao.OrderDao;
-import pchub.dao.PaymentDao;
+import pchub.dao.BillDao;
 import pchub.dao.ProductDao;
 import pchub.model.*;
 import pchub.model.enums.OrderStatus;
@@ -10,7 +10,7 @@ import pchub.model.enums.PaymentStatus;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * Service class for managing orders in the PC Hub system.
@@ -20,7 +20,7 @@ public class OrderService {
     private final OrderDao orderDao;
     private final ProductDao productDao;
     private final CartService cartService;
-    private final PaymentDao paymentDao;
+    private final BillDao billDao;
     private static final BigDecimal TAX_RATE = new BigDecimal("0.13"); // 13% tax rate
     private static final BigDecimal SHIPPING_RATE = new BigDecimal("9.99"); // Standard shipping cost
 
@@ -31,7 +31,7 @@ public class OrderService {
         this.orderDao = new OrderDao();
         this.productDao = new ProductDao();
         this.cartService = new CartService();
-        this.paymentDao = new PaymentDao();
+        this.billDao = new BillDao();
     }
 
     /**
@@ -43,7 +43,7 @@ public class OrderService {
      * @return The created order, or null if cart is empty or invalid
      * @throws IllegalArgumentException if any parameter is null
      */
-    public Order createOrderFromCart(User user, ShoppingCart cart, Address shippingAddress, PaymentMethod paymentMethod) {
+    public Order createOrderFromCart(User user, Cart cart, Address shippingAddress, PaymentMethod paymentMethod) {
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
@@ -63,7 +63,7 @@ public class OrderService {
         try {
             Order order = new Order();
             order.setCustomerId(user.getUserId());
-            order.setUserName(user.getUsername());
+            order.setCustomerName(user.getUsername());
             order.setShippingAddress(shippingAddress);
             order.setPaymentMethod(paymentMethod);
 
@@ -147,7 +147,7 @@ public class OrderService {
 
             // Clear the cart after successful order placement
             if (orderSaved) {
-                ShoppingCart cart = new ShoppingCart();
+                Cart cart = new Cart();
                 cart.setCustomerId(order.getCustomerId());
                 cartService.clearCart(cart);
             }
@@ -180,11 +180,11 @@ public class OrderService {
             Bill bill = new Bill();
             bill.setOrderId(orderId);
             bill.setCustomerId(order.getCustomerId());
-            bill.setCustomerName(order.getUserName());
+            bill.setCustomerName(order.getCustomerName());
             bill.setShippingAddress(order.getShippingAddress());
             bill.setItems(order.getItems());
             bill.setPaymentMethod(order.getPaymentMethod());
-            bill.setIssueDate(LocalDateTime.now());
+            bill.setIssueDate(new Date());
 
             // Calculate bill components
             BigDecimal subtotal = BigDecimal.valueOf(order.getTotalAmount());
@@ -197,18 +197,19 @@ public class OrderService {
             bill.setShippingCost(shippingCost);
             bill.setTotalAmount(totalAmount);
 
-            // Create and save payment record
-            Payment payment = new Payment();
-            payment.setOrderId(orderId);
-            payment.setAmount(totalAmount);
-            payment.setPaymentMethodId(order.getPaymentMethod().getPaymentMethodId());
-            payment.setStatus(PaymentStatus.PENDING);
+            // TODO: This part need to be done when the Transaction Class is created
+//            // Create and save transaction record
+//            Bill bill = new Bill();
+//            bill.setOrderId(orderId);
+//            bill.setTotalAmount(totalAmount);
+//            bill.getPaymentMethod().setPaymentMethodId(order.getPaymentMethod().getPaymentMethodId());
+//            bill.setPaymentStatus(PaymentStatus.PENDING);
 
-            if (paymentDao.insert(payment)) {
-                bill.setBillId(payment.getBillId());
-                bill.setPaymentStatus(payment.getStatus().toString());
+            if (billDao.insert(bill)) {
+                bill.setBillId(bill.getBillId());
+                bill.setPaymentStatus(bill.getPaymentStatus());
             } else {
-                bill.setPaymentStatus("ERROR");
+                bill.setPaymentStatus(PaymentStatus.FAILED);
             }
 
             return bill;
@@ -327,18 +328,18 @@ public class OrderService {
         }
 
         try {
-            Payment payment = paymentDao.findById(billId.trim());
-            if (payment == null) {
+            Bill bill = billDao.findById(billId.trim());
+            if (bill == null) {
                 return false;
             }
 
             // Update transaction ID
-            if (!paymentDao.update(payment)) {
+            if (!billDao.update(bill)) {
                 return false;
             }
 
             // Update payment status to COMPLETED
-            return paymentDao.update(payment);
+            return billDao.update(bill);
         } catch (Exception e) {
             throw new RuntimeException("Failed to process payment: " + e.getMessage(), e);
         }

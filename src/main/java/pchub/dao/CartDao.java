@@ -1,7 +1,7 @@
 package pchub.dao;
 
 import pchub.model.CartItem;
-import pchub.model.ShoppingCart;
+import pchub.model.Cart;
 import pchub.utils.DatabaseConnection;
 
 import java.sql.Connection;
@@ -12,10 +12,10 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class CartDao extends DaoTemplate<ShoppingCart> {
+public class CartDao extends DaoTemplate<Cart> {
     @Override
-    public ShoppingCart findById(String cartId) throws SQLException {
-        String sql = "SELECT * FROM shoppingcart WHERE cartID = ?";
+    public Cart findById(String cartId) throws SQLException {
+        String sql = "SELECT * FROM cart WHERE cartID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -24,7 +24,7 @@ public class CartDao extends DaoTemplate<ShoppingCart> {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                ShoppingCart cart = mapResultSet(resultSet);
+                Cart cart = mapResultSet(resultSet);
                 loadCartItems(connection, cart);
                 return cart;
             }
@@ -36,8 +36,8 @@ public class CartDao extends DaoTemplate<ShoppingCart> {
         return null;
     }
 
-    public ShoppingCart findByUserId(String customerId) throws SQLException {
-        String sql = "SELECT * FROM shoppingcart WHERE customerID = ?";
+    public Cart findByUserId(String customerId) throws SQLException {
+        String sql = "SELECT * FROM cart WHERE customerID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -46,16 +46,16 @@ public class CartDao extends DaoTemplate<ShoppingCart> {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                ShoppingCart cart = mapResultSet(resultSet);
+                Cart cart = mapResultSet(resultSet);
                 loadCartItems(connection, cart);
                 return cart;
             } else {
                 // No cart found, create a new one
-                ShoppingCart cart = new ShoppingCart();
+                Cart cart = new Cart();
                 cart.setCustomerId(customerId);
                 if (insert(cart)) {
                     // Get the newly created cart with the cartID
-                    ShoppingCart newCart = findByUserId(customerId);
+                    Cart newCart = findByUserId(customerId);
                     cart.setCartId(newCart.getCartId());
                     return newCart;
                 }
@@ -68,8 +68,8 @@ public class CartDao extends DaoTemplate<ShoppingCart> {
     }
 
     @Override
-    public boolean insert(ShoppingCart cart) throws SQLException {
-        String sql = "INSERT INTO shoppingcart (cartID, customerID, createdDate, lastUpdated, itemCount, subtotal) " +
+    public boolean insert(Cart cart) throws SQLException {
+        String sql = "INSERT INTO cart (cartID, customerID, createdDate, lastUpdated, itemCount, subtotal) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
         // Generate a unique cart ID (10 characters)
@@ -126,8 +126,8 @@ public class CartDao extends DaoTemplate<ShoppingCart> {
     }
 
     @Override
-    public boolean update(ShoppingCart cart) throws SQLException {
-        String sql = "UPDATE shoppingcart SET lastUpdated = ?, itemCount = ?, subtotal = ? WHERE cartID = ?";
+    public boolean update(Cart cart) throws SQLException {
+        String sql = "UPDATE cart SET lastUpdated = ?, itemCount = ?, subtotal = ? WHERE cartID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
@@ -179,7 +179,7 @@ public class CartDao extends DaoTemplate<ShoppingCart> {
 
     @Override
     public boolean delete(String cartId) throws SQLException {
-        String sql = "DELETE FROM shoppingcart WHERE cartID = ?";
+        String sql = "DELETE FROM cart WHERE cartID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
@@ -216,8 +216,8 @@ public class CartDao extends DaoTemplate<ShoppingCart> {
     }
 
     @Override
-    public ShoppingCart mapResultSet(ResultSet resultSet) throws SQLException {
-        ShoppingCart cart = new ShoppingCart();
+    public Cart mapResultSet(ResultSet resultSet) throws SQLException {
+        Cart cart = new Cart();
         cart.setCartId(resultSet.getString("cartID"));
         cart.setCustomerId(resultSet.getString("customerID"));
         cart.setItemCount(resultSet.getInt("itemCount"));
@@ -227,14 +227,14 @@ public class CartDao extends DaoTemplate<ShoppingCart> {
         return cart;
     }
 
-    private void loadCartItems(Connection conn, ShoppingCart cart) throws SQLException {
-        String sql = "SELECT * FROM cartitem WHERE cartItemID = ?";
+    private void loadCartItems(Connection connection, Cart cart) throws SQLException {
+        String sql = "SELECT * FROM cart_item WHERE cartID = ?";
 
-        try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, cart.getCartId());
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            CartItem[] items = new CartItem[resultSet.getInt("itemCount")];
+            CartItem[] items = new CartItem[30];
             int index = 0;
             while (resultSet.next()) {
                 CartItem item = new CartItem();

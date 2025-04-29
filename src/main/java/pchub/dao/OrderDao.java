@@ -94,8 +94,8 @@ public class OrderDao extends DaoTemplate<Order> {
 
     @Override
     public boolean insert(Order order) throws SQLException {
-        String sql = "INSERT INTO `order` (customerID, orderDate, status, totalAmount, " +
-                "shippingAddress, paymentMethodID) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO `order` (customerID, orderDate, order_status, totalAmount, " +
+                "shipping_addressID, payment_MethodID) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
@@ -139,7 +139,7 @@ public class OrderDao extends DaoTemplate<Order> {
 
     @Override
     public boolean update(Order order) throws SQLException {
-        String sql = "UPDATE `order` SET status = ?, totalAmount = ? WHERE orderID = ?";
+        String sql = "UPDATE `order` SET order_status = ?, totalAmount = ? WHERE orderID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);

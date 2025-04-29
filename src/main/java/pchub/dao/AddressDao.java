@@ -12,7 +12,7 @@ public class AddressDao extends DaoTemplate<Address> {
 
     @Override
     public boolean insert(Address address) throws SQLException {
-        String sql = "INSERT INTO addresses (address_id, user_id, street, city, state, zip_code, country) " +
+        String sql = "INSERT INTO shipping_address (shipping_addressID, customerID, street, city, state, zipCode, country) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -31,8 +31,8 @@ public class AddressDao extends DaoTemplate<Address> {
 
     @Override
     public boolean update(Address address) throws SQLException {
-        String sql = "UPDATE addresses SET street = ?, city = ?, state = ?, zip_code = ?, country = ? " +
-                    "WHERE address_id = ? AND user_id = ?";
+        String sql = "UPDATE shipping_address SET street = ?, city = ?, state = ?, zipCode = ?, country = ? " +
+                    "WHERE shipping_addressID = ? AND customerID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -50,7 +50,7 @@ public class AddressDao extends DaoTemplate<Address> {
 
     @Override
     public boolean delete(String addressId) throws SQLException {
-        String sql = "DELETE FROM addresses WHERE address_id = ?";
+        String sql = "DELETE FROM shipping_address WHERE shipping_addressID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -61,7 +61,7 @@ public class AddressDao extends DaoTemplate<Address> {
 
     @Override
     public Address findById(String addressId) throws SQLException {
-        String sql = "SELECT * FROM addresses WHERE address_id = ?";
+        String sql = "SELECT * FROM shipping_address WHERE shipping_addressID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -76,7 +76,7 @@ public class AddressDao extends DaoTemplate<Address> {
     }
 
     public Address[] findByUserId(String userId) throws SQLException {
-        String sql = "SELECT * FROM addresses WHERE user_id = ?";
+        String sql = "SELECT * FROM shipping_address WHERE customerID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -96,12 +96,12 @@ public class AddressDao extends DaoTemplate<Address> {
     @Override
     public Address mapResultSet(ResultSet resultSet) throws SQLException {
         Address address = new Address();
-        address.setAddressId(resultSet.getString("address_id"));
-        address.setUserId(resultSet.getString("user_id"));
+        address.setAddressId(resultSet.getString("shipping_addressID"));
+        address.setUserId(resultSet.getString("customerID"));
         address.setStreet(resultSet.getString("street"));
         address.setCity(resultSet.getString("city"));
         address.setState(resultSet.getString("state"));
-        address.setZipCode(resultSet.getString("zip_code"));
+        address.setZipCode(resultSet.getString("zipCode"));
         address.setCountry(resultSet.getString("country"));
         return address;
     }

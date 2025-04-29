@@ -13,7 +13,7 @@ import java.util.Objects;
 public class Order {
     private String orderId;
     private String customerId;
-    private String userName;
+    private String customerName;
     private Date orderDate;
     private OrderStatus status;
     private double totalAmount;
@@ -45,7 +45,7 @@ public class Order {
                 Address shippingAddress, PaymentMethod paymentMethod) {
         setOrderId(orderId);
         setCustomerId(customerId);
-        setUserName(userName);
+        setCustomerName(userName);
         setShippingAddress(shippingAddress);
         setPaymentMethod(paymentMethod);
         this.orderDate = new Date();
@@ -76,15 +76,15 @@ public class Order {
         this.customerId = customerId.trim();
     }
 
-    public String getUserName() {
-        return userName;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public void setUserName(String userName) {
-        if (userName == null || userName.trim().isEmpty()) {
+    public void setCustomerName(String customerName) {
+        if (customerName == null || customerName.trim().isEmpty()) {
             throw new IllegalArgumentException("Username cannot be null or empty");
         }
-        this.userName = userName.trim();
+        this.customerName = customerName.trim();
     }
 
     public Date getOrderDate() {
@@ -181,7 +181,7 @@ public class Order {
         return "Order{" +
                 "orderId='" + orderId + '\'' +
                 ", customerId='" + customerId + '\'' +
-                ", userName='" + userName + '\'' +
+                ", userName='" + customerName + '\'' +
                 ", orderDate=" + orderDate +
                 ", status=" + status +
                 ", totalAmount=" + totalAmount +

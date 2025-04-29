@@ -1,7 +1,6 @@
 package pchub.dao;
 
 import pchub.model.PaymentMethod;
-import pchub.model.enums.PaymentType;
 import pchub.utils.DatabaseConnection;
 
 import java.sql.Connection;
@@ -15,7 +14,7 @@ public class PaymentMethodDao extends DaoTemplate<PaymentMethod> {
 
     @Override
     public PaymentMethod findById(String paymentMethodId) {
-        String sql = "SELECT * FROM payment_method WHERE paymentMethodID = ?";
+        String sql = "SELECT * FROM payment_method WHERE payment_methodID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -54,7 +53,7 @@ public class PaymentMethodDao extends DaoTemplate<PaymentMethod> {
 
     @Override
     public boolean insert(PaymentMethod paymentMethod) {
-        String sql = "INSERT INTO payment_method (paymentMethodID, name, description, type, addedDate) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO payment_method (payment_methodID, name, description, addedDate) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -62,8 +61,7 @@ public class PaymentMethodDao extends DaoTemplate<PaymentMethod> {
             preparedStatement.setString(1, paymentMethod.getPaymentMethodId());
             preparedStatement.setString(2, paymentMethod.getName());
             preparedStatement.setString(3, paymentMethod.getDescription());
-            preparedStatement.setString(4, paymentMethod.getType().toString());
-            preparedStatement.setTimestamp(5, Timestamp.valueOf(paymentMethod.getAddedDate().atStartOfDay()));
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(paymentMethod.getAddedDate().atStartOfDay()));
 
             int affectedRows = preparedStatement.executeUpdate();
             return affectedRows > 0;
@@ -75,15 +73,14 @@ public class PaymentMethodDao extends DaoTemplate<PaymentMethod> {
 
     @Override
     public boolean update(PaymentMethod paymentMethod) {
-        String sql = "UPDATE payment_method SET name = ?, description = ?, type = ? WHERE paymentMethodID = ?";
+        String sql = "UPDATE payment_method SET name = ?, description = ? WHERE payment_methodID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, paymentMethod.getName());
             preparedStatement.setString(2, paymentMethod.getDescription());
-            preparedStatement.setString(3, paymentMethod.getType().toString());
-            preparedStatement.setString(4, paymentMethod.getPaymentMethodId());
+            preparedStatement.setString(3, paymentMethod.getPaymentMethodId());
 
             int affectedRows = preparedStatement.executeUpdate();
             return affectedRows > 0;
@@ -95,7 +92,7 @@ public class PaymentMethodDao extends DaoTemplate<PaymentMethod> {
 
     @Override
     public boolean delete(String paymentMethodId) {
-        String sql = "DELETE FROM payment_method WHERE paymentMethodID = ?";
+        String sql = "DELETE FROM payment_method WHERE payment_methodID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -112,11 +109,10 @@ public class PaymentMethodDao extends DaoTemplate<PaymentMethod> {
     @Override
     public PaymentMethod mapResultSet(ResultSet resultSet) throws SQLException {
         PaymentMethod paymentMethod = new PaymentMethod();
-        paymentMethod.setPaymentMethodId(resultSet.getString("paymentMethodID"));
+        paymentMethod.setPaymentMethodId(resultSet.getString("payment_methodID"));
         paymentMethod.setName(resultSet.getString("name"));
         paymentMethod.setDescription(resultSet.getString("description"));
-        paymentMethod.setType(PaymentType.valueOf(resultSet.getString("type")));
         paymentMethod.setAddedDate(resultSet.getTimestamp("addedDate").toLocalDateTime().toLocalDate());
         return paymentMethod;
     }
-} 
+}

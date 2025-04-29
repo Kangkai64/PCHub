@@ -1,8 +1,10 @@
 package pchub.model;
 
+import pchub.model.enums.PaymentStatus;
+
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -22,8 +24,9 @@ public class Bill {
     private BigDecimal shippingCost;
     private BigDecimal totalAmount;
     private PaymentMethod paymentMethod;
-    private LocalDateTime issueDate;
-    private String paymentStatus;
+    private Date issueDate;
+    private PaymentStatus paymentStatus;
+    private String transactionId;
 
     private static final int MAX_ITEMS = 30;
 
@@ -31,13 +34,13 @@ public class Bill {
      * Default constructor
      */
     public Bill() {
-        this.issueDate = LocalDateTime.now();
+        this.issueDate = new Date();
         this.items = new OrderItem[MAX_ITEMS];
         this.subtotal = BigDecimal.ZERO;
         this.tax = BigDecimal.ZERO;
         this.shippingCost = BigDecimal.ZERO;
         this.totalAmount = BigDecimal.ZERO;
-        this.paymentStatus = "PENDING";
+        this.paymentStatus = PaymentStatus.PENDING;
     }
 
     /**
@@ -51,20 +54,20 @@ public class Bill {
      * @throws IllegalArgumentException if any parameter is invalid
      */
     public Bill(String billId, String orderId, String customerId, String customerName,
-               Address shippingAddress, PaymentMethod paymentMethod) {
+                Address shippingAddress, PaymentMethod paymentMethod) {
         setBillId(billId);
         setOrderId(orderId);
         setCustomerId(customerId);
         setCustomerName(customerName);
         setShippingAddress(shippingAddress);
         setPaymentMethod(paymentMethod);
-        this.issueDate = LocalDateTime.now();
+        this.issueDate = new Date();
         this.items = new OrderItem[MAX_ITEMS];
         this.subtotal = BigDecimal.ZERO;
         this.tax = BigDecimal.ZERO;
         this.shippingCost = BigDecimal.ZERO;
         this.totalAmount = BigDecimal.ZERO;
-        this.paymentStatus = "PENDING";
+        this.paymentStatus = PaymentStatus.PENDING;
     }
 
     public String getBillId() {
@@ -203,26 +206,34 @@ public class Bill {
         this.paymentMethod = paymentMethod;
     }
 
-    public LocalDateTime getIssueDate() {
+    public Date getIssueDate() {
         return issueDate;
     }
 
-    public void setIssueDate(LocalDateTime issueDate) {
+    public void setIssueDate(Date issueDate) {
         if (issueDate == null) {
             throw new IllegalArgumentException("Issue date cannot be null");
         }
         this.issueDate = issueDate;
     }
 
-    public String getPaymentStatus() {
+    public PaymentStatus getPaymentStatus() {
         return paymentStatus;
     }
 
-    public void setPaymentStatus(String paymentStatus) {
-        if (paymentStatus == null || paymentStatus.trim().isEmpty()) {
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        if (paymentStatus == null) {
             throw new IllegalArgumentException("Payment status cannot be null or empty");
         }
-        this.paymentStatus = paymentStatus.trim();
+        this.paymentStatus = paymentStatus;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
     /**

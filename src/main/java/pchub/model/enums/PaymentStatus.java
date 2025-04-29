@@ -2,8 +2,7 @@ package pchub.model.enums;
 
 public enum PaymentStatus {
     PENDING,
-    COMPLETED,
+    AWAITING_PAYMENT,
     FAILED,
-    REFUNDED,
-    CANCELLED
+    PAID
 }
