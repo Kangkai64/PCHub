@@ -2,6 +2,7 @@ package pchub;
 
 import java.sql.SQLException;
 import java.util.Scanner;
+
 import pchub.dao.UserDao;
 import pchub.model.Address;
 import pchub.model.Bill;
@@ -17,12 +18,13 @@ import pchub.model.enums.PaymentType;
 import pchub.model.enums.UserRole;
 import pchub.service.AddressService;
 import pchub.service.CartService;
+import pchub.service.EmailDeliveryService;
+import pchub.service.GenerateOTP;
 import pchub.service.OrderService;
 import pchub.service.ProductService;
 import pchub.service.UserService;
 import pchub.utils.ConsoleUtils;
-import pchub.service.GenerateOTP;
-import pchub.service.EmailDeliveryService;
+import pchub.utils.ProductSorter;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
@@ -250,6 +252,55 @@ public class Main {
             if (products == null) {
                 System.out.println("No products available.");
             } else {
+                // Display sorting options
+                System.out.println("\nSort by:");
+                System.out.println("1. Name (A-Z)");
+                System.out.println("2. Name (Z-A)");
+                System.out.println("3. Price (Low to High)");
+                System.out.println("4. Price (High to Low)");
+                System.out.println("5. Stock (Low to High)");
+                System.out.println("6. Stock (High to Low)");
+                System.out.println("7. Category (A-Z)");
+                System.out.println("8. Category (Z-A)");
+                System.out.println("9. No Sorting");
+
+                int sortChoice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 9);
+                ProductSorter.SortCriteria criteria = null;
+
+                switch (sortChoice) {
+                    case 1:
+                        criteria = ProductSorter.SortCriteria.NAME_ASC;
+                        break;
+                    case 2:
+                        criteria = ProductSorter.SortCriteria.NAME_DESC;
+                        break;
+                    case 3:
+                        criteria = ProductSorter.SortCriteria.PRICE_ASC;
+                        break;
+                    case 4:
+                        criteria = ProductSorter.SortCriteria.PRICE_DESC;
+                        break;
+                    case 5:
+                        criteria = ProductSorter.SortCriteria.STOCK_ASC;
+                        break;
+                    case 6:
+                        criteria = ProductSorter.SortCriteria.STOCK_DESC;
+                        break;
+                    case 7:
+                        criteria = ProductSorter.SortCriteria.CATEGORY_ASC;
+                        break;
+                    case 8:
+                        criteria = ProductSorter.SortCriteria.CATEGORY_DESC;
+                        break;
+                    case 9:
+                        break;
+                }
+
+                // Sort products if a criteria was selected
+                if (criteria != null) {
+                    products = ProductSorter.sortProducts(products, criteria);
+                }
+
                 displayProductList(products);
             }
         } catch (Exception e) {
@@ -1396,7 +1447,56 @@ public class Main {
                 return;
             }
 
-            System.out.println("ID | Name | Price | Stock | Category");
+            // Display sorting options
+            System.out.println("\nSort by:");
+            System.out.println("1. Name (A-Z)");
+            System.out.println("2. Name (Z-A)");
+            System.out.println("3. Price (Low to High)");
+            System.out.println("4. Price (High to Low)");
+            System.out.println("5. Stock (Low to High)");
+            System.out.println("6. Stock (High to Low)");
+            System.out.println("7. Category (A-Z)");
+            System.out.println("8. Category (Z-A)");
+            System.out.println("9. No Sorting");
+
+            int sortChoice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 9);
+            ProductSorter.SortCriteria criteria = null;
+
+            switch (sortChoice) {
+                case 1:
+                    criteria = ProductSorter.SortCriteria.NAME_ASC;
+                    break;
+                case 2:
+                    criteria = ProductSorter.SortCriteria.NAME_DESC;
+                    break;
+                case 3:
+                    criteria = ProductSorter.SortCriteria.PRICE_ASC;
+                    break;
+                case 4:
+                    criteria = ProductSorter.SortCriteria.PRICE_DESC;
+                    break;
+                case 5:
+                    criteria = ProductSorter.SortCriteria.STOCK_ASC;
+                    break;
+                case 6:
+                    criteria = ProductSorter.SortCriteria.STOCK_DESC;
+                    break;
+                case 7:
+                    criteria = ProductSorter.SortCriteria.CATEGORY_ASC;
+                    break;
+                case 8:
+                    criteria = ProductSorter.SortCriteria.CATEGORY_DESC;
+                    break;
+                case 9:
+                    break;
+            }
+
+            // Sort products if a criteria was selected
+            if (criteria != null) {
+                products = ProductSorter.sortProducts(products, criteria);
+            }
+
+            System.out.println("\nID | Name | Price | Stock | Category");
             System.out.println("------------------------------------------");
             for (Product product : products) {
                 if (product != null) {
