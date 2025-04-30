@@ -1,15 +1,15 @@
 package pchub.model;
 
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+
 import pchub.dao.CartDao;
 import pchub.dao.CartItemDao;
 import pchub.dao.ProductDao;
 
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-
 public class Cart {
     private String cartId;
-    private String customerId;
+    private String userId;
     private LocalDateTime createdDate;
     private LocalDateTime lastUpdated;
     private int itemCount = 0;
@@ -21,7 +21,7 @@ public class Cart {
     private static final ProductDao productDao = new ProductDao();
 
     public Cart() {
-        this.items = new CartItem[20];
+        this.items = new CartItem[0];
         this.createdDate = LocalDateTime.now();
         this.lastUpdated = LocalDateTime.now();
     }
@@ -35,12 +35,12 @@ public class Cart {
         this.cartId = cartId;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -115,7 +115,7 @@ public class Cart {
             if (cart == null) {
                 // Create a new cart
                 cart = new Cart();
-                cart.setCustomerId(user.getUserId());
+                cart.setUserId(user.getUserId());
                 cart.setCreatedDate(LocalDateTime.now());
                 boolean cartFlag = cartDao.insert(cart);
                 if (cartFlag) {

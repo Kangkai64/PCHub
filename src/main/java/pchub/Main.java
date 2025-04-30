@@ -1,17 +1,25 @@
 package pchub;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Scanner;
 
+import pchub.dao.ProductCatalogueDao;
+import pchub.dao.ProductCatalogueItemDao;
+import pchub.dao.ProductCategoryDao;
 import pchub.dao.UserDao;
 import pchub.model.Address;
 import pchub.model.Bill;
+import pchub.model.Cart;
 import pchub.model.CartItem;
 import pchub.model.Order;
 import pchub.model.OrderItem;
 import pchub.model.PaymentMethod;
 import pchub.model.Product;
-import pchub.model.Cart;
+import pchub.model.ProductCatalogue;
+import pchub.model.ProductCatalogueItem;
+import pchub.model.ProductCategory;
 import pchub.model.User;
 import pchub.model.enums.OrderStatus;
 import pchub.model.enums.UserRole;
@@ -90,20 +98,23 @@ public class Main {
         System.out.println("Welcome, " + currentUser.getUsername() + "!");
         System.out.println("1. Browse Products");
         System.out.println("2. Search Products");
-        System.out.println("3. View Cart (" + (currentCart != null ? currentCart.getItemCount() : 0) + " items)");
-        System.out.println("4. View Order History");
-        System.out.println("5. Manage Profile");
-        System.out.println("6. Logout");
+        System.out.println("3. View Catalogues");
+        System.out.println("4. View Cart (" + (currentCart != null ? currentCart.getItemCount() : 0) + " items)");
+        System.out.println("5. View Order History");
+        System.out.println("6. Manage Profile");
+        System.out.println("7. Logout");
     }
 
     private static void displayAdminMenu() {
         ConsoleUtils.printHeader("      Admin Menu      ");
         System.out.println("Welcome, Admin " + currentUser.getUsername() + "!");
         System.out.println("1. Manage Products");
-        System.out.println("2. Manage Users");
-        System.out.println("3. View All Orders");
-        System.out.println("4. Generate Reports");
-        System.out.println("5. Logout");
+        System.out.println("2. Manage Product Categories");
+        System.out.println("3. Manage Product Catalogues");
+        System.out.println("4. Manage Users");
+        System.out.println("5. View All Orders");
+        System.out.println("6. Generate Reports");
+        System.out.println("7. Logout");
     }
 
     private static void login() {
@@ -186,7 +197,7 @@ public class Main {
     }
 
     private static void handleCustomerChoice() {
-        int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 6);
+        int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 7);
 
         switch (choice) {
             case 1: // Browse Products
@@ -197,38 +208,47 @@ public class Main {
                 searchProducts();
                 handleProductSelection();
                 break;
-            case 3: // View Cart
+            case 3: // View Catalogues
+                viewCatalogues();
+                break;
+            case 4: // View Cart
                 viewCart();
                 break;
-            case 4: // View Order History
+            case 5: // View Order History
                 viewOrderHistory();
                 break;
-            case 5: // Manage Profile
+            case 6: // Manage Profile
                 manageProfile();
                 break;
-            case 6: // Logout
+            case 7: // Logout
                 logout();
                 break;
         }
     }
 
     private static void handleAdminChoice() {
-        int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 5);
+        int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 7);
 
         switch (choice) {
             case 1: // Manage Products
                 manageProducts();
                 break;
-            case 2: // Manage Users
+            case 2: // Manage Product Categories
+                manageCategories();
+                break;
+            case 3: // Manage Product Catalogues
+                manageProductCatalogues();
+                break;
+            case 4: // Manage Users
                 manageUsers();
                 break;
-            case 3: // View All Order
+            case 5: // View All Orders
                 viewAllOrders();
                 break;
-            case 4: // Generate Reports
+            case 6: // Generate Reports
                 generateReports();
                 break;
-            case 5: // Logout
+            case 7: // Logout
                 logout();
                 break;
         }
@@ -315,11 +335,11 @@ public class Main {
     }
 
     private static void displayProductList(Product[] products) {
-        System.out.printf("\n%s | %-20s | %-15s | $%.2f | %d\n", "ID", "Name", "Category", "Price", "Stock");
+        System.out.printf("\n%-6s | %-30s | %-15s | %-7s | %s\n", "ID", "Name", "Category", "Price", "Stock");
         System.out.println("------------------------------------------");
         for (Product product : products) {
             if (product != null) {
-                System.out.printf("%s | %-20s | %-15s | $%.2f | %d\n",
+                System.out.printf("%s | %-30s | %-15s | $%.2f | %d\n",
                         product.getProductID(),
                         product.getName(),
                         product.getCategory(),
@@ -341,13 +361,32 @@ public class Main {
             try {
                 Product product = Product.getProduct(productId);
                 if (product != null) {
-                    boolean added = Cart.addItemToCart(currentCart, product, quantity);
-                    if (added) {
-                        currentCart = Cart.getCart(currentCart.getCartId()); // Refresh cart
-                        System.out.println("Product added to cart successfully!");
-                    } else {
-                        System.out.println("Failed to add product to cart. Product may not exist or insufficient stock.");
+                    // Create a new CartItem
+                    CartItem item = new CartItem();
+                    item.setProductId(product.getProductID());
+                    item.setProductName(product.getName());
+                    item.setUnitPrice(product.getUnitPrice());
+                    item.setQuantity(quantity);
+                    
+                    // Add to cart
+                    if (currentCart == null) {
+                        currentCart = new Cart();
+                        currentCart.setUserId(currentUser.getUserId());
                     }
+                    
+                    CartItem[] items = currentCart.getItems();
+                    if (items == null) {
+                        items = new CartItem[1];
+                        items[0] = item;
+                    } else {
+                        CartItem[] newItems = new CartItem[items.length + 1];
+                        System.arraycopy(items, 0, newItems, 0, items.length);
+                        newItems[items.length] = item;
+                        items = newItems;
+                    }
+                    currentCart.setItems(items);
+                    
+                    System.out.println("Product added to cart successfully!");
                 } else {
                     System.out.println("Product not found.");
                 }
@@ -990,6 +1029,407 @@ public class Main {
         }
     }
 
+    private static void manageCategories() {
+        ProductCategoryDao categoryDao = new ProductCategoryDao();
+        try {
+            List<ProductCategory> categories = categoryDao.findAll();
+            
+            ConsoleUtils.printHeader("Category Management");
+            System.out.println("1. View Categories");
+            System.out.println("2. Add Category");
+            System.out.println("3. Update Category");
+            System.out.println("4. Delete Category");
+            System.out.println("5. Back");
+            
+            int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 5);
+            
+            switch (choice) {
+                case 1:
+                    viewCategories(categories);
+                    break;
+                case 2:
+                    addCategory(categoryDao);
+                    break;
+                case 3:
+                    updateCategory(categoryDao, categories);
+                    break;
+                case 4:
+                    deleteCategory(categoryDao, categories);
+                    break;
+                case 5:
+                    return;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void viewCategories(List<ProductCategory> categories) {
+        ConsoleUtils.printHeader("All Categories");
+        for (ProductCategory category : categories) {
+            System.out.println("ID: " + category.getProduct_categoryID());
+            System.out.println("Name: " + category.getName());
+            System.out.println("Description: " + category.getDescription());
+            System.out.println("Parent Category: " + category.getParentCategory());
+            System.out.println("-------------------");
+        }
+    }
+
+    private static void addCategory(ProductCategoryDao categoryDao) {
+        ConsoleUtils.printHeader("Add New Category");
+        String id = ConsoleUtils.getStringInput(scanner, "Enter category ID: ");
+        String name = ConsoleUtils.getStringInput(scanner, "Enter category name: ");
+        String description = ConsoleUtils.getStringInput(scanner, "Enter category description: ");
+        String parentId = ConsoleUtils.getStringInput(scanner, "Enter parent category ID (leave empty if none): ");
+        
+        ProductCategory category = new ProductCategory(id, name, description);
+        if (!parentId.isEmpty()) {
+            category.setParentCategory(parentId);
+        }
+        
+        try {
+            categoryDao.insert(category);
+            System.out.println("Category added successfully!");
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void updateCategory(ProductCategoryDao categoryDao, List<ProductCategory> categories) {
+        ConsoleUtils.printHeader("Update Category");
+        String id = ConsoleUtils.getStringInput(scanner, "Enter category ID to update: ");
+        
+        ProductCategory category = null;
+        for (ProductCategory c : categories) {
+            if (c.getProduct_categoryID().equals(id)) {
+                category = c;
+                break;
+            }
+        }
+        
+        if (category == null) {
+            System.out.println("Category not found!");
+            return;
+        }
+        
+        String name = ConsoleUtils.getStringInput(scanner, "Enter new name (leave empty to keep current): ");
+        String description = ConsoleUtils.getStringInput(scanner, "Enter new description (leave empty to keep current): ");
+        String parentId = ConsoleUtils.getStringInput(scanner, "Enter new parent category ID (leave empty to keep current): ");
+        
+        if (!name.isEmpty()) {
+            category.setName(name);
+        }
+        if (!description.isEmpty()) {
+            category.setDescription(description);
+        }
+        if (!parentId.isEmpty()) {
+            category.setParentCategory(parentId);
+        }
+        
+        try {
+            categoryDao.update(category);
+            System.out.println("Category updated successfully!");
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void deleteCategory(ProductCategoryDao categoryDao, List<ProductCategory> categories) {
+        ConsoleUtils.printHeader("Delete Category");
+        String id = ConsoleUtils.getStringInput(scanner, "Enter category ID to delete: ");
+        
+        ProductCategory category = null;
+        for (ProductCategory c : categories) {
+            if (c.getProduct_categoryID().equals(id)) {
+                category = c;
+                break;
+            }
+        }
+        
+        if (category == null) {
+            System.out.println("Category not found!");
+            return;
+        }
+        
+        try {
+            categoryDao.delete(id);
+            System.out.println("Category deleted successfully!");
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void manageProductCatalogues() {
+        ConsoleUtils.printHeader("      Manage Product Catalogues      ");
+        boolean back = false;
+        try {
+            ProductCatalogueDao catalogueDao = new ProductCatalogueDao();
+            ProductCatalogueItemDao itemDao = new ProductCatalogueItemDao();
+
+            while (!back) {
+                System.out.println("\n1. View All Catalogues");
+                System.out.println("2. Add New Catalogue");
+                System.out.println("3. Update Catalogue");
+                System.out.println("4. Delete Catalogue");
+                System.out.println("5. Manage Catalogue Items");
+                System.out.println("6. Back to Admin Menu");
+
+                int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 6);
+
+                switch (choice) {
+                    case 1:
+                        displayAllCatalogues(catalogueDao);
+                        break;
+                    case 2:
+                        addNewCatalogue(catalogueDao);
+                        break;
+                    case 3:
+                        updateCatalogue(catalogueDao);
+                        break;
+                    case 4:
+                        deleteCatalogue(catalogueDao);
+                        break;
+                    case 5:
+                        manageCatalogueItems(catalogueDao, itemDao);
+                        break;
+                    case 6:
+                        back = true;
+                        break;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void displayAllCatalogues(ProductCatalogueDao catalogueDao) throws SQLException {
+        ConsoleUtils.printHeader("      All Product Catalogues      ");
+        ProductCatalogue[] catalogues = catalogueDao.findAll();
+        
+        if (catalogues.length == 0) {
+            System.out.println("No catalogues found.");
+            return;
+        }
+
+        System.out.printf("%-15s %-30s %-20s %-20s\n", 
+            "Catalogue ID", "Name", "Start Date", "End Date");
+        System.out.println("-".repeat(85));
+
+        for (ProductCatalogue catalogue : catalogues) {
+            System.out.printf("%-15s %-30s %-20s %-20s\n",
+                catalogue.getCatalogueID(),
+                catalogue.getName(),
+                catalogue.getStartDate().toLocalDate(),
+                catalogue.getEndDate().toLocalDate());
+        }
+    }
+
+    private static void addNewCatalogue(ProductCatalogueDao catalogueDao) throws SQLException {
+        ConsoleUtils.printHeader("      Add New Catalogue      ");
+        
+        String name = ConsoleUtils.getStringInput(scanner, "Enter catalogue name: ");
+        String description = ConsoleUtils.getStringInput(scanner, "Enter description: ");
+        LocalDateTime startDate = ConsoleUtils.getDateTimeInput(scanner, "Enter start date (yyyy-MM-dd HH:mm): ");
+        LocalDateTime endDate = ConsoleUtils.getDateTimeInput(scanner, "Enter end date (yyyy-MM-dd HH:mm): ");
+
+        ProductCatalogue catalogue = new ProductCatalogue();
+        catalogue.setName(name);
+        catalogue.setDescription(description);
+        catalogue.setStartDate(startDate);
+        catalogue.setEndDate(endDate);
+
+        if (catalogueDao.insert(catalogue)) {
+            System.out.println("Catalogue added successfully!");
+            System.out.println("Catalogue ID: " + catalogue.getCatalogueID());
+        } else {
+            System.out.println("Failed to add catalogue.");
+        }
+    }
+
+    private static void updateCatalogue(ProductCatalogueDao catalogueDao) throws SQLException {
+        ConsoleUtils.printHeader("      Update Catalogue      ");
+        displayAllCatalogues(catalogueDao);
+        
+        String catalogueID = ConsoleUtils.getStringInput(scanner, "Enter catalogue ID to update: ");
+        ProductCatalogue catalogue = catalogueDao.findById(catalogueID);
+        
+        if (catalogue == null) {
+            System.out.println("Catalogue not found.");
+            return;
+        }
+
+        System.out.println("\nCurrent details:");
+        System.out.println("Name: " + catalogue.getName());
+        System.out.println("Description: " + catalogue.getDescription());
+        System.out.println("Start Date: " + catalogue.getStartDate());
+        System.out.println("End Date: " + catalogue.getEndDate());
+
+        String name = ConsoleUtils.getStringInput(scanner, "Enter new name (press Enter to keep current): ");
+        String description = ConsoleUtils.getStringInput(scanner, "Enter new description (press Enter to keep current): ");
+        LocalDateTime startDate = ConsoleUtils.getDateTimeInput(scanner, "Enter new start date (yyyy-MM-dd HH:mm) (press Enter to keep current): ");
+        LocalDateTime endDate = ConsoleUtils.getDateTimeInput(scanner, "Enter new end date (yyyy-MM-dd HH:mm) (press Enter to keep current): ");
+
+        if (!name.isEmpty()) catalogue.setName(name);
+        if (!description.isEmpty()) catalogue.setDescription(description);
+        if (startDate != null) catalogue.setStartDate(startDate);
+        if (endDate != null) catalogue.setEndDate(endDate);
+
+        if (catalogueDao.update(catalogue)) {
+            System.out.println("Catalogue updated successfully!");
+        } else {
+            System.out.println("Failed to update catalogue.");
+        }
+    }
+
+    private static void deleteCatalogue(ProductCatalogueDao catalogueDao) throws SQLException {
+        ConsoleUtils.printHeader("      Delete Catalogue      ");
+        displayAllCatalogues(catalogueDao);
+        
+        String catalogueID = ConsoleUtils.getStringInput(scanner, "Enter catalogue ID to delete: ");
+        
+        if (catalogueDao.delete(catalogueID)) {
+            System.out.println("Catalogue deleted successfully!");
+        } else {
+            System.out.println("Failed to delete catalogue.");
+        }
+    }
+
+    private static void manageCatalogueItems(ProductCatalogueDao catalogueDao, ProductCatalogueItemDao itemDao) throws SQLException {
+        ConsoleUtils.printHeader("      Manage Catalogue Items      ");
+        displayAllCatalogues(catalogueDao);
+        
+        String catalogueID = ConsoleUtils.getStringInput(scanner, "Enter catalogue ID to manage items: ");
+        ProductCatalogue catalogue = catalogueDao.findById(catalogueID);
+        
+        if (catalogue == null) {
+            System.out.println("Catalogue not found.");
+            return;
+        }
+
+        boolean back = false;
+        while (!back) {
+            System.out.println("\n1. View Items");
+            System.out.println("2. Add Item");
+            System.out.println("3. Update Item Price");
+            System.out.println("4. Remove Item");
+            System.out.println("5. Back to Catalogue Menu");
+
+            int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 5);
+
+            switch (choice) {
+                case 1:
+                    displayCatalogueItems(catalogue);
+                    break;
+                case 2:
+                    addItemToCatalogue(catalogue, itemDao);
+                    break;
+                case 3:
+                    updateItemPrice(catalogue, itemDao);
+                    break;
+                case 4:
+                    removeItemFromCatalogue(catalogue, itemDao);
+                    break;
+                case 5:
+                    back = true;
+                    break;
+            }
+        }
+    }
+
+    private static void displayCatalogueItems(ProductCatalogue catalogue) {
+        ConsoleUtils.printHeader("      Catalogue Items      ");
+        try {
+            ProductCatalogueItemDao itemDao = new ProductCatalogueItemDao();
+            ProductCatalogueItem[] items = itemDao.findByCatalogue(catalogue.getCatalogueID());
+            
+            if (items == null || items.length == 0) {
+                System.out.println("No items in this catalogue.");
+                return;
+            }
+
+            System.out.printf("%-15s %-30s %-15s %-15s\n", 
+                "Item ID", "Product Name", "Regular Price", "Special Price");
+            System.out.println("-".repeat(75));
+
+            for (ProductCatalogueItem item : items) {
+                if (item != null && item.getProduct() != null) {
+                    System.out.printf("%-15s %-30s $%-14.2f $%-14.2f\n",
+                        item.getItemID(),
+                        item.getProduct().getName(),
+                        item.getProduct().getUnitPrice(),
+                        item.getSpecialPrice());
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error displaying catalogue items: " + e.getMessage());
+        }
+    }
+
+    private static void addItemToCatalogue(ProductCatalogue catalogue, ProductCatalogueItemDao itemDao) throws SQLException {
+        ConsoleUtils.printHeader("      Add Item to Catalogue      ");
+        // Display available products
+        displayAllProducts();
+        
+        String productID = ConsoleUtils.getStringInput(scanner, "Enter product ID to add: ");
+        
+        // Get and validate the product
+        Product product = Product.getProduct(productID);
+        if (product == null) {
+            System.out.println("Product not found. Please enter a valid product ID.");
+            return;
+        }
+        
+        double specialPrice = ConsoleUtils.getDoubleInput(scanner, "Enter special price: ");
+        String notes = ConsoleUtils.getStringInput(scanner, "Enter notes (optional): ");
+
+        ProductCatalogueItem item = new ProductCatalogueItem();
+        item.setCatalogue(catalogue);
+        item.setProduct(product);
+        item.setSpecialPrice(specialPrice);
+        item.setNotes(notes);
+
+        if (itemDao.insert(item)) {
+            System.out.println("Item added to catalogue successfully!");
+        } else {
+            System.out.println("Failed to add item to catalogue.");
+        }
+    }
+
+    private static void updateItemPrice(ProductCatalogue catalogue, ProductCatalogueItemDao itemDao) throws SQLException {
+        ConsoleUtils.printHeader("      Update Item Price      ");
+        displayCatalogueItems(catalogue);
+        
+        String itemID = ConsoleUtils.getStringInput(scanner, "Enter item ID to update: ");
+        ProductCatalogueItem item = itemDao.findById(itemID);
+        
+        if (item == null) {
+            System.out.println("Item not found.");
+            return;
+        }
+
+        double newPrice = ConsoleUtils.getDoubleInput(scanner, "Enter new special price: ");
+        item.setSpecialPrice(newPrice);
+
+        if (itemDao.update(item)) {
+            System.out.println("Item price updated successfully!");
+        } else {
+            System.out.println("Failed to update item price.");
+        }
+    }
+
+    private static void removeItemFromCatalogue(ProductCatalogue catalogue, ProductCatalogueItemDao itemDao) throws SQLException {
+        ConsoleUtils.printHeader("      Remove Item from Catalogue      ");
+        displayCatalogueItems(catalogue);
+        
+        String itemID = ConsoleUtils.getStringInput(scanner, "Enter item ID to remove: ");
+        
+        if (itemDao.delete(itemID)) {
+            System.out.println("Item removed from catalogue successfully!");
+        } else {
+            System.out.println("Failed to remove item from catalogue.");
+        }
+    }
+
     private static void manageUsers() {
         System.out.println("\n===== Manage Users =====");
         System.out.println("1. View All Users");
@@ -1587,6 +2027,91 @@ public class Main {
             }
         } catch (Exception e) {
             System.out.println("Error checking stock status: " + e.getMessage());
+        }
+    }
+
+    private static void viewCatalogues() {
+        ConsoleUtils.printHeader("      Available Catalogues      ");
+        try {
+            ProductCatalogueDao catalogueDao = new ProductCatalogueDao();
+            ProductCatalogue[] catalogues = catalogueDao.findAll();
+            
+            if (catalogues == null || catalogues.length == 0) {
+                System.out.println("No catalogues available.");
+                return;
+            }
+
+            System.out.printf("%-15s %-30s %-20s %-20s\n", 
+                "Catalogue ID", "Name", "Start Date", "End Date");
+            System.out.println("-".repeat(85));
+
+            for (ProductCatalogue catalogue : catalogues) {
+                if (catalogue != null) {
+                    System.out.printf("%-15s %-30s %-20s %-20s\n",
+                        catalogue.getCatalogueID(),
+                        catalogue.getName(),
+                        catalogue.getStartDate().toLocalDate(),
+                        catalogue.getEndDate().toLocalDate());
+                }
+            }
+
+            String catalogueID = ConsoleUtils.getStringInput(scanner, "\nEnter catalogue ID to view items (or press Enter to go back): ");
+            if (!catalogueID.isEmpty()) {
+                ProductCatalogue selectedCatalogue = catalogueDao.findById(catalogueID);
+                if (selectedCatalogue != null) {
+                    displayCatalogueItems(selectedCatalogue);
+                    handleCatalogueItemSelection(selectedCatalogue);
+                } else {
+                    System.out.println("Catalogue not found.");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error viewing catalogues: " + e.getMessage());
+        }
+    }
+
+    private static void handleCatalogueItemSelection(ProductCatalogue catalogue) {
+        String itemID = ConsoleUtils.getStringInput(scanner, "Enter item ID to add to cart (or press Enter to go back): ");
+        if (!itemID.isEmpty()) {
+            try {
+                ProductCatalogueItemDao itemDao = new ProductCatalogueItemDao();
+                ProductCatalogueItem item = itemDao.findById(itemID);
+                
+                if (item != null && item.getCatalogue().getCatalogueID().equals(catalogue.getCatalogueID())) {
+                    int quantity = ConsoleUtils.getIntInput(scanner, "Enter quantity: ", 1, 100);
+                    
+                    // Create a new CartItem
+                    CartItem cartItem = new CartItem();
+                    cartItem.setProductId(item.getProduct().getProductID());
+                    cartItem.setProductName(item.getProduct().getName());
+                    cartItem.setUnitPrice(item.getSpecialPrice()); // Use special price from catalogue
+                    cartItem.setQuantity(quantity);
+                    
+                    // Add to cart
+                    if (currentCart == null) {
+                        currentCart = new Cart();
+                        currentCart.setUserId(currentUser.getUserId());
+                    }
+                    
+                    CartItem[] items = currentCart.getItems();
+                    if (items == null) {
+                        items = new CartItem[1];
+                        items[0] = cartItem;
+                    } else {
+                        CartItem[] newItems = new CartItem[items.length + 1];
+                        System.arraycopy(items, 0, newItems, 0, items.length);
+                        newItems[items.length] = cartItem;
+                        items = newItems;
+                    }
+                    currentCart.setItems(items);
+                    
+                    System.out.println("Product added to cart successfully!");
+                } else {
+                    System.out.println("Item not found in this catalogue.");
+                }
+            } catch (SQLException e) {
+                System.out.println("Error adding item to cart: " + e.getMessage());
+            }
         }
     }
 }
