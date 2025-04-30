@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 
 public class PaymentMethodDao extends DaoTemplate<PaymentMethod> {
+    final static int MAX_PAYMENT_METHOD = 50;
 
     @Override
     public PaymentMethod findById(String paymentMethodId) {
@@ -33,7 +34,7 @@ public class PaymentMethodDao extends DaoTemplate<PaymentMethod> {
     }
 
     public PaymentMethod[] findAll() {
-        PaymentMethod[] paymentMethods = new PaymentMethod[50];
+        PaymentMethod[] paymentMethods = new PaymentMethod[MAX_PAYMENT_METHOD];
         int index = 0;
         String sql = "SELECT * FROM payment_method";
 

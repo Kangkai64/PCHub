@@ -4,15 +4,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 import pchub.dao.UserDao;
-import pchub.model.Address;
-import pchub.model.Bill;
-import pchub.model.CartItem;
-import pchub.model.Order;
-import pchub.model.OrderItem;
-import pchub.model.PaymentMethod;
-import pchub.model.Product;
-import pchub.model.Cart;
-import pchub.model.User;
+import pchub.model.*;
 import pchub.model.enums.OrderStatus;
 import pchub.model.enums.UserRole;
 import pchub.utils.ConsoleUtils;
@@ -53,10 +45,13 @@ public class Main {
                         break;
                 }
             } else {
+                ConsoleUtils.displayLogo();
                 if (currentUser.getRole() == UserRole.ADMIN) {
+                    currentUser = new Admin(currentUser);
                     displayAdminMenu();
                     handleAdminChoice();
                 } else {
+                    currentUser = new Customer(currentUser);
                     displayCustomerMenu();
                     handleCustomerChoice();
                 }
@@ -115,11 +110,13 @@ public class Main {
             currentUser = User.authenticateUser(username, password);
             if (currentUser != null) {
                 System.out.println("Login successful!");
+                ConsoleUtils.waitMessage();
                 if (currentUser.getRole() == UserRole.CUSTOMER) {
                     currentCart = Cart.getCartForUser(currentUser);
                 }
             } else {
                 System.out.println("Invalid username or password. Please try again.");
+                ConsoleUtils.waitMessage();
             }
         } catch (Exception e) {
             System.out.println("Error during login: " + e.getMessage());
@@ -315,11 +312,11 @@ public class Main {
     }
 
     private static void displayProductList(Product[] products) {
-        System.out.printf("\n%s | %-20s | %-15s | $%.2f | %d\n", "ID", "Name", "Category", "Price", "Stock");
-        System.out.println("------------------------------------------");
+        System.out.printf("\n%-6s | %-30s | %-15s | %-9s | %s\n", "ID", "Name", "Category", "Price", "Stock");
+        System.out.println("-------------------------------------------------------------------------------------------------");
         for (Product product : products) {
             if (product != null) {
-                System.out.printf("%s | %-20s | %-15s | $%.2f | %d\n",
+                System.out.printf("%s | %-30s | %-15s | RM9%.2f | %d\n",
                         product.getProductID(),
                         product.getName(),
                         product.getCategory(),
@@ -359,7 +356,7 @@ public class Main {
 
     private static void viewCart() {
         System.out.println("\n===== Your Shopping Cart =====");
-        if (currentCart == null || currentCart.getItems() == null) {
+        if (currentCart == null || currentCart.getItems() == null || currentCart.getItems().length == 0) {
             System.out.println("Your cart is empty.");
             return;
         }
@@ -395,18 +392,19 @@ public class Main {
     private static void displayCart(Cart cart) {
         if (cart == null || cart.getItems() == null || cart.getItems().length == 0) {
             System.out.println("Your cart is empty.");
+            ConsoleUtils.waitMessage();
             return;
         }
 
         System.out.println("\n===== Your Shopping Cart =====");
-        System.out.println("Item | Quantity | Unit Price | Total");
+        System.out.printf("%-30s | %-10s | %-12s | %-12s\n", "Item", "Quantity", "Unit Price", "Total");
         System.out.println("------------------------------------------");
 
         double total = 0;
         for (CartItem item : cart.getItems()) {
             if (item != null) {
                 double itemTotal = item.getQuantity() * item.getUnitPrice();
-                System.out.printf("%s | %d | $%.2f | $%.2f\n",
+                System.out.printf("%-30s | %-10d | RM%-12.2f | RM%-12.2f\n",
                         item.getProductName(),
                         item.getQuantity(),
                         item.getUnitPrice(),
@@ -416,7 +414,7 @@ public class Main {
         }
 
         System.out.println("------------------------------------------");
-        System.out.printf("Total: $%.2f\n", total);
+        System.out.printf("Total: RM%26.2f\n", total);
     }
 
     private static void updateCartItemQuantity() {
@@ -589,23 +587,33 @@ public class Main {
     }
 
     private static PaymentMethod selectPaymentMethod() {
-        System.out.println("\n===== Select Payment Method =====");
-        System.out.println("1. Credit Card");
-        System.out.println("2. PayPal");
-        System.out.println("3. Bank Transfer");
-        System.out.println("4. Cash on Delivery");
-        System.out.println("5. Cancel checkout");
+        PaymentMethod[] paymentMethods = Bill.getAllPaymentMethods();
 
-        int choice = ConsoleUtils.getIntInput(scanner, "Select payment method: ", 1, 5);
+        int choiceUpperBound = 1;
+        if (paymentMethods == null || paymentMethods.length == 0) {
+            ConsoleUtils.printHeader("      Select Payment Method      ");
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                System.out.println(choiceUpperBound +  "." + paymentMethod.getName());
+                choiceUpperBound++;
+            }
+            System.out.println(choiceUpperBound + ". Cancel checkout");
 
-        if (choice == 5) {
-            return null; // Cancel checkout
+            int choice = ConsoleUtils.getIntInput(scanner, "Select payment method: ", 1, 5);
+
+            if (choice == choiceUpperBound) {
+                return null; // Cancel checkout
+            }
+
+            PaymentMethod paymentMethod = new PaymentMethod();
+            paymentMethod.setName(currentUser.getUserId());
+
+            return paymentMethod;
         }
 
-        PaymentMethod paymentMethod = new PaymentMethod();
-        paymentMethod.setName(currentUser.getUserId());
-
-        return paymentMethod;
+        else {
+            System.out.println("\nThere's something wrong with our server. Please try again later.");
+            return null;
+        }
     }
 
     private static String processCardDetails() {
@@ -620,9 +628,7 @@ public class Main {
     }
 
     private static void displayBill(Bill bill) {
-        System.out.println("\n========================================");
-        System.out.println("             PCHub RECEIPT             ");
-        System.out.println("========================================");
+        ConsoleUtils.printHeader("             PCHub RECEIPT             ");
         System.out.println("Order ID: " + bill.getOrderId());
         System.out.println("Date: " + bill.getIssueDate());
         System.out.println("Customer: " + bill.getCustomerName());
@@ -649,7 +655,7 @@ public class Main {
     }
 
     private static void viewOrderHistory() {
-        System.out.println("\n===== Order History =====");
+        ConsoleUtils.printHeader("      Order History      ");
         try {
             Order[] orders = Order.getOrdersByUser(currentUser.getUserId());
             if (orders == null || orders.length == 0) {

@@ -43,21 +43,29 @@ public class User {
 
     /**
      * Parameterized constructor
-     * @param userId The unique identifier for the user
-     * @param username The username of the user
-     * @param email The email address of the user
-     * @param password The password of the user
-     * @param fullName The full name of the user
-     * @param phone The phone number of the user
-     * @param role The role of the user
+     *
+     * @param userId           The unique identifier for the user
+     * @param username         The username of the user
+     * @param email            The email address of the user
+     * @param password         The password of the user
+     * @param registrationDate The registration date of the user
+     * @param lastLogin        The last login time of the user
+     * @param status           The account status of the user (ACTIVE, INACTIVE, BANNED)
+     * @param fullName         The full name of the user
+     * @param phone            The phone number of the user
+     * @param role             The role of the user
      * @throws IllegalArgumentException if any parameter is invalid
      */
-    public User(String userId, String username, String email, String password, 
-               String fullName, String phone, UserRole role) {
+    public User(String userId, String username, String email, String password,
+               Date registrationDate, Date lastLogin, String status,
+                String fullName, String phone, UserRole role) {
         setUserId(userId);
         setUsername(username);
         setEmail(email);
         setPassword(password);
+        setRegistrationDate(registrationDate);
+        setLastLogin(lastLogin);
+        setStatus(status);
         setFullName(fullName);
         setPhone(phone);
         setRole(role);

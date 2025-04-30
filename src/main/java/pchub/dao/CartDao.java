@@ -43,6 +43,7 @@ public class CartDao extends DaoTemplate<Cart> {
             if (resultSet.next()) {
                 Cart cart = mapResultSet(resultSet);
                 loadCartItems(connection, cart);
+                cart.updateCartTotals();
                 return cart;
             } else {
                 // No cart found, create a new one
@@ -224,30 +225,38 @@ public class CartDao extends DaoTemplate<Cart> {
     }
 
     private void loadCartItems(Connection connection, Cart cart) throws SQLException {
-        String sql = "SELECT ci.*, p.name AS productName FROM cart_item ci JOIN product p ON ci.productID = p.productID WHERE cartID = ?";
+        String sql = "SELECT ci.*, c.itemCount AS itemCount, p.name AS productName FROM cart_item ci JOIN product p ON ci.productID = p.productID JOIN cart c ON ci.cartID = c.cartID WHERE customerID = ? ORDER BY lastUpdated DESC";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, cart.getCartId());
+            preparedStatement.setString(1, cart.getCustomerId());
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            CartItem[] items = new CartItem[30];
-            int index = 0;
-            while (resultSet.next()) {
-                CartItem item = new CartItem();
-                item.setCartItemId(resultSet.getString("cartItemID"));
-                item.setCartId(resultSet.getString("cartID"));
-                item.setProductId(resultSet.getString("productID"));
-                item.setProductName(resultSet.getString("productName"));
-                item.setUnitPrice(resultSet.getDouble("price"));
-                item.setQuantity(resultSet.getInt("quantity"));
+            // Get count first
+            if (resultSet.next()) {
+                int itemCount = resultSet.getInt("itemCount");
+                if (itemCount == 0) {
+                    return; // No items to process
+                }
 
-                items[index] = item;
-                index++;
+                CartItem[] items = new CartItem[itemCount];
+                int index = 0;
+
+                // Process the first row (we've already moved to it)
+                do {
+                    CartItem item = new CartItem();
+                    item.setCartItemId(resultSet.getString("cartItemID"));
+                    item.setCartId(resultSet.getString("cartID"));
+                    item.setProductId(resultSet.getString("productID"));
+                    item.setProductName(resultSet.getString("productName"));
+                    item.setUnitPrice(resultSet.getDouble("price"));
+                    item.setQuantity(resultSet.getInt("quantity"));
+
+                    items[index] = item;
+                    index++;
+                } while (resultSet.next() && index < itemCount);
+
+                cart.setItems(items);
             }
-            if (index == 0){
-                return;
-            }
-            cart.setItems(items);
         }
     }
 }

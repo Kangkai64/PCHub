@@ -76,6 +76,20 @@ public class AddressDao extends DaoTemplate<Address> {
     }
 
     public Address[] findByUserId(String userId) throws SQLException {
+        String countSql = "SELECT COUNT(*) AS count FROM shipping_address WHERE customerID = ?";
+        int count = 0;
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement countStatement = connection.prepareStatement(countSql)) {
+            countStatement.setString(1, userId);
+
+            try (ResultSet countResult = countStatement.executeQuery()) {
+                if (countResult.next()) {
+                    count = countResult.getInt("count");
+                }
+            }
+        }
+
         String sql = "SELECT * FROM shipping_address WHERE customerID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -83,7 +97,7 @@ public class AddressDao extends DaoTemplate<Address> {
             statement.setString(1, userId);
             int index = 0;
             try (ResultSet resultSet = statement.executeQuery()) {
-                Address[] addresses = new Address[10];
+                Address[] addresses = new Address[count];
                 while (resultSet.next()) {
                     addresses[index] = mapResultSet(resultSet);
                     index++;

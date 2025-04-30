@@ -1,5 +1,6 @@
 package pchub.utils;
 
+import java.io.IOException;
 import java.util.Scanner;
 import java.io.Console;
 
@@ -128,11 +129,27 @@ public class ConsoleUtils {
     }
 
     public static void printHeader(String title) {
-        System.out.println("\n==============================");
+        int headerWidth = title.length();
+
+        // Create a repeated string of "=" characters
+        StringBuilder separator = new StringBuilder();
+        for (int i = 0; i < headerWidth; i++) {
+            separator.append("=");
+        }
+
+        System.out.println(separator.toString());
         System.out.println(title);
-        System.out.println("==============================");
+        System.out.println(separator.toString());
     }
 
+    public static void waitMessage() {
+        System.out.println("\n\n\nPress Enter to continue...");
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public static void clearScreen() {
         try {
             final String os = System.getProperty("os.name");

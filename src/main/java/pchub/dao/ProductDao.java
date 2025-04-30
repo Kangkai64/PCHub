@@ -48,18 +48,18 @@ public class ProductDao extends DaoTemplate<Product> {
     public Product[] findAll() throws SQLException {
         Product[] products = new Product[100];
         String sql = "SELECT * FROM product";
-        Connection conn = null;
+        Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
         int index = 0;
 
         try {
-            conn = DatabaseConnection.getConnection();
-            if (conn == null) {
+            connection = DatabaseConnection.getConnection();
+            if (connection == null) {
                 throw new SQLException("Failed to establish database connection");
             }
 
-            statement = conn.createStatement();
+            statement = connection.createStatement();
             resultSet = statement.executeQuery(sql);
 
             while (resultSet.next()) {
@@ -72,7 +72,7 @@ public class ProductDao extends DaoTemplate<Product> {
             try {
                 if (resultSet != null) resultSet.close();
                 if (statement != null) statement.close();
-                if (conn != null) conn.close();
+                if (connection != null) connection.close();
             } catch (SQLException e) {
                 System.err.println("Error closing database resources: " + e.getMessage());
             }

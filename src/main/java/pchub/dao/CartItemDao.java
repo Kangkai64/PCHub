@@ -57,7 +57,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
     }
 
     public CartItem findByProductId(String cartId, String productId) throws SQLException {
-        String sql = "SELECT * FROM cart_item WHERE cartID = ? AND productID = ?";
+        String sql = "SELECT ci.*, p.name AS productName FROM cart_item ci JOIN product p ON ci.productID = p.productID WHERE cartID = ? AND ci.productID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {

@@ -81,7 +81,6 @@ public class Cart {
 
     public void setItems(CartItem[] items) {
         this.items = items;
-        updateCartTotals();
     }
 
     /**
@@ -125,13 +124,6 @@ public class Cart {
                     throw new SQLException("Failed to create new shopping cart");
                 }
             }
-            
-            // Load cart items
-            CartItem[] items = cartItemDao.getCartItems(cart.getCartId());
-            cart.setItems(items);
-            
-            // Calculate totals
-            cart.updateCartTotals();
             
             return cart;
         } catch (SQLException e) {

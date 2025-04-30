@@ -14,6 +14,8 @@ import java.sql.Timestamp;
 import java.sql.Date;
 
 public class UserDao extends DaoTemplate<User> {
+    final static int MAX_USER = 999;
+
     @Override
     public User findById(String userId) throws SQLException {
         String sql = "SELECT * FROM user WHERE userID = ?";
@@ -73,7 +75,7 @@ public class UserDao extends DaoTemplate<User> {
     }
 
     public User[] findAll() throws SQLException {
-        User[] users = new User[999];
+        User[] users = new User[MAX_USER];
         int index = 0;
         String sql = "SELECT * FROM user";
 

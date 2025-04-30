@@ -14,6 +14,19 @@ public class Address {
 
     private static final AddressDao addressDao = new AddressDao();
 
+    public Address() {
+    }
+
+    public Address(String addressId, String userId, String street, String city, String state, String zipCode, String country) {
+        this.addressId = addressId;
+        this.userId = userId;
+        this.street = street;
+        this.city = city;
+        this.state = state;
+        this.zipCode = zipCode;
+        this.country = country;
+    }
+
     // Getters and setters
     public String getAddressId() {
         return addressId;
