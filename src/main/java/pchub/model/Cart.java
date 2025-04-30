@@ -3,8 +3,6 @@ package pchub.model;
 import pchub.dao.CartDao;
 import pchub.dao.CartItemDao;
 import pchub.dao.ProductDao;
-import pchub.model.Product;
-import pchub.model.User;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;

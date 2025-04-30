@@ -146,7 +146,7 @@ public class Main {
             newUser.setFullName(fullname);
             newUser.setEmail(email);
             newUser.setPhone(phone);
-            newUser.setPassword(password); // Will be hashed in the service
+            newUser.setPassword(password); // Will be hashed during insertion
             newUser.setRole(UserRole.CUSTOMER); // Default role for new registrations
 
             boolean success = User.registerUser(newUser);
@@ -315,11 +315,11 @@ public class Main {
     }
 
     private static void displayProductList(Product[] products) {
-        System.out.println("\nID | Name | Category | Price | Stock");
+        System.out.printf("\n%s | %-20s | %-15s | $%.2f | %d\n", "ID", "Name", "Category", "Price", "Stock");
         System.out.println("------------------------------------------");
         for (Product product : products) {
             if (product != null) {
-                System.out.printf("%s | %s | %s | $%.2f | %d\n",
+                System.out.printf("%s | %-20s | %-15s | $%.2f | %d\n",
                         product.getProductID(),
                         product.getName(),
                         product.getCategory(),

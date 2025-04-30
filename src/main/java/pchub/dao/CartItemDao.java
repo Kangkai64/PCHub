@@ -78,30 +78,33 @@ public class CartItemDao extends DaoTemplate<CartItem> {
 
     @Override
     public boolean insert(CartItem item) throws SQLException {
-        String sql = "INSERT INTO cart_item (cartItemID, cartID, productID, quantity, price) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO cart_item (cartID, productID, quantity, price) VALUES (?, ?, ?, ?)";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            // Generate a simple ID (in a real app, you might want a more robust ID generation)
-            String cartItemId = generateCartItemId();
-
-            preparedStatement.setString(1, cartItemId);
-            preparedStatement.setString(2, item.getCartId());
-            preparedStatement.setString(3, item.getProductId());
-            preparedStatement.setInt(4, item.getQuantity());
-            preparedStatement.setDouble(5, item.getUnitPrice());
+            preparedStatement.setString(1, item.getCartId());
+            preparedStatement.setString(2, item.getProductId());
+            preparedStatement.setInt(3, item.getQuantity());
+            preparedStatement.setDouble(4, item.getUnitPrice());
 
             int affectedRows = preparedStatement.executeUpdate();
 
             if (affectedRows > 0) {
-                return true;
+                // Get the generated cart item ID
+                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        String cartItemId = generatedKeys.getString(1);
+                        item.setCartItemId(cartItemId);
+                        return true;
+                    }
+                }
             }
+
+            throw new SQLException("Failed to add cart item");
         } catch (SQLException e) {
             throw new SQLException("Error adding cart item: " + e.getMessage());
         }
-
-        return false;
     }
 
     @Override
@@ -162,10 +165,5 @@ public class CartItemDao extends DaoTemplate<CartItem> {
         item.setQuantity(resultSet.getInt("quantity"));
         item.setUnitPrice(resultSet.getDouble("price"));
         return item;
-    }
-
-    // Helper method to generate a simple cart item ID
-    private String generateCartItemId() {
-        return String.valueOf(System.currentTimeMillis() % 10000000);
     }
 }

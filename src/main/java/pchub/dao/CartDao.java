@@ -4,13 +4,8 @@ import pchub.model.CartItem;
 import pchub.model.Cart;
 import pchub.utils.DatabaseConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public class CartDao extends DaoTemplate<Cart> {
     @Override
@@ -67,46 +62,47 @@ public class CartDao extends DaoTemplate<Cart> {
         return null;
     }
 
+
     @Override
     public boolean insert(Cart cart) throws SQLException {
-        String sql = "INSERT INTO cart (cartID, customerID, createdDate, lastUpdated, itemCount, subtotal) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
-
-        // Generate a unique cart ID (10 characters)
-        String cartId = generateCartId();
+        String sql = "INSERT INTO cart (customerID, createdDate, lastUpdated, itemCount, subtotal) " +
+                "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 LocalDateTime now = LocalDateTime.now();
                 Timestamp timestamp = Timestamp.valueOf(now);
 
-                preparedStatement.setString(1, cartId);
-                preparedStatement.setString(2, cart.getCustomerId());
+                preparedStatement.setString(1, cart.getCustomerId());
+                preparedStatement.setTimestamp(2, timestamp);
                 preparedStatement.setTimestamp(3, timestamp);
-                preparedStatement.setTimestamp(4, timestamp);
-                preparedStatement.setInt(5, cart.getItemCount());
-                preparedStatement.setDouble(6, cart.getSubtotal());
+                preparedStatement.setInt(4, cart.getItemCount());
+                preparedStatement.setDouble(5, cart.getSubtotal());
 
                 int affectedRows = preparedStatement.executeUpdate();
 
                 if (affectedRows > 0) {
-                    cart.setCartId(cartId);
+                    // Get the generated cart ID
+                    try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            String cartId = generatedKeys.getString(1);
+                            cart.setCartId(cartId);
 
-                    // Save cart items if there are any
-                    if (cart.getItems() != null) {
-                        CartItem[] cartItemArrays = cart.getItems();
-                        CartItemDao cartItemDao = new CartItemDao();
-                        for (CartItem cartItem: cartItemArrays){
-                            cartItemDao.insert(cartItem);
+                            // Save cart items if there are any
+                            if (cart.getItems() != null) {
+                                CartItem[] cartItemArrays = cart.getItems();
+                                CartItemDao cartItemDao = new CartItemDao();
+                                for (CartItem cartItem : cartItemArrays) {
+                                    cartItem.setCartId(cartId); // Set the cart ID for each item
+                                    cartItemDao.insert(cartItem);
+                                }
+                            }
+
+                            connection.commit();
+                            return true;
                         }
-                        connection.commit();
-                        return true;
-                    } else if (cart.getItems() == null) {
-                        // No items to insertOrder
-                        connection.commit();
-                        return true;
                     }
                 }
 
@@ -228,7 +224,7 @@ public class CartDao extends DaoTemplate<Cart> {
     }
 
     private void loadCartItems(Connection connection, Cart cart) throws SQLException {
-        String sql = "SELECT * FROM cart_item WHERE cartID = ?";
+        String sql = "SELECT ci.*, p.name AS productName FROM cart_item ci JOIN product p ON ci.productID = p.productID WHERE cartID = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, cart.getCartId());
@@ -248,12 +244,10 @@ public class CartDao extends DaoTemplate<Cart> {
                 items[index] = item;
                 index++;
             }
+            if (index == 0){
+                return;
+            }
             cart.setItems(items);
         }
-    }
-
-    private String generateCartId() {
-        // Generate a UUID and take first 10 characters
-        return UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10);
     }
 }
