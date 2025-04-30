@@ -15,32 +15,22 @@ import pchub.model.Cart;
 import pchub.model.User;
 import pchub.model.enums.OrderStatus;
 import pchub.model.enums.UserRole;
-import pchub.service.AddressService;
-import pchub.service.CartService;
-import pchub.service.EmailDeliveryService;
-import pchub.service.GenerateOTP;
-import pchub.service.OrderService;
-import pchub.service.ProductService;
-import pchub.service.UserService;
 import pchub.utils.ConsoleUtils;
+import pchub.utils.EmailDeliveryService;
+import pchub.utils.GenerateOTP;
 import pchub.utils.ProductSorter;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static User currentUser = null;
     private static Cart currentCart = null;
-    private static ProductService productService = new ProductService();
-    private static UserService userService = new UserService();
-    private static OrderService orderService = new OrderService();
-    private static CartService cartService = new CartService();
-    private static AddressService addressService = new AddressService();
 
     public static void main(String[] args) {
         ConsoleUtils.clearScreen();
         ConsoleUtils.displayLogo();
 
-        // TODO: Only run this if you want to initialize the database
-        // initializeDatabase();
+        // TODO: Only run this if you want to reset the database
+        // resetPassword("123456");
 
         boolean exit = false;
         while (!exit) {
@@ -77,12 +67,11 @@ public class Main {
         scanner.close();
     }
 
-    private static void initializeDatabase() {
+    private static void resetPassword(String password) {
         try {
-            // Update all passwords to encrypted version of "123456"
             UserDao userDAO = new UserDao();
-            userDAO.updateAllPasswords("123456");
-            System.out.println("Database initialized successfully.");
+            userDAO.updateAllPasswords(password);
+            System.out.println("Password reset successfully.");
         } catch (Exception e) {
             System.out.println("Error initializing database: " + e.getMessage());
         }
@@ -123,11 +112,11 @@ public class Main {
         String password = ConsoleUtils.getPasswordInput(scanner, "Enter password: ");
 
         try {
-            currentUser = userService.authenticateUser(username, password);
+            currentUser = User.authenticateUser(username, password);
             if (currentUser != null) {
                 System.out.println("Login successful!");
                 if (currentUser.getRole() == UserRole.CUSTOMER) {
-                    currentCart = cartService.getCartForUser(currentUser);
+                    currentCart = Cart.getCartForUser(currentUser);
                 }
             } else {
                 System.out.println("Invalid username or password. Please try again.");
@@ -160,7 +149,7 @@ public class Main {
             newUser.setPassword(password); // Will be hashed in the service
             newUser.setRole(UserRole.CUSTOMER); // Default role for new registrations
 
-            boolean success = userService.registerUser(newUser);
+            boolean success = User.registerUser(newUser);
             if (success) {
                 System.out.println("Registration successful! You can now login.");
             } else {
@@ -248,7 +237,7 @@ public class Main {
     private static void displayAllProducts() {
         ConsoleUtils.printHeader("      Product Catalog      ");
         try {
-            Product[] products = productService.getAllProducts();
+            Product[] products = Product.getAllProducts();
             if (products == null) {
                 System.out.println("No products available.");
             } else {
@@ -313,7 +302,7 @@ public class Main {
         String keyword = ConsoleUtils.getStringInput(scanner, "Enter search keyword: ");
 
         try {
-            Product[] products = productService.searchProducts(keyword);
+            Product[] products = Product.searchProducts(keyword);
             if (products == null) {
                 System.out.println("No products found matching: " + keyword);
             } else {
@@ -350,11 +339,11 @@ public class Main {
         if (!productId.equals("0")) {
             int quantity = ConsoleUtils.getIntInput(scanner, "Enter quantity: ", 1, 100);
             try {
-                Product product = productService.getProduct(productId);
+                Product product = Product.getProduct(productId);
                 if (product != null) {
-                    boolean added = cartService.addItemToCart(currentCart, product, quantity);
+                    boolean added = Cart.addItemToCart(currentCart, product, quantity);
                     if (added) {
-                        currentCart = cartService.getCart(currentCart.getCartId()); // Refresh cart
+                        currentCart = Cart.getCart(currentCart.getCartId()); // Refresh cart
                         System.out.println("Product added to cart successfully!");
                     } else {
                         System.out.println("Failed to add product to cart. Product may not exist or insufficient stock.");
@@ -435,9 +424,9 @@ public class Main {
         int newQuantity = ConsoleUtils.getIntInput(scanner, "Enter new quantity: ", 1, 100);
 
         try {
-            boolean updated = cartService.updateItemQuantity(currentCart, itemId, newQuantity);
+            boolean updated = Cart.updateItemQuantity(currentCart, itemId, newQuantity);
             if (updated) {
-                currentCart = cartService.getCart(currentCart.getCartId()); // Refresh cart
+                currentCart = Cart.getCart(currentCart.getCartId()); // Refresh cart
                 System.out.println("Cart updated successfully!");
                 displayCart(currentCart);
             } else {
@@ -452,9 +441,9 @@ public class Main {
         String itemId = ConsoleUtils.getStringInput(scanner, "Enter item ID to remove: ");
 
         try {
-            boolean removed = cartService.removeItemFromCart(currentCart, itemId);
+            boolean removed = Cart.removeItemFromCart(currentCart, itemId);
             if (removed) {
-                currentCart = cartService.getCart(currentCart.getCartId()); // Refresh cart
+                currentCart = Cart.getCart(currentCart.getCartId()); // Refresh cart
                 System.out.println("Item removed from cart successfully!");
                 displayCart(currentCart);
             } else {
@@ -467,8 +456,8 @@ public class Main {
 
     private static void clearCart() {
         try {
-            cartService.clearCart(currentCart);
-            currentCart = cartService.getCart(currentCart.getCartId()); // Refresh cart
+            Cart.clearCart(currentCart);
+            currentCart = Cart.getCart(currentCart.getCartId()); // Refresh cart
             System.out.println("Cart cleared successfully!");
         } catch (Exception e) {
             System.out.println("Error clearing cart: " + e.getMessage());
@@ -515,18 +504,18 @@ public class Main {
         System.out.println("OTP verified successfully.");
         // Process order
         try {
-            Order order = orderService.createOrderFromCart(currentUser, currentCart, shippingAddress, paymentMethod);
+            Order order = Order.createOrderFromCart(currentUser, currentCart, shippingAddress, paymentMethod);
             if (order != null) {
                 System.out.println("\nOrder created successfully!");
                 System.out.println("Order ID: " + order.getOrderId());
 
                 // Generate and display bill
-                Bill bill = orderService.generateBill(order.getOrderId());
+                Bill bill = Order.generateBill(order.getOrderId());
                 displayBill(bill);
 
                 // Clear cart after successful order
-                cartService.clearCart(currentCart);
-                currentCart = cartService.getCart(currentCart.getCartId()); // Refresh cart
+                Cart.clearCart(currentCart);
+                currentCart = Cart.getCart(currentCart.getCartId()); // Refresh cart
             } else {
                 System.out.println("Failed to create order. Please try again.");
             }
@@ -537,7 +526,7 @@ public class Main {
 
     private static Address selectShippingAddress() {
         try {
-            Address[] addresses = addressService.getAddressesByUser(currentUser.getUserId());
+            Address[] addresses = Address.getAddressesByUser(currentUser.getUserId());
 
             if (addresses == null || addresses.length == 0) {
                 System.out.println("You don't have any saved addresses. Let's add one:");
@@ -585,7 +574,7 @@ public class Main {
             address.setZipCode(zipCode);
             address.setCountry(country);
 
-            boolean added = addressService.addAddress(address);
+            boolean added = Address.addAddress(address);
             if (added) {
                 System.out.println("Address added successfully!");
                 return address;
@@ -662,7 +651,7 @@ public class Main {
     private static void viewOrderHistory() {
         System.out.println("\n===== Order History =====");
         try {
-            Order[] orders = orderService.getOrdersByUser(currentUser.getUserId());
+            Order[] orders = Order.getOrdersByUser(currentUser.getUserId());
             if (orders == null || orders.length == 0) {
                 System.out.println("You don't have any orders yet.");
                 return;
@@ -695,7 +684,7 @@ public class Main {
 
     private static void displayOrderDetails(int orderId) {
         try {
-            Order order = orderService.getOrderById(String.valueOf(orderId));
+            Order order = Order.getOrderById(String.valueOf(orderId));
             if (order == null) {
                 System.out.println("Order not found.");
                 return;
@@ -722,7 +711,7 @@ public class Main {
             // Option to view receipt/bill
             String choice = ConsoleUtils.getStringInput(scanner, "View receipt? (y/n): ");
             if (choice.equalsIgnoreCase("y")) {
-                Bill bill = orderService.generateBill(String.valueOf(orderId));
+                Bill bill = Order.generateBill(String.valueOf(orderId));
                 displayBill(bill);
             }
         } catch (Exception e) {
@@ -771,7 +760,7 @@ public class Main {
                 currentUser.setPhone(newPhone);
             }
 
-            boolean updated = userService.updateUser(currentUser);
+            boolean updated = User.updateUser(currentUser);
             if (updated) {
                 System.out.println("Profile updated successfully!");
             } else {
@@ -788,7 +777,7 @@ public class Main {
         String newPassword = ConsoleUtils.getStringInput(scanner, "Enter new password: ");
 
         try {
-            boolean changed = userService.updatePassword(currentUser.getUserId(), oldPassword, newPassword);
+            boolean changed = User.updatePassword(currentUser.getUserId(), oldPassword, newPassword);
             if (changed) {
                 System.out.println("Password changed successfully!");
             } else {
@@ -803,7 +792,7 @@ public class Main {
         System.out.println("\n===== Manage Addresses =====");
 
         try {
-            Address[] addresses = addressService.getAddressesByUser(currentUser.getUserId());
+            Address[] addresses = Address.getAddressesByUser(currentUser.getUserId());
 
             if (addresses == null || addresses.length == 0) {
                 System.out.println("You don't have any saved addresses.");
@@ -830,7 +819,7 @@ public class Main {
                     if (addresses != null && addresses.length > 0) {
                         int addressIndex = ConsoleUtils.getIntInput(scanner, "Enter address number to remove: ", 1, addresses.length);
                         Address addressToRemove = addresses[addressIndex - 1];
-                        boolean removed = addressService.deleteAddress(addressToRemove.getAddressId());
+                        boolean removed = Address.deleteAddress(addressToRemove.getAddressId());
                         if (removed) {
                             System.out.println("Address removed successfully!");
                         } else {
@@ -879,7 +868,7 @@ public class Main {
     private static void viewAllProducts() {
         System.out.println("\n===== All Products =====");
         try {
-            Product[] products = productService.getAllProducts();
+            Product[] products = Product.getAllProducts();
             if (products == null || products.length == 0) {
                 System.out.println("No products found.");
             } else {
@@ -917,7 +906,7 @@ public class Main {
             product.setCategory(category);
             product.setDescription(description);
 
-            boolean success = productService.addProduct(product);
+            boolean success = Product.addProduct(product);
             if (success) {
                 System.out.println("Product added successfully!");
             } else {
@@ -933,7 +922,7 @@ public class Main {
         String productId = ConsoleUtils.getStringInput(scanner, "Enter product ID to update: ");
 
         try {
-            Product product = productService.getProduct(productId);
+            Product product = Product.getProduct(productId);
             if (product == null) {
                 System.out.println("Product not found.");
                 return;
@@ -974,7 +963,7 @@ public class Main {
                 product.setDescription(description);
             }
 
-            boolean success = productService.updateProduct(product);
+            boolean success = Product.updateProduct(product);
             if (success) {
                 System.out.println("Product updated successfully!");
             } else {
@@ -990,7 +979,7 @@ public class Main {
         String productId = ConsoleUtils.getStringInput(scanner, "Enter product ID to delete: ");
 
         try {
-            boolean success = productService.deleteProduct(productId);
+            boolean success = Product.deleteProduct(productId);
             if (success) {
                 System.out.println("Product deleted successfully!");
             } else {
@@ -1031,7 +1020,7 @@ public class Main {
 
     private static void viewAllUsers() {
         try {
-            User[] users = userService.getAllUsers();
+            User[] users = User.getAllUsers();
             if (users == null || users.length == 0) {
                 System.out.println("No users found.");
                 return;
@@ -1069,7 +1058,7 @@ public class Main {
             user.setPassword(password); // Will be hashed in the service
             user.setRole(role);
 
-            boolean added = userService.registerUser(user);
+            boolean added = User.registerUser(user);
             if (added) {
                 System.out.println("User added successfully!");
             } else {
@@ -1085,7 +1074,7 @@ public class Main {
         int userId = ConsoleUtils.getIntInput(scanner, "Enter user ID to update: ", 1, Integer.MAX_VALUE);
 
         try {
-            User user = userService.getUserById(String.valueOf(userId));
+            User user = User.getUserById(String.valueOf(userId));
             if (user == null) {
                 System.out.println("User not found.");
                 return;
@@ -1110,7 +1099,7 @@ public class Main {
                 user.setRole(role);
             }
 
-            boolean updated = userService.updateUser(user);
+            boolean updated = User.updateUser(user);
             if (updated) {
                 System.out.println("User updated successfully!");
             } else {
@@ -1126,7 +1115,7 @@ public class Main {
         int userId = ConsoleUtils.getIntInput(scanner, "Enter user ID to delete: ", 1, Integer.MAX_VALUE);
 
         try {
-            User user = userService.getUserById(String.valueOf(userId));
+            User user = User.getUserById(String.valueOf(userId));
             if (user == null) {
                 System.out.println("User not found.");
                 return;
@@ -1142,7 +1131,7 @@ public class Main {
             String confirm = ConsoleUtils.getStringInput(scanner, "Type 'yes' to confirm: ");
 
             if (confirm.equalsIgnoreCase("yes")) {
-                boolean deleted = userService.deleteUser(String.valueOf(userId));
+                boolean deleted = User.deleteUser(String.valueOf(userId));
                 if (deleted) {
                     System.out.println("User deleted successfully!");
                 } else {
@@ -1159,7 +1148,7 @@ public class Main {
     private static void viewAllOrders() {
         System.out.println("\n===== All Orders =====");
         try {
-            Order[] orders = orderService.getAllOrders();
+            Order[] orders = Order.getAllOrders();
             if (orders == null || orders.length == 0) {
                 System.out.println("No orders found.");
             } else {
@@ -1222,7 +1211,7 @@ public class Main {
         }
 
         try {
-            boolean updated = orderService.updateOrderStatus(String.valueOf(orderId), newStatus);
+            boolean updated = Order.updateOrderStatus(String.valueOf(orderId), newStatus);
             if (updated) {
                 System.out.println("Order status updated successfully!");
             } else {
@@ -1316,7 +1305,7 @@ public class Main {
         System.out.println("\n===== Inventory Report =====");
 
         try {
-            Product[] products = productService.getAllProducts();
+            Product[] products = Product.getAllProducts();
 
             System.out.println("\n========================================");
             System.out.println("         PCHub Inventory Report         ");
@@ -1422,7 +1411,7 @@ public class Main {
     private static void displayProducts() {
         System.out.println("\n===== Products =====");
         try {
-            Product[] products = productService.getAllProducts();
+            Product[] products = Product.getAllProducts();
             if (products == null || products.length == 0) {
                 System.out.println("No products found.");
                 return;
@@ -1492,7 +1481,7 @@ public class Main {
 
             String productId = ConsoleUtils.getStringInput(scanner, "Enter product ID to view details (or press Enter to go back): ");
             if (!productId.isEmpty()) {
-                Product product = productService.getProduct(productId);
+                Product product = Product.getProduct(productId);
                 if (product != null) {
                     displayProductDetails(product);
                 } else {
@@ -1524,7 +1513,7 @@ public class Main {
     private static void displayLowStockProducts() {
         System.out.println("\n===== Low Stock Products =====");
         try {
-            Product[] products = productService.getAllProducts();
+            Product[] products = Product.getAllProducts();
             if (products == null || products.length == 0) {
                 System.out.println("No products found.");
                 return;
@@ -1554,7 +1543,7 @@ public class Main {
     private static void displayOutOfStockProducts() {
         System.out.println("\n===== Out of Stock Products =====");
         try {
-            Product[] products = productService.getAllProducts();
+            Product[] products = Product.getAllProducts();
             if (products == null || products.length == 0) {
                 System.out.println("No products found.");
                 return;
@@ -1581,7 +1570,7 @@ public class Main {
     private static void displayStockStatus() {
         System.out.println("\n===== Stock Status =====");
         try {
-            Product[] products = productService.getAllProducts();
+            Product[] products = Product.getAllProducts();
             if (products == null || products.length == 0) {
                 System.out.println("No products found.");
                 return;

@@ -1,4 +1,4 @@
-package pchub.service;
+package pchub.utils;
 
 import javax.mail.*;
 import javax.mail.internet.*;

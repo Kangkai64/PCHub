@@ -5,29 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="30adcfd9-9972-427a-8a7f-5591e9930cdb" name="Changes" comment="Updated database so you can login, but cart will still throw exception and error message.">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/pchub.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/pchub.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pchub/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/AddressDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/AddressDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/CartDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/CartDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/CartItemDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/CartItemDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/OrderDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/OrderDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/PaymentDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/BillDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/PaymentMethodDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/PaymentMethodDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/ProductDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/ProductDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Bill.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Bill.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Order.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Payment.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/PaymentMethod.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/PaymentMethod.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/ShoppingCart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Cart.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/UserPaymentMethod.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/enums/PaymentStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/enums/PaymentStatus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/enums/PaymentType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/service/CartService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/service/CartService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/service/OrderService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/service/PaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/service/BillService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/utils/ConsoleUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/utils/ConsoleUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,6 +96,7 @@
       <workItem from="1745639275890" duration="3376000" />
       <workItem from="1745798816883" duration="691000" />
       <workItem from="1745933341416" duration="6651000" />
+      <workItem from="1745987321417" duration="270000" />
     </task>
     <task id="LOCAL-00001" summary="Removed unnecessary interfaces and impls">
       <option name="closed" value="true" />

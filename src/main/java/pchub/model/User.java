@@ -5,6 +5,9 @@ import pchub.model.enums.UserRole;
 import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import pchub.dao.UserDao;
+import pchub.utils.PasswordUtils;
+import java.sql.SQLException;
 
 /**
  * Represents a user in the PC Hub system.
@@ -22,6 +25,7 @@ public class User {
     private String fullName;
     private String phone;
     private UserRole role;
+    private static final UserDao userDao = new UserDao();
 
     // Email validation pattern
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
@@ -206,5 +210,161 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(userId);
+    }
+    
+    /**
+     * Authenticates a user with username and password
+     * @param username The username to authenticate
+     * @param password The password to verify
+     * @return The authenticated user if successful, null otherwise
+     * @throws IllegalArgumentException if username or password is null or empty
+     */
+    public static User authenticateUser(String username, String password) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
+
+        try {
+            User user = userDao.findByUsername(username.trim());
+            if (user != null && PasswordUtils.verifyPassword(password.trim(), user.getPassword())) {
+                return user;
+            }
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to authenticate user: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Registers a new user
+     * @param user The user to register
+     * @return true if registration was successful, false otherwise
+     * @throws IllegalArgumentException if user is null or invalid
+     */
+    public static boolean registerUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+
+        try {
+            // Check if username or email already exists
+            if (userDao.findByUsername(user.getUsername()) != null) {
+                throw new IllegalStateException("Username already exists");
+            }
+            if (userDao.findByEmail(user.getEmail()) != null) {
+                throw new IllegalStateException("Email already exists");
+            }
+
+            return userDao.insert(user);
+        } catch (IllegalStateException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to register user: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Retrieves a user by their ID
+     * @param userId The ID of the user to retrieve
+     * @return The user if found, null otherwise
+     * @throws IllegalArgumentException if userId is null or empty
+     */
+    public static User getUserById(String userId) {
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new IllegalArgumentException("User ID cannot be null or empty");
+        }
+
+        try {
+            return userDao.findById(userId.trim());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to retrieve user: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Retrieves all users
+     * @return List of all users
+     */
+    public static User[] getAllUsers() throws SQLException {
+        User[] users = userDao.findAll();
+        return users;
+    }
+
+    /**
+     * Updates an existing user
+     * @param user The user to update
+     * @return true if update was successful, false otherwise
+     * @throws IllegalArgumentException if user is null or invalid
+     */
+    public static boolean updateUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+
+        try {
+            // If updating email, check that it's not already in use
+            User existingUserWithEmail = userDao.findByEmail(user.getEmail());
+            if (existingUserWithEmail != null && !Objects.equals(existingUserWithEmail.getUserId(), user.getUserId())) {
+                throw new IllegalStateException("Email already in use by another user");
+            }
+
+            return userDao.update(user);
+        } catch (IllegalStateException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update user: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Deletes a user
+     * @param userId The ID of the user to delete
+     * @return true if deletion was successful, false otherwise
+     * @throws IllegalArgumentException if userId is null or empty
+     */
+    public static boolean deleteUser(String userId) {
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new IllegalArgumentException("User ID cannot be null or empty");
+        }
+
+        try {
+            return userDao.delete(userId.trim());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete user: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Updates a user's password
+     * @param userId The ID of the user
+     * @param oldPassword The current password
+     * @param newPassword The new password
+     * @return true if password was updated successfully, false otherwise
+     * @throws IllegalArgumentException if any parameter is null or empty
+     */
+    public static boolean updatePassword(String userId, String oldPassword, String newPassword) {
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new IllegalArgumentException("User ID cannot be null or empty");
+        }
+        if (oldPassword == null || oldPassword.trim().isEmpty()) {
+            throw new IllegalArgumentException("Old password cannot be null or empty");
+        }
+        if (newPassword == null || newPassword.trim().isEmpty()) {
+            throw new IllegalArgumentException("New password cannot be null or empty");
+        }
+
+        try {
+            User user = userDao.findById(userId.trim());
+            if (user != null && PasswordUtils.verifyPassword(oldPassword.trim(), user.getPassword())) {
+                user.setPassword(newPassword.trim());
+                return userDao.update(user);
+            }
+            return false;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update password: " + e.getMessage(), e);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package pchub.service;
+package pchub.utils;
 
 import java.security.SecureRandom;
 import java.util.HashMap;
