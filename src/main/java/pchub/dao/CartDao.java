@@ -1,11 +1,15 @@
 package pchub.dao;
 
-import pchub.model.CartItem;
-import pchub.model.Cart;
-import pchub.utils.DatabaseConnection;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+
+import pchub.model.Cart;
+import pchub.model.CartItem;
+import pchub.utils.DatabaseConnection;
 
 public class CartDao extends DaoTemplate<Cart> {
     @Override
@@ -48,7 +52,7 @@ public class CartDao extends DaoTemplate<Cart> {
             } else {
                 // No cart found, create a new one
                 Cart cart = new Cart();
-                cart.setCustomerId(customerId);
+                cart.setUserId(customerId);
                 if (insert(cart)) {
                     // Get the newly created cart with the cartID
                     Cart newCart = findByUserId(customerId);
@@ -72,11 +76,11 @@ public class CartDao extends DaoTemplate<Cart> {
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 LocalDateTime now = LocalDateTime.now();
                 Timestamp timestamp = Timestamp.valueOf(now);
 
-                preparedStatement.setString(1, cart.getCustomerId());
+                preparedStatement.setString(1, cart.getUserId());
                 preparedStatement.setTimestamp(2, timestamp);
                 preparedStatement.setTimestamp(3, timestamp);
                 preparedStatement.setInt(4, cart.getItemCount());
@@ -85,10 +89,13 @@ public class CartDao extends DaoTemplate<Cart> {
                 int affectedRows = preparedStatement.executeUpdate();
 
                 if (affectedRows > 0) {
-                    // Get the generated cart ID
-                    try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                        if (generatedKeys.next()) {
-                            String cartId = generatedKeys.getString(1);
+                    // Get the generated cart ID using a separate query
+                    try (PreparedStatement getCartIdStmt = connection.prepareStatement(
+                            "SELECT cartID FROM cart WHERE customerID = ? ORDER BY createdDate DESC LIMIT 1")) {
+                        getCartIdStmt.setString(1, cart.getUserId());
+                        ResultSet rs = getCartIdStmt.executeQuery();
+                        if (rs.next()) {
+                            String cartId = rs.getString("cartID");
                             cart.setCartId(cartId);
 
                             // Save cart items if there are any
@@ -195,9 +202,6 @@ public class CartDao extends DaoTemplate<Cart> {
                         connection.commit();
                         return true;
                     }
-
-                    connection.rollback();
-                    return false;
                 }
             } catch (SQLException e) {
                 connection.rollback();
@@ -210,17 +214,18 @@ public class CartDao extends DaoTemplate<Cart> {
             System.err.println("Error with connection while deleting cart: " + e.getMessage());
             throw e;
         }
+        return false;
     }
 
     @Override
     public Cart mapResultSet(ResultSet resultSet) throws SQLException {
         Cart cart = new Cart();
         cart.setCartId(resultSet.getString("cartID"));
-        cart.setCustomerId(resultSet.getString("customerID"));
-        cart.setItemCount(resultSet.getInt("itemCount"));
-        cart.setSubtotal(resultSet.getDouble("subtotal"));
+        cart.setUserId(resultSet.getString("customerID"));
         cart.setCreatedDate(resultSet.getTimestamp("createdDate").toLocalDateTime());
         cart.setLastUpdated(resultSet.getTimestamp("lastUpdated").toLocalDateTime());
+        cart.setItemCount(resultSet.getInt("itemCount"));
+        cart.setSubtotal(resultSet.getDouble("subtotal"));
         return cart;
     }
 

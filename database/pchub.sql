@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 29, 2025 at 04:48 PM
+-- Generation Time: Apr 30, 2025 at 09:16 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,8 +20,9 @@ SET time_zone = "+00:00";
 --
 -- Database: `pchub`
 --
-CREATE DATABASE IF NOT EXISTS `pchub` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `pchub`;
+
+CREATE DATABASE IF NOT EXISTS pchub;
+USE pchub;
 
 -- --------------------------------------------------------
 
@@ -29,7 +30,6 @@ USE `pchub`;
 -- Table structure for table `admin_role`
 --
 
-DROP TABLE IF EXISTS `admin_role`;
 CREATE TABLE `admin_role` (
   `adminID` varchar(10) NOT NULL,
   `userID` varchar(10) NOT NULL,
@@ -51,7 +51,6 @@ INSERT INTO `admin_role` (`adminID`, `userID`, `department`, `accessLevel`) VALU
 --
 -- Triggers `admin_role`
 --
-DROP TRIGGER IF EXISTS `before_insert_admin_role`;
 DELIMITER $$
 CREATE TRIGGER `before_insert_admin_role` BEFORE INSERT ON `admin_role` FOR EACH ROW BEGIN
     DECLARE next_id INT;
@@ -67,7 +66,6 @@ DELIMITER ;
 -- Table structure for table `bill`
 --
 
-DROP TABLE IF EXISTS `bill`;
 CREATE TABLE `bill` (
   `billID` varchar(10) NOT NULL,
   `orderID` varchar(10) NOT NULL,
@@ -81,7 +79,6 @@ CREATE TABLE `bill` (
 --
 -- Triggers `bill`
 --
-DROP TRIGGER IF EXISTS `before_insert_bill`;
 DELIMITER $$
 CREATE TRIGGER `before_insert_bill` BEFORE INSERT ON `bill` FOR EACH ROW BEGIN
     DECLARE next_id INT;
@@ -97,7 +94,6 @@ DELIMITER ;
 -- Table structure for table `cart`
 --
 
-DROP TABLE IF EXISTS `cart`;
 CREATE TABLE `cart` (
   `cartID` varchar(10) NOT NULL,
   `customerID` varchar(10) NOT NULL,
@@ -108,9 +104,15 @@ CREATE TABLE `cart` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`cartID`, `customerID`, `createdDate`, `lastUpdated`, `itemCount`, `subtotal`) VALUES
+('CA00001', 'C0027', '2025-05-01 03:14:29', '2025-05-01 03:14:29', 0, 0.00);
+
+--
 -- Triggers `cart`
 --
-DROP TRIGGER IF EXISTS `before_insert_cart`;
 DELIMITER $$
 CREATE TRIGGER `before_insert_cart` BEFORE INSERT ON `cart` FOR EACH ROW BEGIN
     DECLARE next_id INT;
@@ -126,7 +128,6 @@ DELIMITER ;
 -- Table structure for table `cart_item`
 --
 
-DROP TABLE IF EXISTS `cart_item`;
 CREATE TABLE `cart_item` (
   `cartItemID` varchar(10) NOT NULL,
   `cartID` varchar(10) NOT NULL,
@@ -139,7 +140,6 @@ CREATE TABLE `cart_item` (
 --
 -- Triggers `cart_item`
 --
-DROP TRIGGER IF EXISTS `before_insert_cart_item`;
 DELIMITER $$
 CREATE TRIGGER `before_insert_cart_item` BEFORE INSERT ON `cart_item` FOR EACH ROW BEGIN
     DECLARE next_id INT;
@@ -155,7 +155,6 @@ DELIMITER ;
 -- Table structure for table `order`
 --
 
-DROP TABLE IF EXISTS `order`;
 CREATE TABLE `order` (
   `orderID` varchar(10) NOT NULL,
   `customerID` varchar(10) NOT NULL,
@@ -169,7 +168,6 @@ CREATE TABLE `order` (
 --
 -- Triggers `order`
 --
-DROP TRIGGER IF EXISTS `before_insert_order`;
 DELIMITER $$
 CREATE TRIGGER `before_insert_order` BEFORE INSERT ON `order` FOR EACH ROW BEGIN
     DECLARE next_id INT;
@@ -185,7 +183,6 @@ DELIMITER ;
 -- Table structure for table `order_item`
 --
 
-DROP TABLE IF EXISTS `order_item`;
 CREATE TABLE `order_item` (
   `orderItemID` varchar(10) NOT NULL,
   `orderID` varchar(10) NOT NULL,
@@ -197,7 +194,6 @@ CREATE TABLE `order_item` (
 --
 -- Triggers `order_item`
 --
-DROP TRIGGER IF EXISTS `before_insert_order_item`;
 DELIMITER $$
 CREATE TRIGGER `before_insert_order_item` BEFORE INSERT ON `order_item` FOR EACH ROW BEGIN
     DECLARE next_id INT;
@@ -213,7 +209,6 @@ DELIMITER ;
 -- Table structure for table `payment_method`
 --
 
-DROP TABLE IF EXISTS `payment_method`;
 CREATE TABLE `payment_method` (
   `payment_methodID` varchar(10) NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -224,7 +219,6 @@ CREATE TABLE `payment_method` (
 --
 -- Triggers `payment_method`
 --
-DROP TRIGGER IF EXISTS `before_insert_payment_method`;
 DELIMITER $$
 CREATE TRIGGER `before_insert_payment_method` BEFORE INSERT ON `payment_method` FOR EACH ROW BEGIN
     DECLARE next_id INT;
@@ -240,7 +234,6 @@ DELIMITER ;
 -- Table structure for table `product`
 --
 
-DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product` (
   `productID` varchar(10) NOT NULL,
   `name` varchar(100) NOT NULL,
@@ -266,12 +259,41 @@ INSERT INTO `product` (`productID`, `name`, `description`, `brand`, `product_cat
 ('P00007', 'ASUS ROG Strix Z790-E', 'Intel Z790 Motherboard', 'ASUS', 'CAT009', 399.99, 40, '{\"socket\":\"LGA1700\",\"chipset\":\"Z790\",\"memory_slots\":4}'),
 ('P00008', 'MSI MPG B650 Carbon', 'AMD B650 Motherboard', 'MSI', 'CAT009', 299.99, 45, '{\"socket\":\"AM5\",\"chipset\":\"B650\",\"memory_slots\":4}'),
 ('P00009', 'Corsair RM1000x', '1000W Power Supply', 'Corsair', 'CAT013', 189.99, 60, '{\"wattage\":\"1000W\",\"efficiency\":\"80+ Gold\",\"modular\":\"Full\"}'),
-('P00010', 'NZXT H7 Elite', 'Mid-Tower Case', 'NZXT', 'CAT014', 179.99, 55, '{\"form_factor\":\"Mid-Tower\",\"material\":\"Steel/Tempered Glass\",\"fans_included\":3}');
+('P00010', 'NZXT H7 Elite', 'Mid-Tower Case', 'NZXT', 'CAT014', 179.99, 55, '{\"form_factor\":\"Mid-Tower\",\"material\":\"Steel/Tempered Glass\",\"fans_included\":3}'),
+('P00011', 'Intel Core i7-13700K', '13th Gen Intel Core i7 Processor', 'Intel', 'CAT008', 409.99, 60, '{\"cores\":16,\"threads\":24,\"base_clock\":\"3.4GHz\",\"boost_clock\":\"5.4GHz\"}'),
+('P00012', 'AMD Ryzen 7 7800X3D', 'AMD Ryzen 7 Processor with 3D V-Cache', 'AMD', 'CAT008', 449.99, 40, '{\"cores\":8,\"threads\":16,\"base_clock\":\"4.2GHz\",\"boost_clock\":\"5.0GHz\"}'),
+('P00013', 'Intel Core i5-13600K', '13th Gen Intel Core i5 Processor', 'Intel', 'CAT008', 319.99, 70, '{\"cores\":14,\"threads\":20,\"base_clock\":\"3.5GHz\",\"boost_clock\":\"5.1GHz\"}'),
+('P00014', 'AMD Ryzen 5 7600X', 'AMD Ryzen 5 Processor', 'AMD', 'CAT008', 299.99, 65, '{\"cores\":6,\"threads\":12,\"base_clock\":\"4.7GHz\",\"boost_clock\":\"5.3GHz\"}'),
+('P00015', 'NVIDIA RTX 4080', 'NVIDIA GeForce RTX 4080 Graphics Card', 'NVIDIA', 'CAT012', 1199.99, 25, '{\"vram\":\"16GB\",\"memory_type\":\"GDDR6X\",\"boost_clock\":\"2.51GHz\"}'),
+('P00016', 'AMD RX 7800 XT', 'AMD Radeon RX 7800 XT Graphics Card', 'AMD', 'CAT012', 499.99, 40, '{\"vram\":\"16GB\",\"memory_type\":\"GDDR6\",\"boost_clock\":\"2.4GHz\"}'),
+('P00017', 'NVIDIA RTX 4070 Ti', 'NVIDIA GeForce RTX 4070 Ti Graphics Card', 'NVIDIA', 'CAT012', 799.99, 35, '{\"vram\":\"12GB\",\"memory_type\":\"GDDR6X\",\"boost_clock\":\"2.61GHz\"}'),
+('P00018', 'AMD RX 7600', 'AMD Radeon RX 7600 Graphics Card', 'AMD', 'CAT012', 269.99, 50, '{\"vram\":\"8GB\",\"memory_type\":\"GDDR6\",\"boost_clock\":\"2.25GHz\"}'),
+('P00019', 'Western Digital Black SN850X 1TB', 'WD Black SN850X NVMe SSD', 'Western Digital', 'CAT011', 149.99, 85, '{\"capacity\":\"1TB\",\"interface\":\"PCIe 4.0\",\"read_speed\":\"7300MB/s\",\"write_speed\":\"6300MB/s\"}'),
+('P00020', 'Crucial P3 Plus 2TB', 'Crucial P3 Plus NVMe SSD', 'Crucial', 'CAT011', 129.99, 95, '{\"capacity\":\"2TB\",\"interface\":\"PCIe 4.0\",\"read_speed\":\"5000MB/s\",\"write_speed\":\"4200MB/s\"}'),
+('P00021', 'Seagate Barracuda 4TB', 'Seagate Barracuda Hard Drive', 'Seagate', 'CAT011', 89.99, 120, '{\"capacity\":\"4TB\",\"interface\":\"SATA 6Gb/s\",\"rpm\":\"5400\"}'),
+('P00022', 'Samsung 870 EVO 1TB', 'Samsung 870 EVO SATA SSD', 'Samsung', 'CAT011', 89.99, 110, '{\"capacity\":\"1TB\",\"interface\":\"SATA 6Gb/s\",\"read_speed\":\"560MB/s\",\"write_speed\":\"530MB/s\"}'),
+('P00023', 'G.Skill Trident Z5 RGB 32GB', 'DDR5 Memory Kit', 'G.Skill', 'CAT010', 179.99, 65, '{\"capacity\":\"32GB\",\"speed\":\"6400MHz\",\"latency\":\"CL32\"}'),
+('P00024', 'Kingston Fury Beast 16GB', 'DDR4 Memory Kit', 'Kingston', 'CAT010', 69.99, 90, '{\"capacity\":\"16GB\",\"speed\":\"3600MHz\",\"latency\":\"CL18\"}'),
+('P00025', 'Crucial Ballistix 64GB', 'DDR5 Memory Kit', 'Crucial', 'CAT010', 289.99, 40, '{\"capacity\":\"64GB\",\"speed\":\"5200MHz\",\"latency\":\"CL40\"}'),
+('P00026', 'TeamGroup T-Force Delta RGB 32GB', 'DDR4 Memory Kit', 'TeamGroup', 'CAT010', 109.99, 70, '{\"capacity\":\"32GB\",\"speed\":\"3600MHz\",\"latency\":\"CL18\"}'),
+('P00027', 'Gigabyte Z790 Aorus Master', 'Intel Z790 Motherboard', 'Gigabyte', 'CAT009', 449.99, 35, '{\"socket\":\"LGA1700\",\"chipset\":\"Z790\",\"memory_slots\":4}'),
+('P00028', 'ASRock X670E Taichi', 'AMD X670E Motherboard', 'ASRock', 'CAT009', 499.99, 30, '{\"socket\":\"AM5\",\"chipset\":\"X670E\",\"memory_slots\":4}'),
+('P00029', 'MSI PRO B760M-A', 'Intel B760 Motherboard', 'MSI', 'CAT009', 139.99, 55, '{\"socket\":\"LGA1700\",\"chipset\":\"B760\",\"memory_slots\":4}'),
+('P00030', 'ASUS TUF Gaming A620M-PLUS', 'AMD A620 Motherboard', 'ASUS', 'CAT009', 119.99, 60, '{\"socket\":\"AM5\",\"chipset\":\"A620\",\"memory_slots\":2}'),
+('P00031', 'EVGA SuperNOVA 850 G6', '850W Power Supply', 'EVGA', 'CAT013', 149.99, 65, '{\"wattage\":\"850W\",\"efficiency\":\"80+ Gold\",\"modular\":\"Full\"}'),
+('P00032', 'Seasonic Focus GX-750', '750W Power Supply', 'Seasonic', 'CAT013', 129.99, 70, '{\"wattage\":\"750W\",\"efficiency\":\"80+ Gold\",\"modular\":\"Full\"}'),
+('P00033', 'be quiet! Straight Power 11 1000W', '1000W Power Supply', 'be quiet!', 'CAT013', 219.99, 45, '{\"wattage\":\"1000W\",\"efficiency\":\"80+ Platinum\",\"modular\":\"Full\"}'),
+('P00034', 'Thermaltake Toughpower GF3 850W', '850W Power Supply', 'Thermaltake', 'CAT013', 159.99, 55, '{\"wattage\":\"850W\",\"efficiency\":\"80+ Gold\",\"modular\":\"Full\"}'),
+('P00035', 'Fractal Design Meshify 2', 'Mid-Tower Case', 'Fractal Design', 'CAT014', 149.99, 50, '{\"form_factor\":\"Mid-Tower\",\"material\":\"Steel/Tempered Glass\",\"fans_included\":2}'),
+('P00036', 'Corsair 5000D Airflow', 'Mid-Tower Case', 'Corsair', 'CAT014', 174.99, 45, '{\"form_factor\":\"Mid-Tower\",\"material\":\"Steel/Tempered Glass\",\"fans_included\":2}'),
+('P00037', 'Lian Li O11 Dynamic EVO', 'Mid-Tower Case', 'Lian Li', 'CAT014', 189.99, 40, '{\"form_factor\":\"Mid-Tower\",\"material\":\"Aluminum/Tempered Glass\",\"fans_included\":0}'),
+('P00038', 'Phanteks Eclipse G360A', 'Mid-Tower Case', 'Phanteks', 'CAT014', 99.99, 65, '{\"form_factor\":\"Mid-Tower\",\"material\":\"Steel/Tempered Glass\",\"fans_included\":3}'),
+('P00039', 'LG UltraGear 27GP850-B', '27\" Gaming Monitor', 'LG', 'CAT015', 399.99, 40, '{\"size\":\"27 inch\",\"resolution\":\"2560x1440\",\"refresh_rate\":\"165Hz\",\"panel_type\":\"IPS\"}'),
+('P00040', 'Samsung Odyssey G7', '32\" Curved Gaming Monitor', 'Samsung', 'CAT015', 649.99, 30, '{\"size\":\"32 inch\",\"resolution\":\"2560x1440\",\"refresh_rate\":\"240Hz\",\"panel_type\":\"VA\"}');
 
 --
 -- Triggers `product`
 --
-DROP TRIGGER IF EXISTS `before_insert_product`;
 DELIMITER $$
 CREATE TRIGGER `before_insert_product` BEFORE INSERT ON `product` FOR EACH ROW BEGIN
     DECLARE next_id INT;
@@ -284,14 +306,93 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `product_catalogue`
+--
+
+CREATE TABLE `product_catalogue` (
+  `catalogueID` varchar(10) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `startDate` datetime NOT NULL,
+  `endDate` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `product_catalogue`
+--
+
+INSERT INTO `product_catalogue` (`catalogueID`, `name`, `description`, `startDate`, `endDate`) VALUES
+('CATL001', '2025 Clearance', 'Clear stock', '2025-05-01 09:00:00', '2025-06-01 18:00:00'),
+('CATL002', 'Samsung Discount', 'Discount laaaaaaaaa', '2025-06-05 08:00:00', '2025-06-10 18:00:00'),
+('CATL003', 'Student Discount', 'Student Starter Pack', '2025-12-15 06:00:00', '2026-01-30 18:30:00');
+
+--
+-- Triggers `product_catalogue`
+--
+DELIMITER $$
+CREATE TRIGGER `before_insert_catalogue` BEFORE INSERT ON `product_catalogue` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    -- Get the highest existing catalogue ID, defaulting to 0 if none exist
+    SELECT IFNULL(MAX(CAST(SUBSTRING(catalogueID, 5) AS UNSIGNED)), 0) INTO next_id FROM product_catalogue;
+    -- Increment the ID
+    SET next_id = next_id + 1;
+    -- Set the new catalogue ID
+    SET NEW.catalogueID = CONCAT('CATL', LPAD(next_id, 3, '0'));
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `product_catalogue_item`
+--
+
+CREATE TABLE `product_catalogue_item` (
+  `itemID` varchar(10) NOT NULL,
+  `catalogueID` varchar(10) NOT NULL,
+  `productID` varchar(10) NOT NULL,
+  `specialPrice` decimal(10,2) NOT NULL,
+  `notes` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `product_catalogue_item`
+--
+
+INSERT INTO `product_catalogue_item` (`itemID`, `catalogueID`, `productID`, `specialPrice`, `notes`) VALUES
+('CI000001', 'CATL001', 'P00018', 179.99, 'Good'),
+('CI000002', 'CATL001', 'P00020', 69.99, 'Very Good'),
+('CI000003', 'CATL001', 'P00021', 39.99, 'Fast'),
+('CI000004', 'CATL002', 'P00022', 69.99, 'Samsung good'),
+('CI000005', 'CATL002', 'P00040', 499.99, 'Samsung nice'),
+('CI000006', 'CATL002', 'P00005', 99.99, 'Samsung best'),
+('CI000007', 'CATL003', 'P00006', 69.99, 'Only For Student'),
+('CI000008', 'CATL003', 'P00013', 159.99, 'Only for student'),
+('CI000009', 'CATL003', 'P00019', 99.99, 'Only for student');
+
+--
+-- Triggers `product_catalogue_item`
+--
+DELIMITER $$
+CREATE TRIGGER `before_insert_catalogue_item` BEFORE INSERT ON `product_catalogue_item` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(itemID, 3)), 0) + 1 FROM product_catalogue_item);
+    SET NEW.itemID = CONCAT('CI', LPAD(next_id, 6, '0'));
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `product_category`
 --
 
-DROP TABLE IF EXISTS `product_category`;
 CREATE TABLE `product_category` (
   `product_categoryID` varchar(10) NOT NULL,
   `name` varchar(50) NOT NULL,
-  `parentCategory` varchar(10) DEFAULT NULL,
+  `parent_category_id` varchar(10) DEFAULT NULL,
   `description` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -299,7 +400,7 @@ CREATE TABLE `product_category` (
 -- Dumping data for table `product_category`
 --
 
-INSERT INTO `product_category` (`product_categoryID`, `name`, `parentCategory`, `description`) VALUES
+INSERT INTO `product_category` (`product_categoryID`, `name`, `parent_category_id`, `description`) VALUES
 ('CAT001', 'Computer Components', NULL, 'All components for building and upgrading computers'),
 ('CAT002', 'Peripherals', NULL, 'External devices for computers'),
 ('CAT003', 'Networking', NULL, 'Devices for home and office networking'),
@@ -334,7 +435,6 @@ INSERT INTO `product_category` (`product_categoryID`, `name`, `parentCategory`, 
 --
 -- Triggers `product_category`
 --
-DROP TRIGGER IF EXISTS `before_insert_product_category`;
 DELIMITER $$
 CREATE TRIGGER `before_insert_product_category` BEFORE INSERT ON `product_category` FOR EACH ROW BEGIN
     DECLARE next_id INT;
@@ -350,7 +450,6 @@ DELIMITER ;
 -- Table structure for table `shipping_address`
 --
 
-DROP TABLE IF EXISTS `shipping_address`;
 CREATE TABLE `shipping_address` (
   `shipping_addressID` varchar(10) NOT NULL,
   `customerID` varchar(10) NOT NULL,
@@ -397,7 +496,6 @@ INSERT INTO `shipping_address` (`shipping_addressID`, `customerID`, `street`, `c
 --
 -- Triggers `shipping_address`
 --
-DROP TRIGGER IF EXISTS `before_insert_address`;
 DELIMITER $$
 CREATE TRIGGER `before_insert_address` BEFORE INSERT ON `shipping_address` FOR EACH ROW BEGIN
     DECLARE next_id INT;
@@ -413,7 +511,6 @@ DELIMITER ;
 -- Table structure for table `user`
 --
 
-DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `userID` varchar(10) NOT NULL,
   `username` varchar(50) NOT NULL,
@@ -461,12 +558,13 @@ INSERT INTO `user` (`userID`, `username`, `email`, `password`, `registrationDate
 ('C0022', 'nicole_adams', 'nicole.a@email.com', '$2a$12$7PWO7wnF58U.J3IInBXdXOnG3zX.Bfm42Z9lvVTBURNwKGbGz5AQG', '2024-10-22 11:45:00', '2025-03-19 15:30:00', 'ACTIVE', '012-2345678', 'Nicole Adams', 'CUSTOMER'),
 ('C0023', 'tyler_baker', 'tyler.b@email.com', '$2a$12$I6XqFNg5hfI6n0YF/CRwnu/7/jdOsMxYZqVmrXSWd7/uJGEq8aodW', '2024-10-23 12:15:00', '2025-03-21 17:15:00', 'ACTIVE', '012-2345678', 'Tyler Baker', 'CUSTOMER'),
 ('C0024', 'olivia_gonzalez', 'olivia.g@email.com', '$2a$12$AcZwlm3.4hxA.zR/Ct3xAOwVbxO4a1v7rlv3jOqqSQF7.x03jFX8e', '2024-10-24 13:30:00', '2025-03-22 10:40:00', 'ACTIVE', '012-2345678', 'Olivia Gonzalez', 'CUSTOMER'),
-('C0025', 'eric_nelson', 'eric.n@email.com', '$2a$12$rM7fPZsYqKjQYZaVNODWk.VhPWS4aJmPdpbRQ25qxZVG8Z9E4tl.O', '2024-10-25 14:45:00', '2025-03-18 13:25:00', 'ACTIVE', '012-2345678', 'Eric Nelson', 'CUSTOMER');
+('C0025', 'eric_nelson', 'eric.n@email.com', '$2a$12$rM7fPZsYqKjQYZaVNODWk.VhPWS4aJmPdpbRQ25qxZVG8Z9E4tl.O', '2024-10-25 14:45:00', '2025-03-18 13:25:00', 'ACTIVE', '012-2345678', 'Eric Nelson', 'CUSTOMER'),
+('C0026', 'Oni', 'lee@gmail.com', '$2a$12$lk/5v7PaG.wLK3mz3JpcsebJ360mPpkBRNlB9eZgLl4Z1VBTkgc1a', '2025-05-01 00:00:00', '2025-05-01 02:32:27', 'ACTIVE', '011-13109924', 'Lee', 'ADMIN'),
+('C0027', 'Lee', 'handsome@gmail.com', '$2a$12$e0i2NWaMhihDKfthdavt.OGbyaXwrMW6LNl2R15uZbwZ2WC4.k7ke', '2025-05-01 00:00:00', '2025-05-01 01:56:46', 'ACTIVE', '011-13109925', 'Handsome', 'CUSTOMER');
 
 --
 -- Triggers `user`
 --
-DROP TRIGGER IF EXISTS `before_insert_user`;
 DELIMITER $$
 CREATE TRIGGER `before_insert_user` BEFORE INSERT ON `user` FOR EACH ROW BEGIN
     DECLARE next_id INT;
@@ -560,11 +658,25 @@ ALTER TABLE `product`
   ADD KEY `product_categoryID` (`product_categoryID`);
 
 --
+-- Indexes for table `product_catalogue`
+--
+ALTER TABLE `product_catalogue`
+  ADD PRIMARY KEY (`catalogueID`);
+
+--
+-- Indexes for table `product_catalogue_item`
+--
+ALTER TABLE `product_catalogue_item`
+  ADD PRIMARY KEY (`itemID`),
+  ADD KEY `catalogueID` (`catalogueID`),
+  ADD KEY `productID` (`productID`);
+
+--
 -- Indexes for table `product_category`
 --
 ALTER TABLE `product_category`
   ADD PRIMARY KEY (`product_categoryID`),
-  ADD KEY `parentCategory` (`parentCategory`);
+  ADD KEY `parentCategory` (`parent_category_id`);
 
 --
 -- Indexes for table `shipping_address`
@@ -635,7 +747,7 @@ ALTER TABLE `product`
 -- Constraints for table `product_category`
 --
 ALTER TABLE `product_category`
-  ADD CONSTRAINT `category_ibfk_1` FOREIGN KEY (`parentCategory`) REFERENCES `product_category` (`product_categoryID`);
+  ADD CONSTRAINT `category_ibfk_1` FOREIGN KEY (`parent_category_id`) REFERENCES `product_category` (`product_categoryID`);
 
 --
 -- Constraints for table `shipping_address`

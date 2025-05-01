@@ -5,8 +5,8 @@ public class CartItem {
     private String cartId;
     private String productId;
     private String productName;
-    private int quantity;
     private double unitPrice;
+    private int quantity;
 
     // Getters and setters
     public String getCartItemId() {
@@ -41,20 +41,20 @@ public class CartItem {
         this.productName = productName;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
     public double getUnitPrice() {
         return unitPrice;
     }
 
     public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public double getSubtotal() {

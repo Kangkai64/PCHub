@@ -1,16 +1,16 @@
 package pchub.model;
 
-import pchub.dao.OrderDao;
-import pchub.dao.BillDao;
-import pchub.dao.ProductDao;
-import pchub.model.enums.OrderStatus;
-import pchub.model.enums.PaymentStatus;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Objects;
+
+import pchub.dao.BillDao;
+import pchub.dao.OrderDao;
+import pchub.dao.ProductDao;
+import pchub.model.enums.OrderStatus;
+import pchub.model.enums.PaymentStatus;
 
 /**
  * Represents an order in the PC Hub system.
@@ -313,7 +313,7 @@ public class Order {
             // Clear the cart after successful order placement
             if (orderSaved) {
                 Cart cart = new Cart();
-                cart.setCustomerId(order.getCustomerId());
+                cart.setUserId(order.getCustomerId());
                 Cart.clearCart(cart);
             }
 

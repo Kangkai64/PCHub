@@ -1,8 +1,14 @@
 package pchub.utils;
 
+<<<<<<< HEAD
 import java.io.IOException;
 import java.util.Scanner;
+=======
+>>>>>>> b5051265d04706e70462947b8a89d1e45f44fc86
 import java.io.Console;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.Scanner;
 
 public class ConsoleUtils {
     // ANSI code for color code
@@ -45,6 +51,25 @@ public class ConsoleUtils {
                 System.out.println("Please enter a valid number");
             }
         }
+    }
+
+    public static LocalDateTime getDateTimeInput(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                return null;
+            }
+            try {
+                return LocalDateTime.parse(input.replace(" ", "T"));
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please use yyyy-MM-dd HH:mm");
+            }
+        }
+    }
+
+    public static double getDoubleInput(Scanner scanner, String prompt) {
+        return getDoubleInput(scanner, prompt, 0.0, Double.MAX_VALUE);
     }
 
     /**
