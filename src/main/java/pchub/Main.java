@@ -17,6 +17,8 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static User currentUser = null;
     private static Cart currentCart = null;
+    private static Admin admin = null;
+    private static Customer customer = null;
 
     public static void main(String[] args) {
         ConsoleUtils.clearScreen();
@@ -48,9 +50,11 @@ public class Main {
             } else {
                 ConsoleUtils.displayLogo();
                 if (currentUser.getRole() == UserRole.ADMIN) {
+                    admin = new Admin(currentUser);
                     displayAdminMenu();
                     handleAdminChoice();
                 } else {
+                    customer = new Customer(currentUser);
                     displayCustomerMenu();
                     handleCustomerChoice();
                 }
@@ -81,7 +85,7 @@ public class Main {
 
     private static void displayCustomerMenu() {
         ConsoleUtils.printHeader("      Customer Menu      ");
-        System.out.println("Welcome, " + currentUser.getUsername() + "!");
+        System.out.println("Welcome, " + customer.getUsername() + "!");
         System.out.println("1. Browse Products");
         System.out.println("2. Search Products");
         System.out.println("3. View Catalogues");
@@ -93,7 +97,7 @@ public class Main {
 
     private static void displayAdminMenu() {
         ConsoleUtils.printHeader("      Admin Menu      ");
-        System.out.println("Welcome, Admin " + currentUser.getUsername() + "!");
+        System.out.println("Welcome, Admin " + admin.getUsername() + "!");
         System.out.println("1. Manage Products");
         System.out.println("2. Manage Product Categories");
         System.out.println("3. Manage Product Catalogues");
@@ -207,10 +211,10 @@ public class Main {
                 viewCart();
                 break;
             case 5: // View Order History
-                ((Customer) currentUser).viewOrderHistory();
+                customer.viewOrderHistory();
                 break;
             case 6: // Manage Profile
-                ((Customer) currentUser).manageProfile();
+                customer.manageProfile();
                 break;
             case 7: // Logout
                 logout();
@@ -231,8 +235,8 @@ public class Main {
             case 3: // Manage Product Catalogues
                 Admin.manageProductCatalogues();
                 break;
-            case 4: // Manage Users
-                new Admin(currentUser).manageUsers();
+            case 4: // Manage Users, is not static to prevent deleting admin own account
+                admin.manageUsers();
                 break;
             case 5: // View All Orders
                 Admin.viewAllOrders();
@@ -247,7 +251,7 @@ public class Main {
     }
 
     public static void displayAllProducts() {
-        ConsoleUtils.printHeader("      Product Catalog      ");
+        ConsoleUtils.printHeader("      Product Catalogue      ");
         try {
             Product[] products = Product.getAllProducts();
             if (products == null) {
@@ -534,26 +538,26 @@ public class Main {
         );
 
         // Generate OTP and send it
-        String otp = otpManager.generateOTP(currentUser.getEmail());
-        emailService.sendOTP(currentUser.getEmail(), otp);
+        String otp = otpManager.generateOTP(customer.getEmail());
+        emailService.sendOTP(customer.getEmail(), otp);
 
         String userInputOtp = ConsoleUtils.getStringInput(scanner, "Enter OTP: ");
         // Verify OTP
-        boolean isValid = otpManager.verifyOTP(currentUser.getEmail(), userInputOtp);
+        boolean isValid = otpManager.verifyOTP(customer.getEmail(), userInputOtp);
         if (!isValid) {
             return;
         }
         System.out.println("OTP verified successfully.");
         // Process order
         try {
-            Order order = Order.createOrderFromCart(currentUser, currentCart, shippingAddress, paymentMethod);
+            Order order = Order.createOrderFromCart(customer, currentCart, shippingAddress, paymentMethod);
             if (order != null) {
                 System.out.println("\nOrder created successfully!");
                 System.out.println("Order ID: " + order.getOrderId());
 
                 // Generate and display bill
                 Bill bill = Order.generateBill(order.getOrderId());
-                ((Customer) currentUser).displayBill(bill);
+                customer.displayBill(bill);
 
                 // Clear cart after successful order
                 Cart.clearCart(currentCart);
@@ -568,11 +572,11 @@ public class Main {
 
     private static Address selectShippingAddress() {
         try {
-            Address[] addresses = Address.getAddressesByUser(currentUser.getUserId());
+            Address[] addresses = Address.getAddressesByUser(customer.getUserId());
 
             if (addresses == null || addresses.length == 0) {
                 System.out.println("You don't have any saved addresses. Let's add one:");
-                return ((Customer) currentUser).addNewAddress();
+                return customer.addNewAddress();
             }
 
             ConsoleUtils.printHeader("      Select Shipping Address      ");
@@ -587,7 +591,7 @@ public class Main {
             int choice = ConsoleUtils.getIntInput(scanner, "Select an address: ", 1, index + 1);
 
             if (choice == index) {
-                return ((Customer) currentUser).addNewAddress();
+                return customer.addNewAddress();
             } else if (choice == index + 1) {
                 return null; // Cancel checkout
             } else {
@@ -620,7 +624,7 @@ public class Main {
             }
 
             PaymentMethod paymentMethod = paymentMethods[choice - 1];
-            paymentMethod.setName(currentUser.getUserId());
+            paymentMethod.setName(customer.getUserId());
 
             return paymentMethod;
         } else {
@@ -693,6 +697,8 @@ public class Main {
 
     private static void logout() {
         currentUser = null;
+        customer = null;
+        admin = null;
         currentCart = null;
         System.out.println("Logged out successfully.");
     }
@@ -757,7 +763,7 @@ public class Main {
                     // Add to cart
                     if (currentCart == null) {
                         currentCart = new Cart();
-                        currentCart.setCustomerId(currentUser.getUserId());
+                        currentCart.setCustomerId(customer.getUserId());
                     }
 
                     CartItem[] items = currentCart.getItems();
@@ -812,7 +818,7 @@ public class Main {
             String choice = ConsoleUtils.getStringInput(scanner, "View receipt? (y/n): ");
             if (choice.equalsIgnoreCase("y")) {
                 Bill bill = Order.generateBill(String.valueOf(orderId));
-                ((Customer) currentUser).displayBill(bill);
+                customer.displayBill(bill);
             }
         } catch (Exception e) {
             System.out.println("Error displaying order details: " + e.getMessage());

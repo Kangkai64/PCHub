@@ -96,31 +96,45 @@ public class UserDao extends DaoTemplate<User> {
 
     @Override
     public boolean insert(User user) throws SQLException {
-        String sql = "INSERT INTO user (userID, username, email, password, registrationDate, lastLogin, status, " +
+        String sql = "INSERT INTO user (username, email, password, registrationDate, lastLogin, status, " +
                 "phone, fullName, role) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            preparedStatement.setString(1, user.getUserId());
-            preparedStatement.setString(2, user.getUsername());
-            preparedStatement.setString(3, user.getEmail());
-            preparedStatement.setString(4, PasswordUtils.hashPassword(user.getPassword()));
-            preparedStatement.setDate(5, new Date(user.getRegistrationDate().getTime()));
-            preparedStatement.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // Current timestamp for last login
-            preparedStatement.setString(7, user.getStatus() != null ? user.getStatus() : "Active");
-            preparedStatement.setString(8, user.getPhone());
-            preparedStatement.setString(9, user.getFullName());
-            preparedStatement.setString(10, user.getRole().name());
+            preparedStatement.setString(1, user.getUsername());
+            preparedStatement.setString(2, user.getEmail());
+            preparedStatement.setString(3, PasswordUtils.hashPassword(user.getPassword()));
+            preparedStatement.setDate(4, new Date(user.getRegistrationDate().getTime()));
+            preparedStatement.setTimestamp(5, new Timestamp(System.currentTimeMillis())); // Current timestamp for last login
+            preparedStatement.setString(6, user.getStatus() != null ? user.getStatus() : "Active");
+            preparedStatement.setString(7, user.getPhone());
+            preparedStatement.setString(8, user.getFullName());
+            preparedStatement.setString(9, user.getRole().name());
 
             int affectedRows = preparedStatement.executeUpdate();
-            return affectedRows > 0;
+
+            if (affectedRows > 0) {
+                // Get the last inserted user ID using a separate query
+                String getLastIdSql = "SELECT userID FROM `user` WHERE role = ? ORDER BY registrationDate DESC LIMIT 1";
+                try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
+                    preparedStatement.setString(1, user.getRole().name());
+                    try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
+                        if (resultSet.next()) {
+                            String userId = resultSet.getString("userID");
+                            user.setUserId(userId);
+                            return true;
+                        }
+                    }
+                }
+            }
 
         } catch (SQLException e) {
             System.err.println("Error inserting user: " + e.getMessage());
             return false;
         }
+        return false;
     }
 
     @Override
@@ -185,7 +199,7 @@ public class UserDao extends DaoTemplate<User> {
     }
 
     @Override
-    public User mapResultSet(ResultSet resultSet) throws SQLException {
+    protected User mapResultSet(ResultSet resultSet) throws SQLException {
         User user = new User();
         user.setUserId(resultSet.getString("userID"));
         user.setUsername(resultSet.getString("username"));

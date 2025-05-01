@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class CartItemDao extends DaoTemplate<CartItem> {
 
@@ -173,7 +172,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
     }
 
     @Override
-    public CartItem mapResultSet(ResultSet resultSet) throws SQLException {
+    protected CartItem mapResultSet(ResultSet resultSet) throws SQLException {
         CartItem item = new CartItem();
         item.setCartItemId(resultSet.getString("cartItemID"));
         item.setCartId(resultSet.getString("cartID"));

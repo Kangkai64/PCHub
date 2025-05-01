@@ -100,7 +100,7 @@ public class OrderDao extends DaoTemplate<Order> {
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, order.getCustomerId());
                 preparedStatement.setTimestamp(2, new Timestamp(order.getOrderDate().getTime()));
                 preparedStatement.setString(3, order.getStatus().name().toLowerCase());
@@ -111,15 +111,16 @@ public class OrderDao extends DaoTemplate<Order> {
                 int affectedRows = preparedStatement.executeUpdate();
 
                 if (affectedRows > 0) {
-                    ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-                    if (generatedKeys.next()) {
-                        String orderId = generatedKeys.getString(1);
-                        order.setOrderId(orderId);
-
-                        // Save order items
-                        if (insertOrderItems(connection, order)) {
-                            connection.commit();
-                            return true;
+                    // Get the last inserted order ID using a separate query
+                    String getLastIdSql = "SELECT orderID FROM `order` WHERE customerID = ? ORDER BY orderID DESC LIMIT 1";
+                    try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
+                        preparedStatement.setString(1, order.getCustomerId());
+                        try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
+                            if (resultSet.next()) {
+                                String orderId = resultSet.getString("orderID");
+                                order.setOrderId(orderId);
+                                return true;
+                            }
                         }
                     }
                 }
@@ -213,7 +214,7 @@ public class OrderDao extends DaoTemplate<Order> {
     }
 
     @Override
-    public Order mapResultSet(ResultSet resultSet) throws SQLException {
+    protected Order mapResultSet(ResultSet resultSet) throws SQLException {
         Order order = new Order();
         order.setOrderId(resultSet.getString("orderID"));
         order.setCustomerId(resultSet.getString("customerID"));

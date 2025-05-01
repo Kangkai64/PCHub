@@ -217,7 +217,7 @@ public class CartDao extends DaoTemplate<Cart> {
     }
 
     @Override
-    public Cart mapResultSet(ResultSet resultSet) throws SQLException {
+    protected Cart mapResultSet(ResultSet resultSet) throws SQLException {
         Cart cart = new Cart();
         cart.setCartId(resultSet.getString("cartID"));
         cart.setCustomerId(resultSet.getString("customerID"));

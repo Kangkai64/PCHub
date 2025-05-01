@@ -120,40 +120,53 @@ public class ProductDao extends DaoTemplate<Product> {
 
     @Override
     public boolean insert(Product product) {
-        String sql = "INSERT INTO product (productID, name, description, brand, product_categoryID, unitPrice, currentQuantity, specifications) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        Connection conn = null;
+        String sql = "INSERT INTO product (name, description, brand, product_categoryID, unitPrice, currentQuantity, specifications) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        Connection connection = null;
         PreparedStatement preparedStatement = null;
 
         try {
-            conn = DatabaseConnection.getConnection();
-            if (conn == null) {
+            connection = DatabaseConnection.getConnection();
+            if (connection == null) {
                 throw new SQLException("Failed to establish database connection");
             }
 
-            preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setString(1, product.getProductID());
-            preparedStatement.setString(2, product.getName());
-            preparedStatement.setString(3, product.getDescription());
-            preparedStatement.setString(4, product.getBrand());
-            preparedStatement.setString(5, product.getCategory());
-            preparedStatement.setDouble(6, product.getUnitPrice());
-            preparedStatement.setInt(7, product.getCurrentQuantity());
-            preparedStatement.setString(8, product.getSpecifications());
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, product.getName());
+            preparedStatement.setString(2, product.getDescription());
+            preparedStatement.setString(3, product.getBrand());
+            preparedStatement.setString(4, product.getCategory());
+            preparedStatement.setDouble(5, product.getUnitPrice());
+            preparedStatement.setInt(6, product.getCurrentQuantity());
+            preparedStatement.setString(7, product.getSpecifications());
 
             int affectedRows = preparedStatement.executeUpdate();
-            return affectedRows > 0;
+
+            if (affectedRows > 0) {
+                // Get the last inserted product ID using a separate query
+                String getLastIdSql = "SELECT productID FROM `product` ORDER BY productID DESC LIMIT 1";
+                try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
+                    try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
+                        if (resultSet.next()) {
+                            String productID = resultSet.getString("productID");
+                            product.setProductID(productID);
+                            return true;
+                        }
+                    }
+                }
+            }
         } catch (SQLException e) {
             System.err.println("Error saving product: " + e.getMessage());
             return false;
         } finally {
             try {
                 if (preparedStatement != null) preparedStatement.close();
-                if (conn != null) conn.close();
+                if (connection != null) connection.close();
             } catch (SQLException e) {
                 System.err.println("Error closing database resources: " + e.getMessage());
             }
         }
+        return false;
     }
 
     @Override
@@ -225,7 +238,7 @@ public class ProductDao extends DaoTemplate<Product> {
     }
 
     @Override
-    public Product mapResultSet(ResultSet resultSet) throws SQLException {
+    protected Product mapResultSet(ResultSet resultSet) throws SQLException {
         Product product = new Product();
         product.setProductID(resultSet.getString("productID"));
         product.setName(resultSet.getString("name"));

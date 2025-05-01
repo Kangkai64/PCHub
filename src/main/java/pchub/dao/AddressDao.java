@@ -12,21 +12,40 @@ public class AddressDao extends DaoTemplate<Address> {
 
     @Override
     public boolean insert(Address address) throws SQLException {
-        String sql = "INSERT INTO shipping_address (shipping_addressID, customerID, street, city, state, zipCode, country) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO shipping_address (customerID, street, city, state, zipCode, country) " +
+                    "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, address.getAddressId());
-            statement.setString(2, address.getUserId());
-            statement.setString(3, address.getStreet());
-            statement.setString(4, address.getCity());
-            statement.setString(5, address.getState());
-            statement.setString(6, address.getZipCode());
-            statement.setString(7, address.getCountry());
+            statement.setString(1, address.getUserId());
+            statement.setString(2, address.getStreet());
+            statement.setString(3, address.getCity());
+            statement.setString(4, address.getState());
+            statement.setString(5, address.getZipCode());
+            statement.setString(6, address.getCountry());
 
-            return statement.executeUpdate() > 0;
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows > 0) {
+                // Get the last inserted shipping address ID using a separate query
+                String getLastIdSql = "SELECT shipping_addressID FROM shipping_address WHERE customerID = ? ORDER BY shipping_addressID DESC LIMIT 1";
+                try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
+                    getLastIdStmt.setString(1, address.getUserId());
+
+                    try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
+                        if (resultSet.next()) {
+                            String addressId = resultSet.getString("shipping_addressID");
+                            address.setAddressId(addressId);
+                            return true;
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error adding address: " + e.getMessage());
+            throw e;
         }
+        return false;
     }
 
     @Override
@@ -108,7 +127,7 @@ public class AddressDao extends DaoTemplate<Address> {
     }
 
     @Override
-    public Address mapResultSet(ResultSet resultSet) throws SQLException {
+    protected Address mapResultSet(ResultSet resultSet) throws SQLException {
         Address address = new Address();
         address.setAddressId(resultSet.getString("shipping_addressID"));
         address.setUserId(resultSet.getString("customerID"));
