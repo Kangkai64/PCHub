@@ -1174,7 +1174,7 @@ test\\_%|schema||&apos;&apos;||UPDATE|G</Grants>
       <CollationName>utf8mb4_general_ci</CollationName>
     </schema>
     <schema id="335" parent="1" name="pchub">
-      <LastIntrospectionLocalTimestamp>2025-04-29.13:54:59</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-05-01.04:06:22</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_general_ci</CollationName>
     </schema>
     <schema id="336" parent="1" name="performance_schema">
@@ -1198,691 +1198,740 @@ test\\_%|schema||&apos;&apos;||UPDATE|G</Grants>
     <user id="342" parent="1" name="root">
       <Host>localhost</Host>
     </user>
-    <table id="343" parent="335" name="admin_role">
+    <table id="343" parent="335" name="bill">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_general_ci</CollationName>
     </table>
-    <table id="344" parent="335" name="bill">
+    <table id="344" parent="335" name="cart">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_general_ci</CollationName>
     </table>
-    <table id="345" parent="335" name="cart">
+    <table id="345" parent="335" name="cart_item">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_general_ci</CollationName>
     </table>
-    <table id="346" parent="335" name="cart_item">
+    <table id="346" parent="335" name="order">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_general_ci</CollationName>
     </table>
-    <table id="347" parent="335" name="order">
+    <table id="347" parent="335" name="order_item">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_general_ci</CollationName>
     </table>
-    <table id="348" parent="335" name="order_item">
+    <table id="348" parent="335" name="payment_method">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_general_ci</CollationName>
     </table>
-    <table id="349" parent="335" name="payment_method">
+    <table id="349" parent="335" name="product">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_general_ci</CollationName>
     </table>
-    <table id="350" parent="335" name="product">
+    <table id="350" parent="335" name="product_catalogue">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_general_ci</CollationName>
     </table>
-    <table id="351" parent="335" name="product_category">
+    <table id="351" parent="335" name="product_catalogue_item">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_general_ci</CollationName>
     </table>
-    <table id="352" parent="335" name="shipping_address">
+    <table id="352" parent="335" name="product_category">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_general_ci</CollationName>
     </table>
-    <table id="353" parent="335" name="user">
+    <table id="353" parent="335" name="shipping_address">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_general_ci</CollationName>
     </table>
-    <column id="354" parent="343" name="adminID">
+    <table id="354" parent="335" name="user">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_general_ci</CollationName>
+    </table>
+    <column id="355" parent="343" name="billID">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="355" parent="343" name="userID">
+    <column id="356" parent="343" name="orderID">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="356" parent="343" name="department">
-      <Position>3</Position>
-      <StoredType>varchar(50)|0s</StoredType>
-    </column>
-    <column id="357" parent="343" name="accessLevel">
-      <Position>4</Position>
-      <StoredType>varchar(30)|0s</StoredType>
-    </column>
-    <foreign-key id="358" parent="343" name="admin_ibfk_1">
-      <ColNames>userID</ColNames>
-      <RefColNames>userID</RefColNames>
-      <RefTableName>user</RefTableName>
-    </foreign-key>
-    <index id="359" parent="343" name="PRIMARY">
-      <ColNames>adminID</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <index id="360" parent="343" name="userID">
-      <ColNames>userID</ColNames>
-      <Type>btree</Type>
-    </index>
-    <key id="361" parent="343" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <trigger id="362" parent="343" name="before_insert_admin_role">
-      <Definer>root@localhost</Definer>
-      <Events>I</Events>
-      <SourceTextLength>180</SourceTextLength>
-      <Turn>before-row</Turn>
-    </trigger>
-    <column id="363" parent="344" name="billID">
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-      <StoredType>varchar(10)|0s</StoredType>
-    </column>
-    <column id="364" parent="344" name="orderID">
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-      <StoredType>varchar(10)|0s</StoredType>
-    </column>
-    <column id="365" parent="344" name="amount">
+    <column id="357" parent="343" name="amount">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>decimal(10,2 digit)|0s</StoredType>
     </column>
-    <column id="366" parent="344" name="payment_MethodID">
+    <column id="358" parent="343" name="payment_MethodID">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="367" parent="344" name="transactionID">
+    <column id="359" parent="343" name="transactionID">
       <Position>5</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="368" parent="344" name="paymentStatus">
+    <column id="360" parent="343" name="paymentStatus">
       <DefaultExpression>&apos;PENDING&apos;</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>6</Position>
       <StoredType>enum(&apos;PENDING&apos;, &apos;AWAITING_PAYMENT&apos;, &apos;PAID&apos;, &apos;FAILED&apos;)|0e</StoredType>
     </column>
-    <column id="369" parent="344" name="issueDate">
+    <column id="361" parent="343" name="issueDate">
       <DefaultExpression>current_timestamp()</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>7</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <foreign-key id="370" parent="344" name="payment_ibfk_1">
+    <foreign-key id="362" parent="343" name="payment_ibfk_1">
       <ColNames>orderID</ColNames>
       <RefColNames>orderID</RefColNames>
       <RefTableName>order</RefTableName>
     </foreign-key>
-    <foreign-key id="371" parent="344" name="payment_ibfk_2">
+    <foreign-key id="363" parent="343" name="payment_ibfk_2">
       <ColNames>payment_MethodID</ColNames>
       <RefColNames>payment_methodID</RefColNames>
       <RefTableName>payment_method</RefTableName>
     </foreign-key>
-    <index id="372" parent="344" name="PRIMARY">
+    <index id="364" parent="343" name="PRIMARY">
       <ColNames>billID</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="373" parent="344" name="orderID">
+    <index id="365" parent="343" name="orderID">
       <ColNames>orderID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="374" parent="344" name="payment_MethodID">
+    <index id="366" parent="343" name="payment_MethodID">
       <ColNames>payment_MethodID</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="375" parent="344" name="PRIMARY">
+    <key id="367" parent="343" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <trigger id="376" parent="344" name="before_insert_bill">
+    <trigger id="368" parent="343" name="before_insert_bill">
       <Definer>root@localhost</Definer>
       <Events>I</Events>
       <SourceTextLength>170</SourceTextLength>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="377" parent="345" name="cartID">
+    <column id="369" parent="344" name="cartID">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="378" parent="345" name="customerID">
+    <column id="370" parent="344" name="customerID">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="379" parent="345" name="createdDate">
+    <column id="371" parent="344" name="createdDate">
       <DefaultExpression>current_timestamp()</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="380" parent="345" name="lastUpdated">
+    <column id="372" parent="344" name="lastUpdated">
       <DefaultExpression>current_timestamp()</DefaultExpression>
       <NotNull>1</NotNull>
       <OnUpdate>current_timestamp()</OnUpdate>
       <Position>4</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="381" parent="345" name="itemCount">
+    <column id="373" parent="344" name="itemCount">
       <DefaultExpression>0</DefaultExpression>
       <Position>5</Position>
       <StoredType>int(11)|0s</StoredType>
     </column>
-    <column id="382" parent="345" name="subtotal">
+    <column id="374" parent="344" name="subtotal">
       <DefaultExpression>0.00</DefaultExpression>
       <Position>6</Position>
       <StoredType>decimal(10,2 digit)|0s</StoredType>
     </column>
-    <foreign-key id="383" parent="345" name="cart_ibfk_1">
+    <foreign-key id="375" parent="344" name="cart_ibfk_1">
       <ColNames>customerID</ColNames>
       <RefColNames>userID</RefColNames>
       <RefTableName>user</RefTableName>
     </foreign-key>
-    <index id="384" parent="345" name="PRIMARY">
+    <index id="376" parent="344" name="PRIMARY">
       <ColNames>cartID</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="385" parent="345" name="customerID">
+    <index id="377" parent="344" name="customerID">
       <ColNames>customerID</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="386" parent="345" name="PRIMARY">
+    <key id="378" parent="344" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <trigger id="387" parent="345" name="before_insert_cart">
+    <trigger id="379" parent="344" name="before_insert_cart">
       <Definer>root@localhost</Definer>
       <Events>I</Events>
       <SourceTextLength>171</SourceTextLength>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="388" parent="346" name="cartItemID">
+    <column id="380" parent="345" name="cartItemID">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="389" parent="346" name="cartID">
+    <column id="381" parent="345" name="cartID">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="390" parent="346" name="productID">
+    <column id="382" parent="345" name="productID">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="391" parent="346" name="quantity">
+    <column id="383" parent="345" name="quantity">
       <DefaultExpression>1</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>int(11)|0s</StoredType>
     </column>
-    <column id="392" parent="346" name="price">
+    <column id="384" parent="345" name="price">
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StoredType>decimal(10,2 digit)|0s</StoredType>
     </column>
-    <column id="393" parent="346" name="subtotal">
+    <column id="385" parent="345" name="subtotal">
       <ColumnKind>generated-stored</ColumnKind>
       <DefaultExpression>`price` * `quantity`</DefaultExpression>
       <Position>6</Position>
       <StoredType>decimal(10,2 digit)|0s</StoredType>
     </column>
-    <foreign-key id="394" parent="346" name="cart_item_ibfk_1">
+    <foreign-key id="386" parent="345" name="cart_item_ibfk_1">
       <ColNames>cartID</ColNames>
       <RefColNames>cartID</RefColNames>
       <RefTableName>cart</RefTableName>
     </foreign-key>
-    <foreign-key id="395" parent="346" name="cart_item_ibfk_2">
+    <foreign-key id="387" parent="345" name="cart_item_ibfk_2">
       <ColNames>productID</ColNames>
       <RefColNames>productID</RefColNames>
       <RefTableName>product</RefTableName>
     </foreign-key>
-    <index id="396" parent="346" name="PRIMARY">
+    <index id="388" parent="345" name="PRIMARY">
       <ColNames>cartItemID</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="397" parent="346" name="cartID">
+    <index id="389" parent="345" name="cartID">
       <ColNames>cartID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="398" parent="346" name="productID">
+    <index id="390" parent="345" name="productID">
       <ColNames>productID</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="399" parent="346" name="PRIMARY">
+    <key id="391" parent="345" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <trigger id="400" parent="346" name="before_insert_cart_item">
+    <trigger id="392" parent="345" name="before_insert_cart_item">
       <Definer>root@localhost</Definer>
       <Events>I</Events>
       <SourceTextLength>184</SourceTextLength>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="401" parent="347" name="orderID">
+    <column id="393" parent="346" name="orderID">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="402" parent="347" name="customerID">
+    <column id="394" parent="346" name="customerID">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="403" parent="347" name="orderDate">
+    <column id="395" parent="346" name="orderDate">
       <DefaultExpression>current_timestamp()</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="404" parent="347" name="order_status">
+    <column id="396" parent="346" name="order_status">
       <DefaultExpression>&apos;PENDING&apos;</DefaultExpression>
       <Position>4</Position>
       <StoredType>enum(&apos;PENDING&apos;, &apos;PROCESSING&apos;, &apos;SHIPPED&apos;, &apos;DELIVERED&apos;, &apos;CANCELLED&apos;, &apos;REFUNDED&apos;)|0e</StoredType>
     </column>
-    <column id="405" parent="347" name="totalAmount">
+    <column id="397" parent="346" name="totalAmount">
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StoredType>decimal(10,2 digit)|0s</StoredType>
     </column>
-    <column id="406" parent="347" name="shipping_addressID">
+    <column id="398" parent="346" name="shipping_addressID">
       <NotNull>1</NotNull>
       <Position>6</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="407" parent="347" name="payment_MethodID">
+    <column id="399" parent="346" name="payment_MethodID">
       <NotNull>1</NotNull>
       <Position>7</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <foreign-key id="408" parent="347" name="order_ibfk_1">
+    <foreign-key id="400" parent="346" name="order_ibfk_1">
       <ColNames>customerID</ColNames>
       <RefColNames>userID</RefColNames>
       <RefTableName>user</RefTableName>
     </foreign-key>
-    <foreign-key id="409" parent="347" name="order_ibfk_2">
+    <foreign-key id="401" parent="346" name="order_ibfk_2">
       <ColNames>payment_MethodID</ColNames>
       <RefColNames>payment_methodID</RefColNames>
       <RefTableName>payment_method</RefTableName>
     </foreign-key>
-    <index id="410" parent="347" name="PRIMARY">
+    <index id="402" parent="346" name="PRIMARY">
       <ColNames>orderID</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="411" parent="347" name="customerID">
+    <index id="403" parent="346" name="customerID">
       <ColNames>customerID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="412" parent="347" name="payment_MethodID">
+    <index id="404" parent="346" name="payment_MethodID">
       <ColNames>payment_MethodID</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="413" parent="347" name="PRIMARY">
+    <key id="405" parent="346" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <trigger id="414" parent="347" name="before_insert_order">
+    <trigger id="406" parent="346" name="before_insert_order">
       <Definer>root@localhost</Definer>
       <Events>I</Events>
       <SourceTextLength>175</SourceTextLength>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="415" parent="348" name="orderItemID">
+    <column id="407" parent="347" name="orderItemID">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="416" parent="348" name="orderID">
+    <column id="408" parent="347" name="orderID">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="417" parent="348" name="productID">
+    <column id="409" parent="347" name="productID">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="418" parent="348" name="quantity">
+    <column id="410" parent="347" name="quantity">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>int(11)|0s</StoredType>
     </column>
-    <column id="419" parent="348" name="price">
+    <column id="411" parent="347" name="price">
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StoredType>decimal(10,2 digit)|0s</StoredType>
     </column>
-    <foreign-key id="420" parent="348" name="order_item_ibfk_1">
+    <foreign-key id="412" parent="347" name="order_item_ibfk_1">
       <ColNames>orderID</ColNames>
       <RefColNames>orderID</RefColNames>
       <RefTableName>order</RefTableName>
     </foreign-key>
-    <foreign-key id="421" parent="348" name="order_item_ibfk_2">
+    <foreign-key id="413" parent="347" name="order_item_ibfk_2">
       <ColNames>productID</ColNames>
       <RefColNames>productID</RefColNames>
       <RefTableName>product</RefTableName>
     </foreign-key>
-    <index id="422" parent="348" name="PRIMARY">
+    <index id="414" parent="347" name="PRIMARY">
       <ColNames>orderItemID</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="423" parent="348" name="orderID">
+    <index id="415" parent="347" name="orderID">
       <ColNames>orderID</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="424" parent="348" name="productID">
+    <index id="416" parent="347" name="productID">
       <ColNames>productID</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="425" parent="348" name="PRIMARY">
+    <key id="417" parent="347" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <trigger id="426" parent="348" name="before_insert_order_item">
+    <trigger id="418" parent="347" name="before_insert_order_item">
       <Definer>root@localhost</Definer>
       <Events>I</Events>
       <SourceTextLength>187</SourceTextLength>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="427" parent="349" name="payment_methodID">
+    <column id="419" parent="348" name="payment_methodID">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="428" parent="349" name="name">
+    <column id="420" parent="348" name="name">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="429" parent="349" name="description">
+    <column id="421" parent="348" name="description">
       <Position>3</Position>
       <StoredType>text|0s</StoredType>
     </column>
-    <column id="430" parent="349" name="addedDate">
+    <column id="422" parent="348" name="addedDate">
       <DefaultExpression>current_timestamp()</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <index id="431" parent="349" name="PRIMARY">
+    <index id="423" parent="348" name="PRIMARY">
       <ColNames>payment_methodID</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="432" parent="349" name="PRIMARY">
+    <key id="424" parent="348" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <trigger id="433" parent="349" name="before_insert_payment_method">
+    <trigger id="425" parent="348" name="before_insert_payment_method">
       <Definer>root@localhost</Definer>
       <Events>I</Events>
       <SourceTextLength>201</SourceTextLength>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="434" parent="350" name="productID">
+    <column id="426" parent="349" name="productID">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="435" parent="350" name="name">
+    <column id="427" parent="349" name="name">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="436" parent="350" name="description">
+    <column id="428" parent="349" name="description">
       <Position>3</Position>
       <StoredType>text|0s</StoredType>
     </column>
-    <column id="437" parent="350" name="brand">
+    <column id="429" parent="349" name="brand">
       <Position>4</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="438" parent="350" name="product_categoryID">
+    <column id="430" parent="349" name="product_categoryID">
       <Position>5</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="439" parent="350" name="unitPrice">
+    <column id="431" parent="349" name="unitPrice">
       <NotNull>1</NotNull>
       <Position>6</Position>
       <StoredType>decimal(10,2 digit)|0s</StoredType>
     </column>
-    <column id="440" parent="350" name="currentQuantity">
+    <column id="432" parent="349" name="currentQuantity">
       <DefaultExpression>0</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>7</Position>
       <StoredType>int(11)|0s</StoredType>
     </column>
-    <column id="441" parent="350" name="specifications">
+    <column id="433" parent="349" name="specifications">
       <Position>8</Position>
       <StoredType>text|0s</StoredType>
     </column>
-    <foreign-key id="442" parent="350" name="product_ibfk_1">
+    <foreign-key id="434" parent="349" name="product_ibfk_1">
       <ColNames>product_categoryID</ColNames>
       <RefColNames>product_categoryID</RefColNames>
       <RefTableName>product_category</RefTableName>
     </foreign-key>
-    <index id="443" parent="350" name="PRIMARY">
+    <index id="435" parent="349" name="PRIMARY">
       <ColNames>productID</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="444" parent="350" name="product_categoryID">
+    <index id="436" parent="349" name="product_categoryID">
       <ColNames>product_categoryID</ColNames>
       <Type>btree</Type>
+    </index>
+    <key id="437" parent="349" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <trigger id="438" parent="349" name="before_insert_product">
+      <Definer>root@localhost</Definer>
+      <Events>I</Events>
+      <SourceTextLength>179</SourceTextLength>
+      <Turn>before-row</Turn>
+    </trigger>
+    <column id="439" parent="350" name="catalogueID">
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>varchar(10)|0s</StoredType>
+    </column>
+    <column id="440" parent="350" name="name">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>varchar(50)|0s</StoredType>
+    </column>
+    <column id="441" parent="350" name="description">
+      <Position>3</Position>
+      <StoredType>text|0s</StoredType>
+    </column>
+    <column id="442" parent="350" name="startDate">
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <StoredType>datetime|0s</StoredType>
+    </column>
+    <column id="443" parent="350" name="endDate">
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+      <StoredType>datetime|0s</StoredType>
+    </column>
+    <index id="444" parent="350" name="PRIMARY">
+      <ColNames>catalogueID</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
     </index>
     <key id="445" parent="350" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <trigger id="446" parent="350" name="before_insert_product">
+    <trigger id="446" parent="350" name="before_insert_catalogue">
       <Definer>root@localhost</Definer>
       <Events>I</Events>
-      <SourceTextLength>179</SourceTextLength>
+      <SourceTextLength>370</SourceTextLength>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="447" parent="351" name="product_categoryID">
+    <column id="447" parent="351" name="itemID">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="448" parent="351" name="name">
+    <column id="448" parent="351" name="catalogueID">
       <NotNull>1</NotNull>
       <Position>2</Position>
-      <StoredType>varchar(50)|0s</StoredType>
+      <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="449" parent="351" name="parentCategory">
+    <column id="449" parent="351" name="productID">
+      <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="450" parent="351" name="description">
+    <column id="450" parent="351" name="specialPrice">
+      <NotNull>1</NotNull>
       <Position>4</Position>
+      <StoredType>decimal(10,2 digit)|0s</StoredType>
+    </column>
+    <column id="451" parent="351" name="notes">
+      <Position>5</Position>
       <StoredType>text|0s</StoredType>
     </column>
-    <foreign-key id="451" parent="351" name="category_ibfk_1">
-      <ColNames>parentCategory</ColNames>
-      <RefColNames>product_categoryID</RefColNames>
-      <RefTableName>product_category</RefTableName>
-    </foreign-key>
     <index id="452" parent="351" name="PRIMARY">
-      <ColNames>product_categoryID</ColNames>
+      <ColNames>itemID</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="453" parent="351" name="parentCategory">
-      <ColNames>parentCategory</ColNames>
+    <index id="453" parent="351" name="catalogueID">
+      <ColNames>catalogueID</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="454" parent="351" name="PRIMARY">
+    <index id="454" parent="351" name="productID">
+      <ColNames>productID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="455" parent="351" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <trigger id="455" parent="351" name="before_insert_product_category">
+    <trigger id="456" parent="351" name="before_insert_catalogue_item">
+      <Definer>root@localhost</Definer>
+      <Events>I</Events>
+      <SourceTextLength>189</SourceTextLength>
+      <Turn>before-row</Turn>
+    </trigger>
+    <column id="457" parent="352" name="product_categoryID">
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>varchar(10)|0s</StoredType>
+    </column>
+    <column id="458" parent="352" name="name">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>varchar(50)|0s</StoredType>
+    </column>
+    <column id="459" parent="352" name="parent_category_id">
+      <Position>3</Position>
+      <StoredType>varchar(10)|0s</StoredType>
+    </column>
+    <column id="460" parent="352" name="description">
+      <Position>4</Position>
+      <StoredType>text|0s</StoredType>
+    </column>
+    <foreign-key id="461" parent="352" name="category_ibfk_1">
+      <ColNames>parent_category_id</ColNames>
+      <RefColNames>product_categoryID</RefColNames>
+      <RefTableName>product_category</RefTableName>
+    </foreign-key>
+    <index id="462" parent="352" name="PRIMARY">
+      <ColNames>product_categoryID</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="463" parent="352" name="parentCategory">
+      <ColNames>parent_category_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="464" parent="352" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <trigger id="465" parent="352" name="before_insert_product_category">
       <Definer>root@localhost</Definer>
       <Events>I</Events>
       <SourceTextLength>200</SourceTextLength>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="456" parent="352" name="shipping_addressID">
+    <column id="466" parent="353" name="shipping_addressID">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="457" parent="352" name="customerID">
+    <column id="467" parent="353" name="customerID">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="458" parent="352" name="street">
+    <column id="468" parent="353" name="street">
       <Position>3</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="459" parent="352" name="city">
+    <column id="469" parent="353" name="city">
       <Position>4</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="460" parent="352" name="state">
+    <column id="470" parent="353" name="state">
       <Position>5</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="461" parent="352" name="zipCode">
+    <column id="471" parent="353" name="zipCode">
       <Position>6</Position>
       <StoredType>varchar(20)|0s</StoredType>
     </column>
-    <column id="462" parent="352" name="country">
+    <column id="472" parent="353" name="country">
       <Position>7</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="463" parent="352" name="isDefault">
+    <column id="473" parent="353" name="isDefault">
       <DefaultExpression>0</DefaultExpression>
       <Position>8</Position>
       <StoredType>tinyint(1)|0s</StoredType>
     </column>
-    <foreign-key id="464" parent="352" name="customer_ibfk_1">
+    <foreign-key id="474" parent="353" name="customer_ibfk_1">
       <ColNames>customerID</ColNames>
       <RefColNames>userID</RefColNames>
       <RefTableName>user</RefTableName>
     </foreign-key>
-    <index id="465" parent="352" name="PRIMARY">
+    <index id="475" parent="353" name="PRIMARY">
       <ColNames>shipping_addressID</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="466" parent="352" name="customerID">
+    <index id="476" parent="353" name="customerID">
       <ColNames>customerID</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="467" parent="352" name="PRIMARY">
+    <key id="477" parent="353" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <trigger id="468" parent="352" name="before_insert_address">
+    <trigger id="478" parent="353" name="before_insert_address">
       <Definer>root@localhost</Definer>
       <Events>I</Events>
       <SourceTextLength>216</SourceTextLength>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="469" parent="353" name="userID">
+    <column id="479" parent="354" name="userID">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="470" parent="353" name="username">
+    <column id="480" parent="354" name="username">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="471" parent="353" name="email">
+    <column id="481" parent="354" name="email">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="472" parent="353" name="password">
+    <column id="482" parent="354" name="password">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="473" parent="353" name="registrationDate">
+    <column id="483" parent="354" name="registrationDate">
       <DefaultExpression>current_timestamp()</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="474" parent="353" name="lastLogin">
+    <column id="484" parent="354" name="lastLogin">
       <Position>6</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="475" parent="353" name="status">
+    <column id="485" parent="354" name="status">
       <DefaultExpression>&apos;ACTIVE&apos;</DefaultExpression>
       <Position>7</Position>
       <StoredType>enum(&apos;ACTIVE&apos;, &apos;INACTIVE&apos;, &apos;BANNED&apos;)|0e</StoredType>
     </column>
-    <column id="476" parent="353" name="phone">
+    <column id="486" parent="354" name="phone">
       <Position>8</Position>
       <StoredType>varchar(20)|0s</StoredType>
     </column>
-    <column id="477" parent="353" name="fullName">
+    <column id="487" parent="354" name="fullName">
       <Position>9</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="478" parent="353" name="role">
+    <column id="488" parent="354" name="role">
       <Position>10</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <index id="479" parent="353" name="PRIMARY">
+    <index id="489" parent="354" name="PRIMARY">
       <ColNames>userID</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="480" parent="353" name="username">
+    <index id="490" parent="354" name="username">
       <ColNames>username</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="481" parent="353" name="email">
+    <index id="491" parent="354" name="email">
       <ColNames>email</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="482" parent="353" name="PRIMARY">
+    <key id="492" parent="354" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="483" parent="353" name="username">
+    <key id="493" parent="354" name="username">
       <UnderlyingIndexName>username</UnderlyingIndexName>
     </key>
-    <key id="484" parent="353" name="email">
+    <key id="494" parent="354" name="email">
       <UnderlyingIndexName>email</UnderlyingIndexName>
     </key>
-    <trigger id="485" parent="353" name="before_insert_user">
+    <trigger id="495" parent="354" name="before_insert_user">
       <Definer>root@localhost</Definer>
       <Events>I</Events>
       <SourceTextLength>828</SourceTextLength>

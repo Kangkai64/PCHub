@@ -81,7 +81,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
         String sql = "INSERT INTO cart_item (cartID, productID, quantity, price) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, item.getCartId());
             preparedStatement.setString(2, item.getProductId());
@@ -91,12 +91,28 @@ public class CartItemDao extends DaoTemplate<CartItem> {
             int affectedRows = preparedStatement.executeUpdate();
 
             if (affectedRows > 0) {
-                // Get the generated cart item ID
-                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        String cartItemId = generatedKeys.getString(1);
-                        item.setCartItemId(cartItemId);
-                        return true;
+                // Get the last inserted cart item ID using a separate query
+                String getLastIdSql = "SELECT cartItemID FROM cart_item WHERE cartID = ? AND productID = ? ORDER BY cartItemID DESC LIMIT 1";
+                try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
+                    getLastIdStmt.setString(1, item.getCartId());
+                    getLastIdStmt.setString(2, item.getProductId());
+
+                    try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
+                        if (resultSet.next()) {
+                            String cartItemId = resultSet.getString("cartItemID");
+                            item.setCartItemId(cartItemId);
+                        }
+                    }
+                }
+                // Update the cart item count in the cart table
+                String updateCartItemCount = "SELECT COUNT(*) FROM cart_item WHERE cartID = ?";
+                try (PreparedStatement updateCartItemCountStmt = connection.prepareStatement(updateCartItemCount)) {
+                    updateCartItemCountStmt.setString(1, item.getCartId());
+
+                    try (ResultSet resultSet = updateCartItemCountStmt.executeQuery()) {
+                        if (resultSet.next()) {
+                            return true;
+                        }
                     }
                 }
             }

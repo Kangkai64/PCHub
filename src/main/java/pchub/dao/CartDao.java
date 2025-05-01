@@ -47,12 +47,11 @@ public class CartDao extends DaoTemplate<Cart> {
             if (resultSet.next()) {
                 Cart cart = mapResultSet(resultSet);
                 loadCartItems(connection, cart);
-                cart.updateCartTotals();
                 return cart;
             } else {
                 // No cart found, create a new one
                 Cart cart = new Cart();
-                cart.setUserId(customerId);
+                cart.setCustomerId(customerId);
                 if (insert(cart)) {
                     // Get the newly created cart with the cartID
                     Cart newCart = findByUserId(customerId);
@@ -80,7 +79,7 @@ public class CartDao extends DaoTemplate<Cart> {
                 LocalDateTime now = LocalDateTime.now();
                 Timestamp timestamp = Timestamp.valueOf(now);
 
-                preparedStatement.setString(1, cart.getUserId());
+                preparedStatement.setString(1, cart.getCustomerId());
                 preparedStatement.setTimestamp(2, timestamp);
                 preparedStatement.setTimestamp(3, timestamp);
                 preparedStatement.setInt(4, cart.getItemCount());
@@ -92,7 +91,7 @@ public class CartDao extends DaoTemplate<Cart> {
                     // Get the generated cart ID using a separate query
                     try (PreparedStatement getCartIdStmt = connection.prepareStatement(
                             "SELECT cartID FROM cart WHERE customerID = ? ORDER BY createdDate DESC LIMIT 1")) {
-                        getCartIdStmt.setString(1, cart.getUserId());
+                        getCartIdStmt.setString(1, cart.getCustomerId());
                         ResultSet rs = getCartIdStmt.executeQuery();
                         if (rs.next()) {
                             String cartId = rs.getString("cartID");
@@ -221,7 +220,7 @@ public class CartDao extends DaoTemplate<Cart> {
     public Cart mapResultSet(ResultSet resultSet) throws SQLException {
         Cart cart = new Cart();
         cart.setCartId(resultSet.getString("cartID"));
-        cart.setUserId(resultSet.getString("customerID"));
+        cart.setCustomerId(resultSet.getString("customerID"));
         cart.setCreatedDate(resultSet.getTimestamp("createdDate").toLocalDateTime());
         cart.setLastUpdated(resultSet.getTimestamp("lastUpdated").toLocalDateTime());
         cart.setItemCount(resultSet.getInt("itemCount"));

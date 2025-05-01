@@ -313,7 +313,7 @@ public class Order {
             // Clear the cart after successful order placement
             if (orderSaved) {
                 Cart cart = new Cart();
-                cart.setUserId(order.getCustomerId());
+                cart.setCustomerId(order.getCustomerId());
                 Cart.clearCart(cart);
             }
 

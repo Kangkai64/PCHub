@@ -9,7 +9,7 @@ import pchub.dao.ProductDao;
 
 public class Cart {
     private String cartId;
-    private String userId;
+    private String customerId;
     private LocalDateTime createdDate;
     private LocalDateTime lastUpdated;
     private int itemCount = 0;
@@ -35,12 +35,12 @@ public class Cart {
         this.cartId = cartId;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -79,8 +79,11 @@ public class Cart {
         return items;
     }
 
-    public void setItems(CartItem[] items) {
+    public void setItems(CartItem[] items) throws SQLException {
         this.items = items;
+        updateCartTotals();
+        cartItemDao.insert(items[items.length - 1]);
+        itemCount = items.length;
     }
 
     /**
@@ -114,7 +117,7 @@ public class Cart {
             if (cart == null) {
                 // Create a new cart
                 cart = new Cart();
-                cart.setUserId(user.getUserId());
+                cart.setCustomerId(user.getUserId());
                 cart.setCreatedDate(LocalDateTime.now());
                 boolean cartFlag = cartDao.insert(cart);
                 if (cartFlag) {

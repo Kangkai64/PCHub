@@ -43,7 +43,8 @@ public class PaymentMethodDao extends DaoTemplate<PaymentMethod> {
              ResultSet resultSet = statement.executeQuery(sql)) {
 
             while (resultSet.next()) {
-                paymentMethods[index++] = mapResultSet(resultSet);
+                paymentMethods[index] = mapResultSet(resultSet);
+                index++;
             }
         } catch (SQLException e) {
             System.err.println("Error retrieving all payment methods: " + e.getMessage());
