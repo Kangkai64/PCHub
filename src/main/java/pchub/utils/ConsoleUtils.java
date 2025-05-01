@@ -1,10 +1,8 @@
 package pchub.utils;
 
-<<<<<<< HEAD
+
 import java.io.IOException;
 import java.util.Scanner;
-=======
->>>>>>> b5051265d04706e70462947b8a89d1e45f44fc86
 import java.io.Console;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
