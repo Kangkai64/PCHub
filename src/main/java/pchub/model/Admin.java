@@ -717,8 +717,8 @@ public class Admin extends User {
                     }
                 }
 
-                int orderId = ConsoleUtils.getIntInput(scanner, "Enter order ID to view details (0 to go back): ", 0, Integer.MAX_VALUE);
-                if (orderId > 0) {
+                String orderId = ConsoleUtils.getStringInput(scanner, "Enter order ID to view details (0 to go back): ");
+                if (!orderId.equals("0")) {
                     Main.displayOrderDetails(orderId);
 
                     // Admin can update order status
@@ -735,7 +735,7 @@ public class Admin extends User {
         }
     }
 
-    public static void updateOrderStatus(int orderId) {
+    public static void updateOrderStatus(String orderId) {
         ConsoleUtils.printHeader("      Update Order Status      ");
         System.out.println("1. Processing");
         System.out.println("2. Shipped");
@@ -763,7 +763,7 @@ public class Admin extends User {
         }
 
         try {
-            boolean updated = Order.updateOrderStatus(String.valueOf(orderId), newStatus);
+            boolean updated = Order.updateOrderStatus(orderId, newStatus);
             if (updated) {
                 System.out.println("Order status updated successfully!");
             } else {

@@ -82,8 +82,10 @@ public class Cart {
     public void setItems(CartItem[] items) throws SQLException {
         this.items = items;
         updateCartTotals();
-        cartItemDao.insert(items[items.length - 1]);
-        itemCount = items.length;
+        if (items != null && items.length > 0 && items[items.length - 1] != null) {
+            cartItemDao.insert(items[items.length - 1]);
+        }
+        itemCount = items != null ? items.length : 0;
     }
 
     /**

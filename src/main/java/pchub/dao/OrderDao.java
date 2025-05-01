@@ -93,7 +93,7 @@ public class OrderDao extends DaoTemplate<Order> {
 
     @Override
     public boolean insert(Order order) throws SQLException {
-        String sql = "INSERT INTO `order` (customerID, orderDate, orderStatus, totalAmount, " +
+        String sql = "INSERT INTO `order` (customerID, orderDate, order_status, totalAmount, " +
                 "shipping_addressID, payment_MethodID) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -149,7 +149,7 @@ public class OrderDao extends DaoTemplate<Order> {
 
     @Override
     public boolean update(Order order) throws SQLException {
-        String sql = "UPDATE `order` SET orderStatus = ?, totalAmount = ? WHERE orderID = ?";
+        String sql = "UPDATE `order` SET order_status = ?, totalAmount = ? WHERE orderID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
@@ -227,12 +227,31 @@ public class OrderDao extends DaoTemplate<Order> {
         Order order = new Order();
         order.setOrderId(resultSet.getString("orderID"));
         order.setCustomerId(resultSet.getString("customerID"));
+        
+        // Get customer name from user table
+        String customerId = order.getCustomerId();
+        String customerName = getUserName(customerId);
+        order.setCustomerName(customerName);
+        
         order.setOrderDate(resultSet.getTimestamp("orderDate"));
-        order.setStatus(OrderStatus.valueOf(resultSet.getString("orderStatus").toUpperCase()));
+        order.setStatus(OrderStatus.valueOf(resultSet.getString("order_status").toUpperCase()));
         order.setTotalAmount(resultSet.getDouble("totalAmount"));
         order.setShippingAddress(convertStringToAddress(resultSet.getString("shipping_addressID")));
         order.setPaymentMethod(lookupPaymentMethodById(resultSet.getString("payment_MethodID")));
         return order;
+    }
+
+    private String getUserName(String customerId) throws SQLException {
+        String sql = "SELECT username FROM user WHERE userID = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, customerId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("username");
+            }
+        }
+        return null;
     }
 
     private void loadOrderItems(Connection connection, Order order) throws SQLException {
@@ -328,19 +347,13 @@ public class OrderDao extends DaoTemplate<Order> {
         if (addressString == null || addressString.trim().isEmpty()) {
             return null;
         }
-
-        String[] parts = addressString.split("\\|");
-        if (parts.length != 5) {
+        try {
+            AddressDao addressDao = new AddressDao();
+            return addressDao.findById(addressString.trim());
+        } catch (SQLException e) {
+            System.err.println("Error loading shipping address: " + e.getMessage());
             return null;
         }
-
-        Address address = new Address();
-        address.setStreet(parts[0]);
-        address.setCity(parts[1]);
-        address.setState(parts[2]);
-        address.setZipCode(parts[3]);
-        address.setCountry(parts[4]);
-        return address;
     }
 
     private PaymentMethod lookupPaymentMethodById(String paymentMethodId) {

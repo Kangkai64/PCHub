@@ -790,9 +790,9 @@ public class Main {
         }
     }
 
-    public static void displayOrderDetails(int orderId) {
+    public static void displayOrderDetails(String orderId) {
         try {
-            Order order = Order.getOrderById(String.valueOf(orderId));
+            Order order = Order.getOrderById(orderId);
             if (order == null) {
                 System.out.println("Order not found.");
                 return;
@@ -805,11 +805,13 @@ public class Main {
 
             System.out.println("\nItems:");
             for (OrderItem item : order.getItems()) {
-                System.out.printf("%s - %d x $%.2f = $%.2f\n",
-                        item.getProductName(),
-                        item.getQuantity(),
-                        item.getUnitPrice(),
-                        item.getSubtotal());
+                if (item != null) {
+                    System.out.printf("%s - %d x $%.2f = $%.2f\n",
+                            item.getProductName(),
+                            item.getQuantity(),
+                            item.getUnitPrice(),
+                            item.getSubtotal());
+                }
             }
 
             System.out.println("\nShipping Address: " + order.getShippingAddress().getFormattedAddress());
@@ -819,7 +821,7 @@ public class Main {
             // Option to view receipt/bill
             String choice = ConsoleUtils.getStringInput(scanner, "View receipt? (y/n): ");
             if (choice.equalsIgnoreCase("y")) {
-                Bill bill = Order.generateBill(String.valueOf(orderId));
+                Bill bill = Order.generateBill(orderId);
                 customer.displayBill(bill);
             }
         } catch (Exception e) {

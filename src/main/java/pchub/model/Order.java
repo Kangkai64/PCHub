@@ -10,6 +10,8 @@ import pchub.dao.BillDao;
 import pchub.dao.OrderDao;
 import pchub.dao.OrderItemDao;
 import pchub.dao.ProductDao;
+import pchub.dao.AddressDao;
+import pchub.dao.PaymentMethodDao;
 import pchub.model.enums.OrderStatus;
 import pchub.model.enums.PaymentStatus;
 
@@ -34,6 +36,8 @@ public class Order {
     private static final OrderItemDao orderItemDao = new OrderItemDao();
     private static final ProductDao productDao = new ProductDao();
     private static final BillDao billDao = new BillDao();
+    private static final AddressDao addressDao = new AddressDao();
+    private static final PaymentMethodDao paymentMethodDao = new PaymentMethodDao();
     private static final BigDecimal TAX_RATE = new BigDecimal("0.13"); // 13% tax rate
     private static final BigDecimal SHIPPING_RATE = new BigDecimal("9.99"); // Standard shipping cost
 

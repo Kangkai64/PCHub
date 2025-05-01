@@ -30,10 +30,11 @@ public class Customer extends User {
 
             displayOrderList(orders);
 
-            int orderId = ConsoleUtils.getIntInput(scanner, "Enter order ID to view details (0 to go back): ", 0, Integer.MAX_VALUE);
-            if (orderId > 0) {
-                Main.displayOrderDetails(orderId);
+            String orderId = ConsoleUtils.getStringInput(scanner, "Enter order ID to view details (0 to go back): ");
+            if (orderId.equals("0")) {
+                return;
             }
+            Main.displayOrderDetails(orderId);
         } catch (Exception e) {
             System.out.println("Error fetching order history: " + e.getMessage());
         }
