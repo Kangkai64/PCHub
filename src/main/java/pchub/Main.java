@@ -1459,11 +1459,13 @@ public class Main {
             
             System.out.println("\n=== All Users ===");
             for (User user : users) {
-                System.out.println("ID: " + user.getUserId());
-                System.out.println("Username: " + user.getUsername());
-                System.out.println("Email: " + user.getEmail());
-                System.out.println("Role: " + user.getRole());
-                System.out.println("-------------------");
+                if (user != null) {  // Add null check for each user
+                    System.out.println("ID: " + (user.getUserId() != null ? user.getUserId() : "N/A"));
+                    System.out.println("Username: " + (user.getUsername() != null ? user.getUsername() : "N/A"));
+                    System.out.println("Email: " + (user.getEmail() != null ? user.getEmail() : "N/A"));
+                    System.out.println("Role: " + (user.getRole() != null ? user.getRole() : "N/A"));
+                    System.out.println("-------------------");
+                }
             }
         } catch (SQLException e) {
             System.out.println("Error retrieving users: " + e.getMessage());
@@ -1502,10 +1504,16 @@ public class Main {
 
     private static void updateUser() {
         System.out.println("\n===== Update User =====");
-        int userId = ConsoleUtils.getIntInput(scanner, "Enter user ID to update: ", 1, Integer.MAX_VALUE);
+        String userId = ConsoleUtils.getStringInput(scanner, "Enter user ID to update (format: C0001-C9999): ");
+
+        // Validate user ID format
+        if (!userId.matches("C\\d{4}")) {
+            System.out.println("Invalid user ID format. Please use format C0001-C9999.");
+            return;
+        }
 
         try {
-            User user = User.getUserById(String.valueOf(userId));
+            User user = User.getUserById(userId);
             if (user == null) {
                 System.out.println("User not found.");
                 return;
@@ -1543,10 +1551,16 @@ public class Main {
 
     private static void deleteUser() {
         System.out.println("\n===== Delete User =====");
-        int userId = ConsoleUtils.getIntInput(scanner, "Enter user ID to delete: ", 1, Integer.MAX_VALUE);
+        String userId = ConsoleUtils.getStringInput(scanner, "Enter user ID to delete (format: C0001-C9999): ");
+
+        // Validate user ID format
+        if (!userId.matches("C\\d{4}")) {
+            System.out.println("Invalid user ID format. Please use format C0001-C9999.");
+            return;
+        }
 
         try {
-            User user = User.getUserById(String.valueOf(userId));
+            User user = User.getUserById(userId);
             if (user == null) {
                 System.out.println("User not found.");
                 return;
@@ -1562,7 +1576,7 @@ public class Main {
             String confirm = ConsoleUtils.getStringInput(scanner, "Type 'yes' to confirm: ");
 
             if (confirm.equalsIgnoreCase("yes")) {
-                boolean deleted = User.deleteUser(String.valueOf(userId));
+                boolean deleted = User.deleteUser(userId);
                 if (deleted) {
                     System.out.println("User deleted successfully!");
                 } else {
