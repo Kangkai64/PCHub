@@ -650,21 +650,29 @@ public class Main {
         ConsoleUtils.printHeader("      All Product Catalogues      ");
         ProductCatalogue[] catalogues = catalogueDao.findAll();
 
-        if (catalogues.length == 0) {
+        if (catalogues == null || catalogues.length == 0) {
             System.out.println("No catalogues found.");
             return;
         }
 
         System.out.printf("%-15s %-30s %-20s %-20s\n",
-            "Catalogue ID", "Name", "Start Date", "End Date");
+                "Catalogue ID", "Name", "Start Date", "End Date");
         System.out.println("-".repeat(85));
 
+        boolean hasCatalogues = false;
         for (ProductCatalogue catalogue : catalogues) {
-            System.out.printf("%-15s %-30s %-20s %-20s\n",
-                catalogue.getCatalogueID(),
-                catalogue.getName(),
-                catalogue.getStartDate().toLocalDate(),
-                catalogue.getEndDate().toLocalDate());
+            if (catalogue != null) {
+                System.out.printf("%-15s %-30s %-20s %-20s\n",
+                        catalogue.getCatalogueID(),
+                        catalogue.getName(),
+                        catalogue.getStartDate().toLocalDate(),
+                        catalogue.getEndDate().toLocalDate());
+                hasCatalogues = true;
+            }
+        }
+
+        if (!hasCatalogues) {
+            System.out.println("No catalogues found.");
         }
     }
 
