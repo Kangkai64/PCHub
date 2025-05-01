@@ -8,5 +8,5 @@ public abstract class DaoTemplate<T> {
     public abstract boolean insert(T object) throws SQLException;
     public abstract boolean update(T object) throws SQLException;
     public abstract boolean delete(String id) throws SQLException;
-    public abstract T mapResultSet(ResultSet resultSet) throws SQLException;
+    protected abstract T mapResultSet(ResultSet resultSet) throws SQLException;
 }
