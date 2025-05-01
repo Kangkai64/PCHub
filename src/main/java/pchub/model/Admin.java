@@ -922,7 +922,7 @@ public class Admin extends User {
             System.out.println("========================================");
             System.out.println("Generated on: " + java.time.LocalDate.now());
 
-            int totalProducts = products.length;
+            int totalProducts = 0;
             int lowStockProducts = 0;
             int outOfStockProducts = 0;
             double totalInventoryValue = 0;
@@ -930,6 +930,7 @@ public class Admin extends User {
             // First pass to count products and calculate inventory value
             for (Product product : products) {
                 if (product != null) {
+                    totalProducts++;
                     if (product.getCurrentQuantity() == 0) {
                         outOfStockProducts++;
                     } else if (product.getCurrentQuantity() < 10) {
@@ -945,11 +946,11 @@ public class Admin extends User {
             System.out.println("Out of Stock Products: " + outOfStockProducts);
             System.out.println("Total Inventory Value: $" + String.format("%.2f", totalInventoryValue));
 
-            System.out.println("\nLow Stock Items (Less than 5 units):");
+            System.out.println("\nLow Stock Items (Less than 10 units):");
             System.out.println("------------------------------------------");
             boolean hasLowStock = false;
             for (Product product : products) {
-                if (product != null && product.getCurrentQuantity() > 0 && product.getCurrentQuantity() < 5) {
+                if (product != null && product.getCurrentQuantity() > 0 && product.getCurrentQuantity() < 10) {
                     System.out.printf("%s - %d units remaining (Value: $%.2f)\n",
                             product.getName(),
                             product.getCurrentQuantity(),
