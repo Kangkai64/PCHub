@@ -2,10 +2,6 @@ package pchub.model;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import pchub.Main;
@@ -60,16 +56,16 @@ public class Admin extends User {
             if (products == null || products.length == 0) {
                 System.out.println("No products found.");
             } else {
-                System.out.println("ID | Name | Price | Stock | Category");
-                System.out.println("------------------------------------------");
+                System.out.printf("\n%-6s | %-40s | %-15s | %-7s | %s\n", "ID", "Name", "Category", "Price", "Stock");
+                System.out.println("-----------------------------------------------------------------------------------------");
                 for (Product product : products) {
                     if (product != null) {
-                        System.out.printf("%s | %s | $%.2f | %d | %s\n",
+                        System.out.printf("%s | %-40s | %-15s | $%.2f | %d\n",
                                 product.getProductID(),
                                 product.getName(),
+                                product.getCategory(),
                                 product.getUnitPrice(),
-                                product.getCurrentQuantity(),
-                                product.getCategory());
+                                product.getCurrentQuantity());
                     }
                 }
             }
@@ -181,7 +177,15 @@ public class Admin extends User {
     public static void manageCategories() {
         ProductCategoryDao categoryDao = new ProductCategoryDao();
         try {
-            ProductCategory[] categories = categoryDao.findAll();
+            ProductCategory[] categories = new ProductCategory[1000]; // Assuming max 100 categories
+            int count = 0;
+
+            // Get all categories and store in array
+            for (ProductCategory category : categoryDao.findAll()) {
+                if (category != null) {
+                    categories[count++] = category;
+                }
+            }
 
             ConsoleUtils.printHeader("     Category Management     ");
             System.out.println("1. View Categories");
@@ -216,22 +220,24 @@ public class Admin extends User {
     public static void viewCategories(ProductCategory[] categories) {
         ConsoleUtils.printHeader("     All Categories     ");
         for (ProductCategory category : categories) {
-            System.out.println("ID: " + category.getProduct_categoryID());
-            System.out.println("Name: " + category.getName());
-            System.out.println("Description: " + category.getDescription());
-            System.out.println("Parent Category: " + category.getParentCategory());
-            System.out.println("-------------------");
+            if (category != null) {
+                System.out.println("ID: " + category.getProduct_categoryID());
+                System.out.println("Name: " + category.getName());
+                System.out.println("Description: " + category.getDescription());
+                System.out.println("Parent Category: " + category.getParentCategory());
+                System.out.println("-------------------");
+            }
         }
     }
 
     public static void addCategory(ProductCategoryDao categoryDao) {
         ConsoleUtils.printHeader("     Add New Category     ");
-        String id = ConsoleUtils.getStringInput(scanner, "Enter category ID: ");
+        String product_categoryID = ConsoleUtils.getStringInput(scanner, "Enter category ID: ");
         String name = ConsoleUtils.getStringInput(scanner, "Enter category name: ");
         String description = ConsoleUtils.getStringInput(scanner, "Enter category description: ");
         String parentId = ConsoleUtils.getStringInput(scanner, "Enter parent category ID (leave empty if none): ");
 
-        ProductCategory category = new ProductCategory(id, name, description);
+        ProductCategory category = new ProductCategory(product_categoryID, name, description);
         if (!parentId.isEmpty()) {
             category.setParentCategory(parentId);
         }
@@ -246,11 +252,11 @@ public class Admin extends User {
 
     public static void updateCategory(ProductCategoryDao categoryDao, ProductCategory[] categories) {
         ConsoleUtils.printHeader("     Update Category     ");
-        String id = ConsoleUtils.getStringInput(scanner, "Enter category ID to update: ");
+        String product_categoryID = ConsoleUtils.getStringInput(scanner, "Enter category ID to update: ");
 
         ProductCategory category = null;
         for (ProductCategory c : categories) {
-            if (c.getProduct_categoryID().equals(id)) {
+            if (c != null && c.getProduct_categoryID().equals(product_categoryID)) {
                 category = c;
                 break;
             }
@@ -285,11 +291,11 @@ public class Admin extends User {
 
     public static void deleteCategory(ProductCategoryDao categoryDao, ProductCategory[] categories) {
         ConsoleUtils.printHeader("     Delete Category     ");
-        String id = ConsoleUtils.getStringInput(scanner, "Enter category ID to delete: ");
+        String product_categoryID = ConsoleUtils.getStringInput(scanner, "Enter category ID to delete: ");
 
         ProductCategory category = null;
         for (ProductCategory c : categories) {
-            if (c.getProduct_categoryID().equals(id)) {
+            if (c != null && c.getProduct_categoryID().equals(product_categoryID)) {
                 category = c;
                 break;
             }
@@ -301,7 +307,7 @@ public class Admin extends User {
         }
 
         try {
-            categoryDao.delete(id);
+            categoryDao.delete(product_categoryID);
             System.out.println("Category deleted successfully!");
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
@@ -842,32 +848,67 @@ public class Admin extends User {
             double averageOrderValue = orderCount > 0 ? totalSales / orderCount : 0;
 
             // Get top selling products
-            Map<String, Integer> productSales = new HashMap<>();
-            Map<String, Double> categorySales = new HashMap<>();
+            Product[] allProducts = Product.getAllProducts();
+            int[] productSales = new int[allProducts.length];
+            double[] categorySales = new double[allProducts.length];
+            String[] categories = new String[allProducts.length];
+            int categoryCount = 0;
             double totalCategorySales = 0;
 
+            // Initialize arrays
+            for (int i = 0; i < allProducts.length; i++) {
+                if (allProducts[i] != null) {
+                    productSales[i] = 0;
+                    categories[categoryCount] = allProducts[i].getCategory();
+                    categorySales[categoryCount] = 0;
+                    categoryCount++;
+                }
+            }
+
+            // Process orders
             for (Order order : orders) {
                 if (order != null && order.getStatus() != OrderStatus.CANCELLED) {
                     for (OrderItem item : order.getItems()) {
                         // Count product sales
-                        String productName = item.getProductName();
-                        productSales.put(productName, productSales.getOrDefault(productName, 0) + item.getQuantity());
+                        for (int i = 0; i < allProducts.length; i++) {
+                            if (allProducts[i] != null && allProducts[i].getProductID().equals(item.getProductId())) {
+                                productSales[i] += item.getQuantity();
+                                break;
+                            }
+                        }
 
                         // Calculate category sales
                         Product product = Product.getProduct(item.getProductId());
                         if (product != null) {
                             String category = product.getCategory();
                             double itemTotal = item.getQuantity() * item.getUnitPrice();
-                            categorySales.put(category, categorySales.getOrDefault(category, 0.0) + itemTotal);
-                            totalCategorySales += itemTotal;
+                            for (int i = 0; i < categoryCount; i++) {
+                                if (categories[i].equals(category)) {
+                                    categorySales[i] += itemTotal;
+                                    totalCategorySales += itemTotal;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            // Sort products by sales quantity
-            List<Map.Entry<String, Integer>> sortedProducts = new ArrayList<>(productSales.entrySet());
-            sortedProducts.sort(Map.Entry.<String, Integer>comparingByValue().reversed());
+            // Sort products by sales quantity (simple bubble sort)
+            for (int i = 0; i < allProducts.length - 1; i++) {
+                for (int j = 0; j < allProducts.length - i - 1; j++) {
+                    if (productSales[j] < productSales[j + 1]) {
+                        // Swap sales
+                        int tempSales = productSales[j];
+                        productSales[j] = productSales[j + 1];
+                        productSales[j + 1] = tempSales;
+                        // Swap products
+                        Product tempProduct = allProducts[j];
+                        allProducts[j] = allProducts[j + 1];
+                        allProducts[j + 1] = tempProduct;
+                    }
+                }
+            }
 
             // Display report
             System.out.println("\n========================================");
@@ -882,22 +923,22 @@ public class Admin extends User {
 
             System.out.println("\nTop Selling Products:");
             int count = 0;
-            for (Map.Entry<String, Integer> entry : sortedProducts) {
-                if (count < 3) {
-                    System.out.println((count + 1) + ". " + entry.getKey() + " - " + entry.getValue() + " units");
+            for (int i = 0; i < allProducts.length && count < 3; i++) {
+                if (allProducts[i] != null && productSales[i] > 0) {
+                    System.out.println((count + 1) + ". " + allProducts[i].getName() + " - " + productSales[i] + " units");
                     count++;
-                } else {
-                    break;
                 }
             }
 
             System.out.println("\nSales by Category:");
-            for (Map.Entry<String, Double> entry : categorySales.entrySet()) {
-                double percentage = (entry.getValue() / totalCategorySales) * 100;
-                System.out.printf("- %s: $%.2f (%.1f%%)\n",
-                        entry.getKey(),
-                        entry.getValue(),
-                        percentage);
+            for (int i = 0; i < categoryCount; i++) {
+                if (categorySales[i] > 0) {
+                    double percentage = (categorySales[i] / totalCategorySales) * 100;
+                    System.out.printf("- %s: $%.2f (%.1f%%)\n",
+                            categories[i],
+                            categorySales[i],
+                            percentage);
+                }
             }
 
             System.out.println("========================================");
@@ -922,7 +963,7 @@ public class Admin extends User {
             System.out.println("========================================");
             System.out.println("Generated on: " + java.time.LocalDate.now());
 
-            int totalProducts = 0;
+            int totalProducts = products.length;
             int lowStockProducts = 0;
             int outOfStockProducts = 0;
             double totalInventoryValue = 0;
@@ -930,7 +971,6 @@ public class Admin extends User {
             // First pass to count products and calculate inventory value
             for (Product product : products) {
                 if (product != null) {
-                    totalProducts++;
                     if (product.getCurrentQuantity() == 0) {
                         outOfStockProducts++;
                     } else if (product.getCurrentQuantity() < 10) {
@@ -946,11 +986,11 @@ public class Admin extends User {
             System.out.println("Out of Stock Products: " + outOfStockProducts);
             System.out.println("Total Inventory Value: $" + String.format("%.2f", totalInventoryValue));
 
-            System.out.println("\nLow Stock Items (Less than 10 units):");
+            System.out.println("\nLow Stock Items (Less than 5 units):");
             System.out.println("------------------------------------------");
             boolean hasLowStock = false;
             for (Product product : products) {
-                if (product != null && product.getCurrentQuantity() > 0 && product.getCurrentQuantity() < 10) {
+                if (product != null && product.getCurrentQuantity() > 0 && product.getCurrentQuantity() < 5) {
                     System.out.printf("%s - %d units remaining (Value: $%.2f)\n",
                             product.getName(),
                             product.getCurrentQuantity(),
@@ -1004,12 +1044,18 @@ public class Admin extends User {
             LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
 
             // Track customer spending
-            Map<String, Double> customerSpending = new HashMap<>();
-            Map<String, Integer> customerOrderCount = new HashMap<>();
+            double[] customerSpending = new double[users.length];
+            int[] customerOrderCount = new int[users.length];
+            String[] customerIds = new String[users.length];
+            int customerCount = 0;
 
             for (User user : users) {
                 if (user != null && user.getRole() == UserRole.CUSTOMER) {
                     totalCustomers++;
+                    customerIds[customerCount] = user.getUserId();
+                    customerSpending[customerCount] = 0;
+                    customerOrderCount[customerCount] = 0;
+                    customerCount++;
 
                     // Check for new customers
                     LocalDateTime registrationDate = user.getRegistrationDate().toInstant()
@@ -1018,10 +1064,6 @@ public class Admin extends User {
                     if (registrationDate.isAfter(thirtyDaysAgo)) {
                         newCustomers++;
                     }
-
-                    // Initialize customer tracking
-                    customerSpending.put(user.getUserId(), 0.0);
-                    customerOrderCount.put(user.getUserId(), 0);
                 }
             }
 
@@ -1030,34 +1072,50 @@ public class Admin extends User {
                 if (order != null && order.getStatus() != OrderStatus.CANCELLED) {
                     String customerId = order.getCustomerId();
 
-                    // Update customer spending
-                    customerSpending.put(customerId,
-                            customerSpending.getOrDefault(customerId, 0.0) + order.getTotalAmount());
+                    // Update customer spending and order count
+                    for (int i = 0; i < customerCount; i++) {
+                        if (customerIds[i].equals(customerId)) {
+                            customerSpending[i] += order.getTotalAmount();
+                            customerOrderCount[i]++;
 
-                    // Update order count
-                    customerOrderCount.put(customerId,
-                            customerOrderCount.getOrDefault(customerId, 0) + 1);
-
-                    // Check for active customers
-                    LocalDateTime orderDate = order.getOrderDate().toInstant()
-                            .atZone(java.time.ZoneId.systemDefault())
-                            .toLocalDateTime();
-                    if (orderDate.isAfter(thirtyDaysAgo)) {
-                        activeCustomers++;
+                            // Check for active customers
+                            LocalDateTime orderDate = order.getOrderDate().toInstant()
+                                    .atZone(java.time.ZoneId.systemDefault())
+                                    .toLocalDateTime();
+                            if (orderDate.isAfter(thirtyDaysAgo)) {
+                                activeCustomers++;
+                            }
+                            break;
+                        }
                     }
                 }
             }
 
-            // Sort customers by spending
-            List<Map.Entry<String, Double>> sortedCustomers = new ArrayList<>(customerSpending.entrySet());
-            sortedCustomers.sort(Map.Entry.<String, Double>comparingByValue().reversed());
+            // Sort customers by spending (simple bubble sort)
+            for (int i = 0; i < customerCount - 1; i++) {
+                for (int j = 0; j < customerCount - i - 1; j++) {
+                    if (customerSpending[j] < customerSpending[j + 1]) {
+                        // Swap spending
+                        double tempSpending = customerSpending[j];
+                        customerSpending[j] = customerSpending[j + 1];
+                        customerSpending[j + 1] = tempSpending;
+                        // Swap customer IDs
+                        String tempId = customerIds[j];
+                        customerIds[j] = customerIds[j + 1];
+                        customerIds[j + 1] = tempId;
+                    }
+                }
+            }
 
             // Calculate retention rate
             double retentionRate = totalCustomers > 0 ?
                     ((double) activeCustomers / totalCustomers) * 100 : 0;
 
             // Calculate average order frequency
-            double totalOrders = customerOrderCount.values().stream().mapToInt(Integer::intValue).sum();
+            double totalOrders = 0;
+            for (int i = 0; i < customerCount; i++) {
+                totalOrders += customerOrderCount[i];
+            }
             double avgOrderFrequency = totalCustomers > 0 ? totalOrders / totalCustomers : 0;
 
             // Display report
@@ -1073,18 +1131,16 @@ public class Admin extends User {
 
             System.out.println("\nTop Customers (By Purchase Amount):");
             int count = 0;
-            for (Map.Entry<String, Double> entry : sortedCustomers) {
-                if (count < 3) {
-                    User customer = User.getUserById(entry.getKey());
+            for (int i = 0; i < customerCount && count < 3; i++) {
+                if (customerSpending[i] > 0) {
+                    User customer = User.getUserById(customerIds[i]);
                     if (customer != null) {
                         System.out.printf("%d. %s - $%.2f\n",
                                 count + 1,
                                 customer.getFullName(),
-                                entry.getValue());
+                                customerSpending[i]);
                         count++;
                     }
-                } else {
-                    break;
                 }
             }
 
@@ -1156,16 +1212,16 @@ public class Admin extends User {
                 products = ProductSorter.sortProducts(products, criteria);
             }
 
-            System.out.println("\nID | Name | Price | Stock | Category");
-            System.out.println("------------------------------------------");
+            System.out.printf("\n%-6s | %-40s | %-15s | %-7s | %s\n", "ID", "Name", "Category", "Price", "Stock");
+            System.out.println("-----------------------------------------------------------------------------------------");
             for (Product product : products) {
                 if (product != null) {
-                    System.out.printf("%s | %s | $%.2f | %d | %s\n",
+                    System.out.printf("%s | %-40s | %-15s | $%.2f | %d\n",
                             product.getProductID(),
                             product.getName(),
+                            product.getCategory(),
                             product.getUnitPrice(),
-                            product.getCurrentQuantity(),
-                            product.getCategory());
+                            product.getCurrentQuantity());
                 }
             }
 
