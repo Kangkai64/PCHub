@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import pchub.dao.BillDao;
 import pchub.dao.OrderDao;
+import pchub.dao.OrderItemDao;
 import pchub.dao.ProductDao;
 import pchub.model.enums.OrderStatus;
 import pchub.model.enums.PaymentStatus;
@@ -25,11 +26,12 @@ public class Order {
     private OrderStatus status;
     private double totalAmount;
     private OrderItem[] items;
-    private Address shippingAddress;  // Kept as Address object
-    private PaymentMethod paymentMethod;  // Kept as PaymentMethod object
+    private Address shippingAddress;
+    private PaymentMethod paymentMethod;
 
     private static final int MAX_ITEMS = 30;
     private static final OrderDao orderDao = new OrderDao();
+    private static final OrderItemDao orderItemDao = new OrderItemDao();
     private static final ProductDao productDao = new ProductDao();
     private static final BillDao billDao = new BillDao();
     private static final BigDecimal TAX_RATE = new BigDecimal("0.13"); // 13% tax rate
@@ -136,7 +138,7 @@ public class Order {
         return items;
     }
 
-    public void setItems(OrderItem[] items) {
+    public void setItems(OrderItem[] items) throws SQLException {
         if (items == null) {
             throw new IllegalArgumentException("Items array cannot be null");
         }
@@ -224,7 +226,7 @@ public class Order {
      * @return The created order, or null if cart is empty or invalid
      * @throws IllegalArgumentException if any parameter is null
      */
-    public static Order createOrderFromCart(User user, Cart cart, Address shippingAddress, PaymentMethod paymentMethod) {
+    public static Order createOrderFromCart(User user, Cart cart, Address shippingAddress, PaymentMethod paymentMethod) throws SQLException {
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
@@ -242,32 +244,52 @@ public class Order {
         }
 
         try {
+            // First calculate the total amount from cart items
+            double totalAmount = 0;
+            for (CartItem cartItem : cart.getItems()) {
+                if (cartItem != null) {
+                    totalAmount += (cartItem.getUnitPrice() * cartItem.getQuantity());
+                }
+            }
+
+            // Create and populate the order
             Order order = new Order();
             order.setCustomerId(user.getUserId());
             order.setCustomerName(user.getUsername());
+            order.setOrderDate(new Date()); // Set current date
+            order.setStatus(OrderStatus.PENDING); // Set initial status
+            order.setTotalAmount(totalAmount);
             order.setShippingAddress(shippingAddress);
             order.setPaymentMethod(paymentMethod);
 
-            double totalAmount = 0;
+            // Insert the order first
+            if (!orderDao.insert(order)) {
+                throw new SQLException("Failed to insert order");
+            }
+
+            // Now create and save the order items
             OrderItem[] orderItems = new OrderItem[30];
             int itemCount = 0;
 
             for (CartItem cartItem : cart.getItems()) {
                 if (cartItem != null && itemCount < orderItems.length) {
                     OrderItem orderItem = new OrderItem();
+                    orderItem.setOrderId(order.getOrderId());
                     orderItem.setProductId(cartItem.getProductId());
                     orderItem.setProductName(cartItem.getProductName());
                     orderItem.setUnitPrice(cartItem.getUnitPrice());
                     orderItem.setQuantity(cartItem.getQuantity());
 
-                    orderItems[itemCount++] = orderItem;
-                    totalAmount += (orderItem.getUnitPrice() * orderItem.getQuantity());
+                    orderItems[itemCount] = orderItem;
+                    orderItemDao.insert(orderItems[itemCount]);
+                    itemCount++;
                 }
             }
 
             order.setItems(orderItems);
-            order.setTotalAmount(totalAmount);
             return order;
+        } catch (SQLException e) {
+            throw new SQLException("Failed to create order from cart: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new RuntimeException("Failed to create order from cart: " + e.getMessage(), e);
         }

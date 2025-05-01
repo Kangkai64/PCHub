@@ -13,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.Arrays;
 
 public class OrderDao extends DaoTemplate<Order> {
     private static final int MAX_ITEMS = 30;
@@ -94,53 +93,63 @@ public class OrderDao extends DaoTemplate<Order> {
 
     @Override
     public boolean insert(Order order) throws SQLException {
-        String sql = "INSERT INTO `order` (customerID, orderDate, order_status, totalAmount, " +
+        String sql = "INSERT INTO `order` (customerID, orderDate, orderStatus, totalAmount, " +
                 "shipping_addressID, payment_MethodID) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
+            // Start transaction
             connection.setAutoCommit(false);
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(1, order.getCustomerId());
                 preparedStatement.setTimestamp(2, new Timestamp(order.getOrderDate().getTime()));
-                preparedStatement.setString(3, order.getStatus().name().toLowerCase());
+                preparedStatement.setString(3, order.getStatus().name().toUpperCase());
                 preparedStatement.setDouble(4, order.getTotalAmount());
-                preparedStatement.setString(5, formatAddressToString(order.getShippingAddress()));
+                preparedStatement.setString(5, order.getShippingAddress().getAddressId()); // Assuming Address has getAddressId()
                 preparedStatement.setString(6, order.getPaymentMethod().getPaymentMethodId());
 
                 int affectedRows = preparedStatement.executeUpdate();
 
                 if (affectedRows > 0) {
-                    // Get the last inserted order ID using a separate query
-                    String getLastIdSql = "SELECT orderID FROM `order` WHERE customerID = ? ORDER BY orderID DESC LIMIT 1";
-                    try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
-                        preparedStatement.setString(1, order.getCustomerId());
-                        try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
-                            if (resultSet.next()) {
-                                String orderId = resultSet.getString("orderID");
-                                order.setOrderId(orderId);
-                                return true;
-                            }
-                        }
+                    // Get the generated order ID using the same connection
+                    String orderId = getLastInsertId(connection, order.getCustomerId());
+                    if (orderId != null) {
+                        order.setOrderId(orderId);
+                        // Commit the transaction
+                        connection.commit();
+                        return true;
                     }
                 }
 
+                // If we reached here, something went wrong
                 connection.rollback();
                 return false;
             } catch (SQLException e) {
                 connection.rollback();
                 System.err.println("Error saving order: " + e.getMessage());
-                return false;
+                throw e; // Re-throw to handle in the service layer
             }
         } catch (SQLException e) {
             System.err.println("Error connecting to database: " + e.getMessage());
-            return false;
+            throw e; // Re-throw to handle in the service layer
         }
+    }
+
+    private String getLastInsertId(Connection connection, String customerId) throws SQLException {
+        String getLastIdSql = "SELECT orderID FROM `order` WHERE customerID = ? ORDER BY orderID DESC LIMIT 1";
+        try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
+            getLastIdStmt.setString(1, customerId);
+            ResultSet resultSet = getLastIdStmt.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("orderID");
+            }
+        }
+        return null;
     }
 
     @Override
     public boolean update(Order order) throws SQLException {
-        String sql = "UPDATE `order` SET order_status = ?, totalAmount = ? WHERE orderID = ?";
+        String sql = "UPDATE `order` SET orderStatus = ?, totalAmount = ? WHERE orderID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
@@ -219,32 +228,55 @@ public class OrderDao extends DaoTemplate<Order> {
         order.setOrderId(resultSet.getString("orderID"));
         order.setCustomerId(resultSet.getString("customerID"));
         order.setOrderDate(resultSet.getTimestamp("orderDate"));
-        order.setStatus(OrderStatus.valueOf(resultSet.getString("status").toUpperCase()));
+        order.setStatus(OrderStatus.valueOf(resultSet.getString("orderStatus").toUpperCase()));
         order.setTotalAmount(resultSet.getDouble("totalAmount"));
-        order.setShippingAddress(convertStringToAddress(resultSet.getString("shippingAddress")));
-        order.setPaymentMethod(lookupPaymentMethodById(resultSet.getString("paymentMethodID")));
+        order.setShippingAddress(convertStringToAddress(resultSet.getString("shipping_addressID")));
+        order.setPaymentMethod(lookupPaymentMethodById(resultSet.getString("payment_MethodID")));
         return order;
     }
 
     private void loadOrderItems(Connection connection, Order order) throws SQLException {
-        String sql = "SELECT * FROM order_item WHERE orderID = ?";
-        OrderItem[] items = new OrderItem[MAX_ITEMS];
-        int index = 0;
+        // First, count the number of items for this order
+        String countSql = "SELECT COUNT(*) AS itemCount FROM order_item WHERE orderID = ?";
+        int itemCount = 0;
+
+        try (PreparedStatement countStmt = connection.prepareStatement(countSql)) {
+            countStmt.setString(1, order.getOrderId());
+            ResultSet countRs = countStmt.executeQuery();
+
+            if (countRs.next()) {
+                itemCount = countRs.getInt("itemCount");
+                if (itemCount == 0) {
+                    return; // No items to process
+                }
+            }
+        }
+
+        // Now fetch the actual items
+        String sql = "SELECT oi.*, p.name AS productName FROM order_item oi JOIN product p ON oi.productID = p.productID WHERE oi.orderID = ? ORDER BY oi.orderItemID";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, order.getOrderId());
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (resultSet.next() && index < MAX_ITEMS) {
-                OrderItem item = new OrderItem();
-                item.setProductId(resultSet.getString("productID"));
-                item.setQuantity(resultSet.getInt("quantity"));
-                item.setUnitPrice(resultSet.getDouble("price"));
-                items[index++] = item;
-            }
-        }
+            OrderItem[] items = new OrderItem[itemCount];
+            int index = 0;
 
-        order.setItems(Arrays.copyOf(items, index));
+            while (resultSet.next() && index < itemCount) {
+                OrderItem item = new OrderItem();
+                item.setOrderItemId(resultSet.getString("orderItemID"));
+                item.setOrderId(resultSet.getString("orderID"));
+                item.setProductId(resultSet.getString("productID"));
+                item.setProductName(resultSet.getString("productName"));
+                item.setUnitPrice(resultSet.getDouble("price"));
+                item.setQuantity(resultSet.getInt("quantity"));
+
+                items[index] = item;
+                index++;
+            }
+
+            order.setItems(items);
+        }
     }
 
     private boolean insertOrderItems(Connection connection, Order order) throws SQLException {

@@ -92,9 +92,9 @@ public class CartDao extends DaoTemplate<Cart> {
                     try (PreparedStatement getCartIdStmt = connection.prepareStatement(
                             "SELECT cartID FROM cart WHERE customerID = ? ORDER BY createdDate DESC LIMIT 1")) {
                         getCartIdStmt.setString(1, cart.getCustomerId());
-                        ResultSet rs = getCartIdStmt.executeQuery();
-                        if (rs.next()) {
-                            String cartId = rs.getString("cartID");
+                        ResultSet resultSet = getCartIdStmt.executeQuery();
+                        if (resultSet.next()) {
+                            String cartId = resultSet.getString("cartID");
                             cart.setCartId(cartId);
 
                             // Save cart items if there are any
@@ -229,10 +229,11 @@ public class CartDao extends DaoTemplate<Cart> {
     }
 
     private void loadCartItems(Connection connection, Cart cart) throws SQLException {
-        String sql = "SELECT ci.*, c.itemCount AS itemCount, p.name AS productName FROM cart_item ci JOIN product p ON ci.productID = p.productID JOIN cart c ON ci.cartID = c.cartID WHERE customerID = ? ORDER BY lastUpdated DESC";
+        String sql = "SELECT ci.*, c.itemCount AS itemCount, p.name AS productName FROM cart_item ci JOIN product p ON ci.productID = p.productID JOIN cart c ON ci.cartID = c.cartID WHERE c.customerID = ? AND ci.cartID = ? ORDER BY lastUpdated DESC";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, cart.getCustomerId());
+            preparedStatement.setString(2, cart.getCartId());
             ResultSet resultSet = preparedStatement.executeQuery();
 
             // Get count first

@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class CartItemDao extends DaoTemplate<CartItem> {
 
     public CartItem[] getCartItems(String cartId) throws SQLException {
-        String sql = "SELECT * FROM cart_item WHERE cartID = ?";
+        String sql = "SELECT ci.*, p.name AS productName FROM cart_item ci JOIN product p ON ci.productID = p.productID WHERE cartID = ?";
         CartItem[] items = new CartItem[30];
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -37,7 +37,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
 
     @Override
     public CartItem findById(String cartItemId) throws SQLException {
-        String sql = "SELECT * FROM cart_item WHERE cartItemID = ?";
+        String sql = "SELECT ci.*, p.name AS productName FROM cart_item ci JOIN product p ON ci.productID = p.productID WHERE cartItemID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
@@ -177,6 +177,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
         item.setCartItemId(resultSet.getString("cartItemID"));
         item.setCartId(resultSet.getString("cartID"));
         item.setProductId(resultSet.getString("productID"));
+        item.setProductName(resultSet.getString("productName"));
         item.setQuantity(resultSet.getInt("quantity"));
         item.setUnitPrice(resultSet.getDouble("price"));
         return item;

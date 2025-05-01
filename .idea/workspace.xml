@@ -5,23 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a8cace0c-3eb5-48f1-aae0-75fbd2f15355" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/OrderItemDao.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/a42cce08-2129-494a-b963-ea63ed09d912.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/a42cce08-2129-494a-b963-ea63ed09d912.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/a42cce08-2129-494a-b963-ea63ed09d912/storage_v2/_src_/schema/pchub.It5YBg.zip" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/a42cce08-2129-494a-b963-ea63ed09d912/storage_v2/_src_/schema/pchub.It5YBg.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/pchub.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/pchub.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pchub/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/AddressDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/AddressDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/BillDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/BillDao.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/CartDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/CartDao.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/CartItemDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/CartItemDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/DaoTemplate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/DaoTemplate.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/OrderDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/OrderDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/PaymentMethodDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/PaymentMethodDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/ProductCatalogueDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/ProductCatalogueDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/ProductCatalogueItemDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/ProductCatalogueItemDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/ProductCategoryDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/ProductCategoryDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/ProductDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/ProductDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/UserDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/UserDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Admin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Order.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -137,7 +130,7 @@
       <workItem from="1746028444474" duration="7228000" />
       <workItem from="1746069100426" duration="392000" />
       <workItem from="1746072092312" duration="3459000" />
-      <workItem from="1746087249523" duration="5231000" />
+      <workItem from="1746087249523" duration="12481000" />
     </task>
     <task id="LOCAL-00001" summary="Removed unnecessary interfaces and impls">
       <option name="closed" value="true" />

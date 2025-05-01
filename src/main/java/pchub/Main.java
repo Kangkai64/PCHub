@@ -529,25 +529,27 @@ public class Main {
             return; // User canceled checkout
         }
 
-        // Initialize OTP manager
-        GenerateOTP otpManager = new GenerateOTP();
+        // TODO: Remember to uncomment this part before submission
+//        // Initialize OTP manager
+//        GenerateOTP otpManager = new GenerateOTP();
+//
+//        // Initialize delivery service (e.g., email)
+//        EmailDeliveryService emailService = new EmailDeliveryService(
+//            "smtp.gmail.com", 587, "lcheekang33@gmail.com", "pdeu tpau dihs xdxz"
+//        );
+//
+//        // Generate OTP and send it
+//        String otp = otpManager.generateOTP(customer.getEmail());
+//        emailService.sendOTP(customer.getEmail(), otp);
+//
+//        String userInputOtp = ConsoleUtils.getStringInput(scanner, "Enter OTP: ");
+//        // Verify OTP
+//        boolean isValid = otpManager.verifyOTP(customer.getEmail(), userInputOtp);
+//        if (!isValid) {
+//            return;
+//        }
+//        System.out.println("OTP verified successfully.");
 
-        // Initialize delivery service (e.g., email)
-        EmailDeliveryService emailService = new EmailDeliveryService(
-            "smtp.gmail.com", 587, "lcheekang33@gmail.com", "pdeu tpau dihs xdxz"
-        );
-
-        // Generate OTP and send it
-        String otp = otpManager.generateOTP(customer.getEmail());
-        emailService.sendOTP(customer.getEmail(), otp);
-
-        String userInputOtp = ConsoleUtils.getStringInput(scanner, "Enter OTP: ");
-        // Verify OTP
-        boolean isValid = otpManager.verifyOTP(customer.getEmail(), userInputOtp);
-        if (!isValid) {
-            return;
-        }
-        System.out.println("OTP verified successfully.");
         // Process order
         try {
             Order order = Order.createOrderFromCart(customer, currentCart, shippingAddress, paymentMethod);
