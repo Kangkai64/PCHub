@@ -1,16 +1,20 @@
 package pchub.model;
 
-import pchub.utils.ConsoleUtils;
-import java.util.Scanner;
 import java.sql.SQLException;
-import pchub.dao.ProductCategoryDao;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import pchub.Main;
 import pchub.dao.ProductCatalogueDao;
 import pchub.dao.ProductCatalogueItemDao;
-import java.util.List;
-import java.time.LocalDateTime;
-import pchub.Main;
+import pchub.dao.ProductCategoryDao;
 import pchub.model.enums.OrderStatus;
 import pchub.model.enums.UserRole;
+import pchub.utils.ConsoleUtils;
 import pchub.utils.ProductSorter;
 
 public class Admin extends User {
@@ -559,7 +563,7 @@ public class Admin extends User {
                 System.out.println("No users found.");
                 return;
             }
-            
+
             System.out.println("\n=== All Users ===");
             for (User user : users) {
                 if (user != null) {  // Add null check for each user
@@ -818,29 +822,83 @@ public class Admin extends User {
         }
 
         try {
-            // In a real system, we would fetch actual sales data
-            // Here we'll just simulate a report
+            // Get all orders
+            Order[] orders = Order.getAllOrders();
+            if (orders == null || orders.length == 0) {
+                System.out.println("No sales data available.");
+                return;
+            }
+
+            // Calculate total sales and number of orders
+            double totalSales = 0;
+            int orderCount = 0;
+            for (Order order : orders) {
+                if (order != null && order.getStatus() != OrderStatus.CANCELLED) {
+                    totalSales += order.getTotalAmount();
+                    orderCount++;
+                }
+            }
+
+            double averageOrderValue = orderCount > 0 ? totalSales / orderCount : 0;
+
+            // Get top selling products
+            Map<String, Integer> productSales = new HashMap<>();
+            Map<String, Double> categorySales = new HashMap<>();
+            double totalCategorySales = 0;
+
+            for (Order order : orders) {
+                if (order != null && order.getStatus() != OrderStatus.CANCELLED) {
+                    for (OrderItem item : order.getItems()) {
+                        // Count product sales
+                        String productName = item.getProductName();
+                        productSales.put(productName, productSales.getOrDefault(productName, 0) + item.getQuantity());
+
+                        // Calculate category sales
+                        Product product = Product.getProduct(item.getProductId());
+                        if (product != null) {
+                            String category = product.getCategory();
+                            double itemTotal = item.getQuantity() * item.getUnitPrice();
+                            categorySales.put(category, categorySales.getOrDefault(category, 0.0) + itemTotal);
+                            totalCategorySales += itemTotal;
+                        }
+                    }
+                }
+            }
+
+            // Sort products by sales quantity
+            List<Map.Entry<String, Integer>> sortedProducts = new ArrayList<>(productSales.entrySet());
+            sortedProducts.sort(Map.Entry.<String, Integer>comparingByValue().reversed());
+
+            // Display report
             System.out.println("\n========================================");
             System.out.println("           PCHub Sales Report           ");
             System.out.println("========================================");
             System.out.println("Period: " + period.toUpperCase());
             System.out.println("Generated on: " + java.time.LocalDate.now());
 
-            // Sample data
-            System.out.println("\nTotal Sales: $15,782.45");
-            System.out.println("Number of Orders: 43");
-            System.out.println("Average Order Value: $367.03");
+            System.out.println("\nTotal Sales: $" + String.format("%.2f", totalSales));
+            System.out.println("Number of Orders: " + orderCount);
+            System.out.println("Average Order Value: $" + String.format("%.2f", averageOrderValue));
 
             System.out.println("\nTop Selling Products:");
-            System.out.println("1. Dell XPS 15 Laptop - 12 units");
-            System.out.println("2. Logitech MX Master Mouse - 28 units");
-            System.out.println("3. Samsung 27\" Monitor - 15 units");
+            int count = 0;
+            for (Map.Entry<String, Integer> entry : sortedProducts) {
+                if (count < 3) {
+                    System.out.println((count + 1) + ". " + entry.getKey() + " - " + entry.getValue() + " units");
+                    count++;
+                } else {
+                    break;
+                }
+            }
 
             System.out.println("\nSales by Category:");
-            System.out.println("- Laptops: $8,245.00 (52.2%)");
-            System.out.println("- Peripherals: $3,127.45 (19.8%)");
-            System.out.println("- Components: $2,410.00 (15.3%)");
-            System.out.println("- Monitors: $2,000.00 (12.7%)");
+            for (Map.Entry<String, Double> entry : categorySales.entrySet()) {
+                double percentage = (entry.getValue() / totalCategorySales) * 100;
+                System.out.printf("- %s: $%.2f (%.1f%%)\n",
+                        entry.getKey(),
+                        entry.getValue(),
+                        percentage);
+            }
 
             System.out.println("========================================");
             System.out.println("Report generated successfully!");
@@ -854,6 +912,10 @@ public class Admin extends User {
 
         try {
             Product[] products = Product.getAllProducts();
+            if (products == null || products.length == 0) {
+                System.out.println("No products found.");
+                return;
+            }
 
             System.out.println("\n========================================");
             System.out.println("         PCHub Inventory Report         ");
@@ -863,12 +925,17 @@ public class Admin extends User {
             int totalProducts = products.length;
             int lowStockProducts = 0;
             int outOfStockProducts = 0;
+            double totalInventoryValue = 0;
 
+            // First pass to count products and calculate inventory value
             for (Product product : products) {
-                if (product.getCurrentQuantity() == 0) {
-                    outOfStockProducts++;
-                } else if (product.getCurrentQuantity() < 5) {
-                    lowStockProducts++;
+                if (product != null) {
+                    if (product.getCurrentQuantity() == 0) {
+                        outOfStockProducts++;
+                    } else if (product.getCurrentQuantity() < 10) {
+                        lowStockProducts++;
+                    }
+                    totalInventoryValue += product.getCurrentQuantity() * product.getUnitPrice();
                 }
             }
 
@@ -876,21 +943,37 @@ public class Admin extends User {
             System.out.println("Total Products: " + totalProducts);
             System.out.println("Low Stock Products: " + lowStockProducts);
             System.out.println("Out of Stock Products: " + outOfStockProducts);
+            System.out.println("Total Inventory Value: $" + String.format("%.2f", totalInventoryValue));
 
             System.out.println("\nLow Stock Items (Less than 5 units):");
             System.out.println("------------------------------------------");
+            boolean hasLowStock = false;
             for (Product product : products) {
-                if (product.getCurrentQuantity() > 0 && product.getCurrentQuantity() < 5) {
-                    System.out.printf("%s - %d units remaining\n", product.getName(), product.getCurrentQuantity());
+                if (product != null && product.getCurrentQuantity() > 0 && product.getCurrentQuantity() < 5) {
+                    System.out.printf("%s - %d units remaining (Value: $%.2f)\n",
+                            product.getName(),
+                            product.getCurrentQuantity(),
+                            product.getCurrentQuantity() * product.getUnitPrice());
+                    hasLowStock = true;
                 }
+            }
+            if (!hasLowStock) {
+                System.out.println("No low stock items found.");
             }
 
             System.out.println("\nOut of Stock Items:");
             System.out.println("------------------------------------------");
+            boolean hasOutOfStock = false;
             for (Product product : products) {
-                if (product.getCurrentQuantity() == 0) {
-                    System.out.println(product.getName());
+                if (product != null && product.getCurrentQuantity() == 0) {
+                    System.out.printf("%s (Last Price: $%.2f)\n",
+                            product.getName(),
+                            product.getUnitPrice());
+                    hasOutOfStock = true;
                 }
+            }
+            if (!hasOutOfStock) {
+                System.out.println("No out of stock items found.");
             }
 
             System.out.println("========================================");
@@ -904,25 +987,108 @@ public class Admin extends User {
         ConsoleUtils.printHeader("      Customer Activity Report      ");
 
         try {
-            // In a real system, we would fetch actual customer data
-            // Here we'll just simulate a report
+            // Get all users and orders
+            User[] users = User.getAllUsers();
+            Order[] orders = Order.getAllOrders();
+
+            if (users == null || orders == null) {
+                System.out.println("Error retrieving data.");
+                return;
+            }
+
+            // Calculate customer metrics
+            int totalCustomers = 0;
+            int newCustomers = 0;
+            int activeCustomers = 0;
+            LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+
+            // Track customer spending
+            Map<String, Double> customerSpending = new HashMap<>();
+            Map<String, Integer> customerOrderCount = new HashMap<>();
+
+            for (User user : users) {
+                if (user != null && user.getRole() == UserRole.CUSTOMER) {
+                    totalCustomers++;
+
+                    // Check for new customers
+                    LocalDateTime registrationDate = user.getRegistrationDate().toInstant()
+                            .atZone(java.time.ZoneId.systemDefault())
+                            .toLocalDateTime();
+                    if (registrationDate.isAfter(thirtyDaysAgo)) {
+                        newCustomers++;
+                    }
+
+                    // Initialize customer tracking
+                    customerSpending.put(user.getUserId(), 0.0);
+                    customerOrderCount.put(user.getUserId(), 0);
+                }
+            }
+
+            // Process orders
+            for (Order order : orders) {
+                if (order != null && order.getStatus() != OrderStatus.CANCELLED) {
+                    String customerId = order.getCustomerId();
+
+                    // Update customer spending
+                    customerSpending.put(customerId,
+                            customerSpending.getOrDefault(customerId, 0.0) + order.getTotalAmount());
+
+                    // Update order count
+                    customerOrderCount.put(customerId,
+                            customerOrderCount.getOrDefault(customerId, 0) + 1);
+
+                    // Check for active customers
+                    LocalDateTime orderDate = order.getOrderDate().toInstant()
+                            .atZone(java.time.ZoneId.systemDefault())
+                            .toLocalDateTime();
+                    if (orderDate.isAfter(thirtyDaysAgo)) {
+                        activeCustomers++;
+                    }
+                }
+            }
+
+            // Sort customers by spending
+            List<Map.Entry<String, Double>> sortedCustomers = new ArrayList<>(customerSpending.entrySet());
+            sortedCustomers.sort(Map.Entry.<String, Double>comparingByValue().reversed());
+
+            // Calculate retention rate
+            double retentionRate = totalCustomers > 0 ?
+                    ((double) activeCustomers / totalCustomers) * 100 : 0;
+
+            // Calculate average order frequency
+            double totalOrders = customerOrderCount.values().stream().mapToInt(Integer::intValue).sum();
+            double avgOrderFrequency = totalCustomers > 0 ? totalOrders / totalCustomers : 0;
+
+            // Display report
             System.out.println("\n========================================");
             System.out.println("     PCHub Customer Activity Report     ");
             System.out.println("========================================");
             System.out.println("Generated on: " + java.time.LocalDate.now());
 
             System.out.println("\nCustomer Summary:");
-            System.out.println("Total Customers: 128");
-            System.out.println("New Customers (Last 30 days): 15");
-            System.out.println("Active Customers (Last 30 days): 47");
+            System.out.println("Total Customers: " + totalCustomers);
+            System.out.println("New Customers (Last 30 days): " + newCustomers);
+            System.out.println("Active Customers (Last 30 days): " + activeCustomers);
 
             System.out.println("\nTop Customers (By Purchase Amount):");
-            System.out.println("1. John Smith - $2,450.00");
-            System.out.println("2. Emily Johnson - $1,875.50");
-            System.out.println("3. Michael Brown - $1,635.25");
+            int count = 0;
+            for (Map.Entry<String, Double> entry : sortedCustomers) {
+                if (count < 3) {
+                    User customer = User.getUserById(entry.getKey());
+                    if (customer != null) {
+                        System.out.printf("%d. %s - $%.2f\n",
+                                count + 1,
+                                customer.getFullName(),
+                                entry.getValue());
+                        count++;
+                    }
+                } else {
+                    break;
+                }
+            }
 
-            System.out.println("\nCustomer Retention Rate: 78%");
-            System.out.println("Average Order Frequency: 1.8 orders/month");
+            System.out.printf("\nCustomer Retention Rate: %.1f%%\n", retentionRate);
+            System.out.printf("Average Order Frequency: %.1f orders/month\n", avgOrderFrequency);
 
             System.out.println("========================================");
             System.out.println("Report generated successfully!");
