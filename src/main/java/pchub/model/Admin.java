@@ -181,7 +181,7 @@ public class Admin extends User {
     public static void manageCategories() {
         ProductCategoryDao categoryDao = new ProductCategoryDao();
         try {
-            List<ProductCategory> categories = categoryDao.findAll();
+            ProductCategory[] categories = categoryDao.findAll();
 
             ConsoleUtils.printHeader("     Category Management     ");
             System.out.println("1. View Categories");
@@ -213,7 +213,7 @@ public class Admin extends User {
         }
     }
 
-    public static void viewCategories(List<ProductCategory> categories) {
+    public static void viewCategories(ProductCategory[] categories) {
         ConsoleUtils.printHeader("     All Categories     ");
         for (ProductCategory category : categories) {
             System.out.println("ID: " + category.getProduct_categoryID());
@@ -244,7 +244,7 @@ public class Admin extends User {
         }
     }
 
-    public static void updateCategory(ProductCategoryDao categoryDao, List<ProductCategory> categories) {
+    public static void updateCategory(ProductCategoryDao categoryDao, ProductCategory[] categories) {
         ConsoleUtils.printHeader("     Update Category     ");
         String id = ConsoleUtils.getStringInput(scanner, "Enter category ID to update: ");
 
@@ -283,7 +283,7 @@ public class Admin extends User {
         }
     }
 
-    public static void deleteCategory(ProductCategoryDao categoryDao, List<ProductCategory> categories) {
+    public static void deleteCategory(ProductCategoryDao categoryDao, ProductCategory[] categories) {
         ConsoleUtils.printHeader("     Delete Category     ");
         String id = ConsoleUtils.getStringInput(scanner, "Enter category ID to delete: ");
 

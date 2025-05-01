@@ -55,22 +55,34 @@ public class PaymentMethodDao extends DaoTemplate<PaymentMethod> {
 
     @Override
     public boolean insert(PaymentMethod paymentMethod) {
-        String sql = "INSERT INTO payment_method (payment_methodID, name, description, addedDate) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO payment_method (name, description, addedDate) VALUES (?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            preparedStatement.setString(1, paymentMethod.getPaymentMethodId());
-            preparedStatement.setString(2, paymentMethod.getName());
-            preparedStatement.setString(3, paymentMethod.getDescription());
-            preparedStatement.setTimestamp(4, Timestamp.valueOf(paymentMethod.getAddedDate().atStartOfDay()));
+            preparedStatement.setString(1, paymentMethod.getName());
+            preparedStatement.setString(2, paymentMethod.getDescription());
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(paymentMethod.getAddedDate().atStartOfDay()));
 
             int affectedRows = preparedStatement.executeUpdate();
-            return affectedRows > 0;
+
+            if (affectedRows > 0) {
+                // Get the last inserted payment method ID using a separate query
+                String getLastIdSql = "SELECT payment_methodID FROM payment_method ORDER BY addedDate DESC LIMIT 1";
+                try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
+                    try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
+                        if (resultSet.next()) {
+                            String payment_methodID = resultSet.getString("payment_methodID");
+                            paymentMethod.setPaymentMethodId(payment_methodID);
+                            return true;
+                        }
+                    }
+                }
+            }
         } catch (SQLException e) {
             System.err.println("Error saving payment method: " + e.getMessage());
-            return false;
         }
+        return false;
     }
 
     @Override
@@ -109,7 +121,7 @@ public class PaymentMethodDao extends DaoTemplate<PaymentMethod> {
     }
 
     @Override
-    public PaymentMethod mapResultSet(ResultSet resultSet) throws SQLException {
+    protected PaymentMethod mapResultSet(ResultSet resultSet) throws SQLException {
         PaymentMethod paymentMethod = new PaymentMethod();
         paymentMethod.setPaymentMethodId(resultSet.getString("payment_methodID"));
         paymentMethod.setName(resultSet.getString("name"));

@@ -31,26 +31,41 @@ public class BillDao extends DaoTemplate<Bill> {
 
     @Override
     public boolean insert(Bill bill) throws SQLException {
-        String sql = "INSERT INTO bill (billID, orderID, amount, payment_MethodID, transactionID, paymentStatus, issueDate) VALUES (?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO bill (orderID, amount, payment_MethodID, transactionID, paymentStatus, issueDate) VALUES (?,?,?,?,?,?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            preparedStatement.setString(1, bill.getBillId());
-            preparedStatement.setString(2, bill.getOrderId());
-            preparedStatement.setBigDecimal(3, bill.getTotalAmount());
-            preparedStatement.setString(4, bill.getPaymentMethod().getPaymentMethodId());
-            preparedStatement.setString(5, bill.getTransactionId());
-            preparedStatement.setString(6, bill.getPaymentStatus().toString());
-            preparedStatement.setTimestamp(7, new Timestamp(bill.getIssueDate().getTime()));
+            preparedStatement.setString(1, bill.getOrderId());
+            preparedStatement.setBigDecimal(2, bill.getTotalAmount());
+            preparedStatement.setString(3, bill.getPaymentMethod().getPaymentMethodId());
+            preparedStatement.setString(4, bill.getTransactionId());
+            preparedStatement.setString(5, bill.getPaymentStatus().toString());
+            preparedStatement.setTimestamp(6, new Timestamp(bill.getIssueDate().getTime()));
 
             int affectedRows = preparedStatement.executeUpdate();
-            return affectedRows > 0;
+
+            if (affectedRows > 0) {
+                // Get the last inserted bill ID using a separate query
+                String getLastIdSql = "SELECT billID FROM bill WHERE orderID = ? ORDER BY billID DESC LIMIT 1";
+                try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
+                    getLastIdStmt.setString(1, bill.getOrderId());
+
+                    try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
+                        if (resultSet.next()) {
+                            String billId = resultSet.getString("billID");
+                            bill.setBillId(billId);
+                            return true;
+                        }
+                    }
+                }
+            }
 
         } catch (SQLException e) {
             System.err.println("Error inserting bill: " + e.getMessage());
             return false;
         }
+        return false;
     }
 
     public Bill findByOrderId(String orderId) throws SQLException {
@@ -133,7 +148,7 @@ public class BillDao extends DaoTemplate<Bill> {
     }
 
     @Override
-    public Bill mapResultSet(ResultSet resultSet) throws SQLException {
+    protected Bill mapResultSet(ResultSet resultSet) throws SQLException {
         Bill bill = new Bill();
         bill.setBillId(resultSet.getString("billID"));
         bill.setOrderId(resultSet.getString("orderID"));
