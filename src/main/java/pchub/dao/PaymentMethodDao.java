@@ -11,7 +11,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 
 public class PaymentMethodDao extends DaoTemplate<PaymentMethod> {
-    final static int MAX_PAYMENT_METHOD = 50;
+    private static final int MAX_PAYMENT_METHOD = 50;
 
     @Override
     public PaymentMethod findById(String paymentMethodId) {

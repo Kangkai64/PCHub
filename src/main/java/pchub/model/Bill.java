@@ -59,20 +59,21 @@ public class Bill {
      * @throws IllegalArgumentException if any parameter is invalid
      */
     public Bill(String billId, String orderId, String customerId, String customerName,
-                Address shippingAddress, PaymentMethod paymentMethod) {
-        setBillId(billId);
-        setOrderId(orderId);
-        setCustomerId(customerId);
-        setCustomerName(customerName);
-        setShippingAddress(shippingAddress);
-        setPaymentMethod(paymentMethod);
+                Address shippingAddress, PaymentMethod paymentMethod, OrderItem[] items,
+                BigDecimal subtotal, BigDecimal tax, BigDecimal shippingCost, BigDecimal totalAmount, PaymentStatus paymentStatus) {
+        this.billId = billId;
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.customerName = customerName;
+        this.shippingAddress = shippingAddress;
+        this.paymentMethod = paymentMethod;
         this.issueDate = new Date();
-        this.items = new OrderItem[MAX_ITEMS];
-        this.subtotal = BigDecimal.ZERO;
-        this.tax = BigDecimal.ZERO;
-        this.shippingCost = BigDecimal.ZERO;
-        this.totalAmount = BigDecimal.ZERO;
-        this.paymentStatus = PaymentStatus.PENDING;
+        this.items = items;
+        this.subtotal = subtotal;
+        this.tax = tax;
+        this.shippingCost = shippingCost;
+        this.totalAmount = totalAmount;
+        this.paymentStatus = paymentStatus;
     }
 
     public String getBillId() {

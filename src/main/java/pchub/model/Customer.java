@@ -7,11 +7,10 @@ import java.sql.SQLException;
 
 public class Customer extends User {
     Address address;
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
     public Customer(User user) {
         super(user.getUserId(), user.getUsername(), user.getEmail(), user.getPassword(), user.getRegistrationDate(),
                 user.getLastLogin(), user.getStatus(), user.getFullName(), user.getPhone(), user.getRole());
-        address = new Address();
     }
 
     public Customer(Address address) {
@@ -208,13 +207,7 @@ public class Customer extends User {
         String country = ConsoleUtils.getStringInput(scanner, "Country: ");
 
         try {
-            Address address = new Address();
-            address.setUserId(this.getUserId());
-            address.setStreet(street);
-            address.setCity(city);
-            address.setState(state);
-            address.setZipCode(zipCode);
-            address.setCountry(country);
+            Address address = new Address(null, this.getUserId(), street, city, state, zipCode, country);
 
             boolean added = Address.addAddress(address);
             if (added) {

@@ -93,7 +93,7 @@ public class OrderDao extends DaoTemplate<Order> {
 
     @Override
     public boolean insert(Order order) throws SQLException {
-        String sql = "INSERT INTO `order` (customerID, orderDate, order_status, totalAmount, " +
+        String sql = "INSERT INTO `order` (customerID, orderDate, orderStatus, totalAmount, " +
                 "shipping_addressID, payment_MethodID) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -149,7 +149,7 @@ public class OrderDao extends DaoTemplate<Order> {
 
     @Override
     public boolean update(Order order) throws SQLException {
-        String sql = "UPDATE `order` SET order_status = ?, totalAmount = ? WHERE orderID = ?";
+        String sql = "UPDATE `order` SET orderStatus = ?, totalAmount = ? WHERE orderID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
@@ -234,7 +234,7 @@ public class OrderDao extends DaoTemplate<Order> {
         order.setCustomerName(customerName);
         
         order.setOrderDate(resultSet.getTimestamp("orderDate"));
-        order.setStatus(OrderStatus.valueOf(resultSet.getString("order_status").toUpperCase()));
+        order.setStatus(OrderStatus.valueOf(resultSet.getString("orderStatus").toUpperCase()));
         order.setTotalAmount(resultSet.getDouble("totalAmount"));
         order.setShippingAddress(convertStringToAddress(resultSet.getString("shipping_addressID")));
         order.setPaymentMethod(lookupPaymentMethodById(resultSet.getString("payment_MethodID")));

@@ -368,20 +368,15 @@ public class Order {
                 return null;
             }
 
-            Bill bill = new Bill();
-            bill.setOrderId(orderId);
-            bill.setCustomerId(order.getCustomerId());
-            bill.setCustomerName(order.getCustomerName());
-            bill.setShippingAddress(order.getShippingAddress());
-            bill.setItems(order.getItems());
-            bill.setPaymentMethod(order.getPaymentMethod());
-            bill.setIssueDate(new Date());
-
             // Calculate bill components
             BigDecimal subtotal = BigDecimal.valueOf(order.getTotalAmount());
             BigDecimal tax = subtotal.multiply(TAX_RATE).setScale(2, RoundingMode.HALF_UP);
             BigDecimal shippingCost = SHIPPING_RATE;
             BigDecimal totalAmount = subtotal.add(tax).add(shippingCost);
+
+            Bill bill = new Bill(orderId, order.getCustomerId(), order.getCustomerName(),
+                    order.getShippingAddress(), order.getItems(), order.getPaymentMethod(),
+                    );
 
             bill.setSubtotal(subtotal);
             bill.setTax(tax);

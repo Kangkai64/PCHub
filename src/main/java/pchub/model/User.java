@@ -59,18 +59,16 @@ public class User {
     public User(String userId, String username, String email, String password,
                Date registrationDate, Date lastLogin, String status,
                 String fullName, String phone, UserRole role) {
-        setUserId(userId);
-        setUsername(username);
-        setEmail(email);
-        setPassword(password);
-        setRegistrationDate(registrationDate);
-        setLastLogin(lastLogin);
-        setStatus(status);
-        setFullName(fullName);
-        setPhone(phone);
-        setRole(role);
-        this.registrationDate = new Date();
-        this.status = "ACTIVE";
+        this.userId = userId;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.registrationDate = registrationDate;
+        this.lastLogin = lastLogin;
+        this.status = status;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.role = role;
     }
 
     public String getUserId() {
