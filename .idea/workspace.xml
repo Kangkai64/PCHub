@@ -5,14 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a8cace0c-3eb5-48f1-aae0-75fbd2f15355" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/OrderDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/OrderDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/PaymentMethodDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/PaymentMethodDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Bill.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Bill.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Customer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Customer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Order.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/User.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +51,7 @@
   "keyToString": {
     "Application.Main.executor": "Run",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "checkFix",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -129,6 +122,11 @@
       <workItem from="1746069100426" duration="392000" />
       <workItem from="1746072092312" duration="3459000" />
       <workItem from="1746087249523" duration="12481000" />
+      <workItem from="1746175466582" duration="164000" />
+      <workItem from="1746191861410" duration="4000" />
+      <workItem from="1746191878086" duration="174000" />
+      <workItem from="1746192317102" duration="371000" />
+      <workItem from="1746195301764" duration="321000" />
     </task>
     <task id="LOCAL-00001" summary="Removed unnecessary interfaces and impls">
       <option name="closed" value="true" />
