@@ -2,9 +2,11 @@ package pchub.model;
 
 import pchub.dao.BillDao;
 import pchub.dao.PaymentMethodDao;
+import pchub.dao.OrderDao;
 import pchub.model.enums.PaymentStatus;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -34,6 +36,7 @@ public class Bill {
     private static final int MAX_ITEMS = 30;
     private static final BillDao billDao = new BillDao();
     private static final PaymentMethodDao paymentMethodDao = new PaymentMethodDao();
+    private static final OrderDao orderDao = new OrderDao();
 
     /**
      * Default constructor
@@ -49,6 +52,32 @@ public class Bill {
     }
 
     /**
+     * Constructor that creates a bill from an order
+     * @param order The order to create the bill from
+     * @throws IllegalArgumentException if order is null
+     */
+    public Bill(Order order) {
+        if (order == null) {
+            throw new IllegalArgumentException("Order cannot be null");
+        }
+        
+        this.orderId = order.getOrderId();
+        this.customerId = order.getCustomerId();
+        this.customerName = order.getCustomerName();
+        this.shippingAddress = order.getShippingAddress();
+        this.items = order.getItems();
+        this.paymentMethod = order.getPaymentMethod();
+        this.issueDate = new Date();
+        this.paymentStatus = PaymentStatus.PENDING;
+        
+        // Calculate bill components
+        this.subtotal = BigDecimal.valueOf(order.getTotalAmount());
+        this.tax = this.subtotal.multiply(new BigDecimal("0.13")).setScale(2, RoundingMode.HALF_UP);
+        this.shippingCost = new BigDecimal("9.99");
+        this.totalAmount = this.subtotal.add(this.tax).add(this.shippingCost);
+    }
+
+    /**
      * Parameterized constructor
      * @param billId The unique identifier for the bill
      * @param orderId The ID of the associated order
@@ -56,6 +85,12 @@ public class Bill {
      * @param customerName The name of the customer
      * @param shippingAddress The shipping address for the order
      * @param paymentMethod The payment method used
+     * @param items The items in the bill
+     * @param subtotal The subtotal amount
+     * @param tax The tax amount
+     * @param shippingCost The shipping cost
+     * @param totalAmount The total amount
+     * @param paymentStatus The payment status
      * @throws IllegalArgumentException if any parameter is invalid
      */
     public Bill(String billId, String orderId, String customerId, String customerName,
@@ -434,6 +469,31 @@ public class Bill {
             return billDao.update(bill);
         } catch (Exception e) {
             throw new RuntimeException("Failed to refund payment: " + e.getMessage(), e);
+        }
+    }
+
+    public static Bill generateBill(String orderId) {
+        // ... validation code ...
+        
+        try {
+            Order order = orderDao.findById(orderId.trim());
+            if (order == null) {
+                return null;
+            }
+
+            // Create bill using the new constructor
+            Bill bill = new Bill(order);
+
+            if (billDao.insert(bill)) {
+                bill.setBillId(bill.getBillId());
+                bill.setPaymentStatus(bill.getPaymentStatus());
+            } else {
+                bill.setPaymentStatus(PaymentStatus.FAILED);
+            }
+
+            return bill;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate bill: " + e.getMessage(), e);
         }
     }
 }

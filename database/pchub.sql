@@ -130,7 +130,7 @@ CREATE TABLE `order` (
   `orderID` varchar(10) NOT NULL,
   `customerID` varchar(10) NOT NULL,
   `orderDate` datetime NOT NULL DEFAULT current_timestamp(),
-  `order_status` enum('PENDING','PROCESSING','SHIPPED','DELIVERED','CANCELLED','REFUNDED') DEFAULT 'PENDING',
+  `ordertatus` enum('PENDING','PROCESSING','SHIPPED','DELIVERED','CANCELLED','REFUNDED') DEFAULT 'PENDING',
   `totalAmount` decimal(10,2) NOT NULL,
   `shipping_addressID` varchar(255) NOT NULL,
   `payment_MethodID` varchar(10) NOT NULL

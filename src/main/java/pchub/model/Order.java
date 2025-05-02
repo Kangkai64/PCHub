@@ -368,20 +368,8 @@ public class Order {
                 return null;
             }
 
-            // Calculate bill components
-            BigDecimal subtotal = BigDecimal.valueOf(order.getTotalAmount());
-            BigDecimal tax = subtotal.multiply(TAX_RATE).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal shippingCost = SHIPPING_RATE;
-            BigDecimal totalAmount = subtotal.add(tax).add(shippingCost);
-
-            Bill bill = new Bill(orderId, order.getCustomerId(), order.getCustomerName(),
-                    order.getShippingAddress(), order.getItems(), order.getPaymentMethod(),
-                    );
-
-            bill.setSubtotal(subtotal);
-            bill.setTax(tax);
-            bill.setShippingCost(shippingCost);
-            bill.setTotalAmount(totalAmount);
+            // Create bill using the new constructor
+            Bill bill = new Bill(order);
 
             if (billDao.insert(bill)) {
                 bill.setBillId(bill.getBillId());
