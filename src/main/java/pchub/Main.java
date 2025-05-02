@@ -2,12 +2,10 @@ package pchub;
 
 import java.sql.SQLException;
 import java.util.Scanner;
-
-import pchub.dao.ProductCatalogueDao;
-import pchub.dao.ProductCatalogueItemDao;
-import pchub.dao.UserDao;
 import pchub.model.*;
 import pchub.model.enums.UserRole;
+import pchub.service.CatalogueService;
+import pchub.service.UserService;
 import pchub.utils.ConsoleUtils;
 import pchub.utils.EmailDeliveryService;
 import pchub.utils.GenerateOTP;
@@ -67,8 +65,8 @@ public class Main {
 
     private static void resetPassword(String password) {
         try {
-            UserDao userDAO = new UserDao();
-            userDAO.updateAllPasswords(password);
+            UserService userService = new UserService();
+            userService.updateAllPasswords(password);
             System.out.println("Password reset successfully.");
         } catch (Exception e) {
             System.out.println("Error initializing database: " + e.getMessage());
@@ -113,7 +111,8 @@ public class Main {
         String password = ConsoleUtils.getPasswordInput(scanner, "Enter password: ");
 
         try {
-            currentUser = User.authenticateUser(username, password);
+            UserService userService = new UserService();
+            currentUser = userService.authenticateUser(username, password);
             if (currentUser != null) {
                 System.out.println("Login successful!");
                 ConsoleUtils.waitMessage();
@@ -152,7 +151,8 @@ public class Main {
             newUser.setPassword(password); // Will be hashed during insertion
             newUser.setRole(UserRole.CUSTOMER); // Default role for new registrations
 
-            boolean success = User.registerUser(newUser);
+            UserService userService = new UserService();
+            boolean success = userService.registerUser(newUser);
             if (success) {
                 System.out.println("Registration successful! You can now login.");
             } else {
@@ -642,9 +642,9 @@ public class Main {
         return "Card ending with " + cardNumber.substring(cardNumber.length() - 4);
     }
 
-    public static void displayAllCatalogues(ProductCatalogueDao catalogueDao) throws SQLException {
+    public static void displayAllCatalogues(CatalogueService catalogueService) throws SQLException {
         ConsoleUtils.printHeader("      All Product Catalogues      ");
-        ProductCatalogue[] catalogues = catalogueDao.findAll();
+        ProductCatalogue[] catalogues = catalogueService.getAllCatalogues();
 
         if (catalogues == null || catalogues.length == 0) {
             System.out.println("No catalogues found.");
@@ -672,11 +672,10 @@ public class Main {
         }
     }
 
-    public static void displayCatalogueItems(ProductCatalogue catalogue) {
+    public static void displayCatalogueItems(ProductCatalogue catalogue, CatalogueService catalogueService) {
         ConsoleUtils.printHeader("      Catalogue Items      ");
         try {
-            ProductCatalogueItemDao itemDao = new ProductCatalogueItemDao();
-            ProductCatalogueItem[] items = itemDao.findByCatalogue(catalogue.getCatalogueID());
+            ProductCatalogueItem[] items = catalogueService.getCatalogueItems(catalogue.getCatalogueID());
 
             if (items == null || items.length == 0) {
                 System.out.println("No items in this catalogue.");
@@ -684,16 +683,16 @@ public class Main {
             }
 
             System.out.printf("%-15s %-30s %-15s %-15s\n",
-                "Item ID", "Product Name", "Regular Price", "Special Price");
+                    "Item ID", "Product Name", "Regular Price", "Special Price");
             System.out.println("-".repeat(75));
 
             for (ProductCatalogueItem item : items) {
                 if (item != null && item.getProduct() != null) {
                     System.out.printf("%-15s %-30s $%-14.2f $%-14.2f\n",
-                        item.getItemID(),
-                        item.getProduct().getName(),
-                        item.getProduct().getUnitPrice(),
-                        item.getSpecialPrice());
+                            item.getItemID(),
+                            item.getProduct().getName(),
+                            item.getProduct().getUnitPrice(),
+                            item.getSpecialPrice());
                 }
             }
         } catch (SQLException e) {
@@ -712,8 +711,8 @@ public class Main {
     private static void viewCatalogues() {
         ConsoleUtils.printHeader("      Available Catalogues      ");
         try {
-            ProductCatalogueDao catalogueDao = new ProductCatalogueDao();
-            ProductCatalogue[] catalogues = catalogueDao.findAll();
+            CatalogueService catalogueService = new CatalogueService();
+            ProductCatalogue[] catalogues = catalogueService.getAllCatalogues();
 
             if (catalogues == null || catalogues.length == 0) {
                 System.out.println("No catalogues available.");
@@ -721,25 +720,25 @@ public class Main {
             }
 
             System.out.printf("%-15s %-30s %-20s %-20s\n",
-                "Catalogue ID", "Name", "Start Date", "End Date");
+                    "Catalogue ID", "Name", "Start Date", "End Date");
             System.out.println("-".repeat(85));
 
             for (ProductCatalogue catalogue : catalogues) {
                 if (catalogue != null) {
                     System.out.printf("%-15s %-30s %-20s %-20s\n",
-                        catalogue.getCatalogueID(),
-                        catalogue.getName(),
-                        catalogue.getStartDate().toLocalDate(),
-                        catalogue.getEndDate().toLocalDate());
+                            catalogue.getCatalogueID(),
+                            catalogue.getName(),
+                            catalogue.getStartDate().toLocalDate(),
+                            catalogue.getEndDate().toLocalDate());
                 }
             }
 
             String catalogueID = ConsoleUtils.getStringInput(scanner, "\nEnter catalogue ID to view items (or press Enter to go back): ");
             if (!catalogueID.isEmpty()) {
-                ProductCatalogue selectedCatalogue = catalogueDao.findById(catalogueID);
+                ProductCatalogue selectedCatalogue = catalogueService.getCatalogueById(catalogueID);
                 if (selectedCatalogue != null) {
-                    displayCatalogueItems(selectedCatalogue);
-                    handleCatalogueItemSelection(selectedCatalogue);
+                    displayCatalogueItems(selectedCatalogue, catalogueService);
+                    handleCatalogueItemSelection(selectedCatalogue, catalogueService);
                 } else {
                     System.out.println("Catalogue not found.");
                 }
@@ -749,18 +748,17 @@ public class Main {
         }
     }
 
-    private static void handleCatalogueItemSelection(ProductCatalogue catalogue) {
+    private static void handleCatalogueItemSelection(ProductCatalogue catalogue, CatalogueService catalogueService) {
         String itemID = ConsoleUtils.getStringInput(scanner, "Enter item ID to add to cart (or press Enter to go back): ");
         if (!itemID.isEmpty()) {
             try {
-                ProductCatalogueItemDao itemDao = new ProductCatalogueItemDao();
-                ProductCatalogueItem item = itemDao.findById(itemID);
+                ProductCatalogueItem item = catalogueService.getCatalogueItemById(itemID);
 
                 if (item != null && item.getCatalogue().getCatalogueID().equals(catalogue.getCatalogueID())) {
                     int quantity = ConsoleUtils.getIntInput(scanner, "Enter quantity: ", 1, 100);
 
                     // Create a new CartItem
-                    CartItem cartItem = new CartItem(currentCart.getCartId(), item.getProduct(), quantity,item.getSpecialPrice());
+                    CartItem cartItem = new CartItem(currentCart.getCartId(), item.getProduct(), quantity, item.getSpecialPrice());
 
                     // Add to cart
                     if (currentCart == null) {

@@ -12,6 +12,7 @@ import pchub.model.enums.OrderStatus;
 import pchub.model.enums.UserRole;
 import pchub.utils.ConsoleUtils;
 import pchub.utils.ProductSorter;
+import pchub.service.CatalogueService;
 
 public class Admin extends User {
     private static Scanner scanner = new Scanner(System.in);
@@ -317,11 +318,9 @@ public class Admin extends User {
 
     public static void manageProductCatalogues() {
         ConsoleUtils.printHeader("      Manage Product Catalogues      ");
-        boolean back = false;
         try {
-            ProductCatalogueDao catalogueDao = new ProductCatalogueDao();
-            ProductCatalogueItemDao itemDao = new ProductCatalogueItemDao();
-
+            CatalogueService catalogueService = new CatalogueService();
+            boolean back = false;
             while (!back) {
                 System.out.println("\n1. View All Catalogues");
                 System.out.println("2. Add New Catalogue");
@@ -334,19 +333,19 @@ public class Admin extends User {
 
                 switch (choice) {
                     case 1:
-                        Main.displayAllCatalogues(catalogueDao);
+                        Main.displayAllCatalogues(catalogueService);
                         break;
                     case 2:
-                        addNewCatalogue(catalogueDao);
+                        addNewCatalogue(catalogueService);
                         break;
                     case 3:
-                        updateCatalogue(catalogueDao);
+                        updateCatalogue(catalogueService);
                         break;
                     case 4:
-                        deleteCatalogue(catalogueDao);
+                        deleteCatalogue(catalogueService);
                         break;
                     case 5:
-                        manageCatalogueItems(catalogueDao, itemDao);
+                        manageCatalogueItems(catalogueService);
                         break;
                     case 6:
                         back = true;
@@ -358,7 +357,7 @@ public class Admin extends User {
         }
     }
 
-    public static void addNewCatalogue(ProductCatalogueDao catalogueDao) throws SQLException {
+    public static void addNewCatalogue(CatalogueService catalogueService) throws SQLException {
         ConsoleUtils.printHeader("      Add New Catalogue      ");
 
         String name = ConsoleUtils.getStringInput(scanner, "Enter catalogue name: ");
@@ -372,7 +371,7 @@ public class Admin extends User {
         catalogue.setStartDate(startDate);
         catalogue.setEndDate(endDate);
 
-        if (catalogueDao.insert(catalogue)) {
+        if (catalogueService.addCatalogue(catalogue)) {
             System.out.println("Catalogue added successfully!");
             System.out.println("Catalogue ID: " + catalogue.getCatalogueID());
         } else {
@@ -380,12 +379,12 @@ public class Admin extends User {
         }
     }
 
-    public static void updateCatalogue(ProductCatalogueDao catalogueDao) throws SQLException {
+    public static void updateCatalogue(CatalogueService catalogueService) throws SQLException {
         ConsoleUtils.printHeader("      Update Catalogue      ");
-        Main.displayAllCatalogues(catalogueDao);
+        Main.displayAllCatalogues(catalogueService);
 
         String catalogueID = ConsoleUtils.getStringInput(scanner, "Enter catalogue ID to update: ");
-        ProductCatalogue catalogue = catalogueDao.findById(catalogueID);
+        ProductCatalogue catalogue = catalogueService.getCatalogueById(catalogueID);
 
         if (catalogue == null) {
             System.out.println("Catalogue not found.");
@@ -408,32 +407,32 @@ public class Admin extends User {
         if (startDate != null) catalogue.setStartDate(startDate);
         if (endDate != null) catalogue.setEndDate(endDate);
 
-        if (catalogueDao.update(catalogue)) {
+        if (catalogueService.updateCatalogue(catalogue)) {
             System.out.println("Catalogue updated successfully!");
         } else {
             System.out.println("Failed to update catalogue.");
         }
     }
 
-    public static void deleteCatalogue(ProductCatalogueDao catalogueDao) throws SQLException {
+    public static void deleteCatalogue(CatalogueService catalogueService) throws SQLException {
         ConsoleUtils.printHeader("      Delete Catalogue      ");
-        Main.displayAllCatalogues(catalogueDao);
+        Main.displayAllCatalogues(catalogueService);
 
         String catalogueID = ConsoleUtils.getStringInput(scanner, "Enter catalogue ID to delete: ");
 
-        if (catalogueDao.delete(catalogueID)) {
+        if (catalogueService.deleteCatalogue(catalogueID)) {
             System.out.println("Catalogue deleted successfully!");
         } else {
             System.out.println("Failed to delete catalogue.");
         }
     }
 
-    public static void manageCatalogueItems(ProductCatalogueDao catalogueDao, ProductCatalogueItemDao itemDao) throws SQLException {
+    public static void manageCatalogueItems(CatalogueService catalogueService) throws SQLException {
         ConsoleUtils.printHeader("      Manage Catalogue Items      ");
-        Main.displayAllCatalogues(catalogueDao);
+        Main.displayAllCatalogues(catalogueService);
 
         String catalogueID = ConsoleUtils.getStringInput(scanner, "Enter catalogue ID to manage items: ");
-        ProductCatalogue catalogue = catalogueDao.findById(catalogueID);
+        ProductCatalogue catalogue = catalogueService.getCatalogueById(catalogueID);
 
         if (catalogue == null) {
             System.out.println("Catalogue not found.");
@@ -452,16 +451,16 @@ public class Admin extends User {
 
             switch (choice) {
                 case 1:
-                    Main.displayCatalogueItems(catalogue);
+                    Main.displayCatalogueItems(catalogue, catalogueService);
                     break;
                 case 2:
-                    addItemToCatalogue(catalogue, itemDao);
+                    addItemToCatalogue(catalogue, catalogueService);
                     break;
                 case 3:
-                    updateItemPrice(catalogue, itemDao);
+                    updateItemPrice(catalogue, catalogueService);
                     break;
                 case 4:
-                    removeItemFromCatalogue(catalogue, itemDao);
+                    removeItemFromCatalogue(catalogue, catalogueService);
                     break;
                 case 5:
                     back = true;
@@ -470,7 +469,7 @@ public class Admin extends User {
         }
     }
 
-    public static void addItemToCatalogue(ProductCatalogue catalogue, ProductCatalogueItemDao itemDao) throws SQLException {
+    public static void addItemToCatalogue(ProductCatalogue catalogue, CatalogueService catalogueService) throws SQLException {
         ConsoleUtils.printHeader("      Add Item to Catalogue      ");
         // Display available products
         Main.displayAllProducts();
@@ -493,19 +492,19 @@ public class Admin extends User {
         item.setSpecialPrice(specialPrice);
         item.setNotes(notes);
 
-        if (itemDao.insert(item)) {
+        if (catalogueService.addCatalogueItem(item)) {
             System.out.println("Item added to catalogue successfully!");
         } else {
             System.out.println("Failed to add item to catalogue.");
         }
     }
 
-    public static void updateItemPrice(ProductCatalogue catalogue, ProductCatalogueItemDao itemDao) throws SQLException {
+    public static void updateItemPrice(ProductCatalogue catalogue, CatalogueService catalogueService) throws SQLException {
         ConsoleUtils.printHeader("      Update Item Price      ");
-        Main.displayCatalogueItems(catalogue);
+        Main.displayCatalogueItems(catalogue, catalogueService);
 
         String itemID = ConsoleUtils.getStringInput(scanner, "Enter item ID to update: ");
-        ProductCatalogueItem item = itemDao.findById(itemID);
+        ProductCatalogueItem item = catalogueService.getCatalogueItemById(itemID);
 
         if (item == null) {
             System.out.println("Item not found.");
@@ -515,20 +514,20 @@ public class Admin extends User {
         double newPrice = ConsoleUtils.getDoubleInput(scanner, "Enter new special price: ");
         item.setSpecialPrice(newPrice);
 
-        if (itemDao.update(item)) {
+        if (catalogueService.updateCatalogueItem(item)) {
             System.out.println("Item price updated successfully!");
         } else {
             System.out.println("Failed to update item price.");
         }
     }
 
-    public static void removeItemFromCatalogue(ProductCatalogue catalogue, ProductCatalogueItemDao itemDao) throws SQLException {
+    public static void removeItemFromCatalogue(ProductCatalogue catalogue, CatalogueService catalogueService) throws SQLException {
         ConsoleUtils.printHeader("      Remove Item from Catalogue      ");
-        Main.displayCatalogueItems(catalogue);
+        Main.displayCatalogueItems(catalogue, catalogueService);
 
         String itemID = ConsoleUtils.getStringInput(scanner, "Enter item ID to remove: ");
 
-        if (itemDao.delete(itemID)) {
+        if (catalogueService.deleteCatalogueItem(itemID)) {
             System.out.println("Item removed from catalogue successfully!");
         } else {
             System.out.println("Failed to remove item from catalogue.");
