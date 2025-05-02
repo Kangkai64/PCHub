@@ -1,30 +1,41 @@
 package pchub.model;
 
-public class LineItem {
-    private String productName;
-    private double unitPrice;
+public abstract class LineItem {
+    private Product product;
     private int quantity;
+    private double unitPrice;
 
-    public LineItem(String productName, double unitPrice, int quantity) {
-        this.productName = productName;
+    public LineItem(Product product, int quantity, double unitPrice) {
+        this.product = product;
         this.unitPrice = unitPrice;
         this.quantity = quantity;
     }
 
-    // Getters
-    public String getProductName() {
-        return productName;
+    public LineItem(){
+
     }
 
-    public double getUnitPrice() {
-        return unitPrice;
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public int getQuantity() {
         return quantity;
     }
 
-    public double getSubtotal() {
-        return unitPrice * quantity;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
     }
 }

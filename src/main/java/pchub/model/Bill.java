@@ -77,40 +77,6 @@ public class Bill {
         this.totalAmount = this.subtotal.add(this.tax).add(this.shippingCost);
     }
 
-    /**
-     * Parameterized constructor
-     * @param billId The unique identifier for the bill
-     * @param orderId The ID of the associated order
-     * @param customerId The ID of the customer
-     * @param customerName The name of the customer
-     * @param shippingAddress The shipping address for the order
-     * @param paymentMethod The payment method used
-     * @param items The items in the bill
-     * @param subtotal The subtotal amount
-     * @param tax The tax amount
-     * @param shippingCost The shipping cost
-     * @param totalAmount The total amount
-     * @param paymentStatus The payment status
-     * @throws IllegalArgumentException if any parameter is invalid
-     */
-    public Bill(String billId, String orderId, String customerId, String customerName,
-                Address shippingAddress, PaymentMethod paymentMethod, OrderItem[] items,
-                BigDecimal subtotal, BigDecimal tax, BigDecimal shippingCost, BigDecimal totalAmount, PaymentStatus paymentStatus) {
-        this.billId = billId;
-        this.orderId = orderId;
-        this.customerId = customerId;
-        this.customerName = customerName;
-        this.shippingAddress = shippingAddress;
-        this.paymentMethod = paymentMethod;
-        this.issueDate = new Date();
-        this.items = items;
-        this.subtotal = subtotal;
-        this.tax = tax;
-        this.shippingCost = shippingCost;
-        this.totalAmount = totalAmount;
-        this.paymentStatus = paymentStatus;
-    }
-
     public String getBillId() {
         return billId;
     }
@@ -469,31 +435,6 @@ public class Bill {
             return billDao.update(bill);
         } catch (Exception e) {
             throw new RuntimeException("Failed to refund payment: " + e.getMessage(), e);
-        }
-    }
-
-    public static Bill generateBill(String orderId) {
-        // ... validation code ...
-        
-        try {
-            Order order = orderDao.findById(orderId.trim());
-            if (order == null) {
-                return null;
-            }
-
-            // Create bill using the new constructor
-            Bill bill = new Bill(order);
-
-            if (billDao.insert(bill)) {
-                bill.setBillId(bill.getBillId());
-                bill.setPaymentStatus(bill.getPaymentStatus());
-            } else {
-                bill.setPaymentStatus(PaymentStatus.FAILED);
-            }
-
-            return bill;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to generate bill: " + e.getMessage(), e);
         }
     }
 }

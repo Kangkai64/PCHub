@@ -277,12 +277,8 @@ public class Order {
 
             for (CartItem cartItem : cart.getItems()) {
                 if (cartItem != null && itemCount < orderItems.length) {
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setOrderId(order.getOrderId());
-                    orderItem.setProductId(cartItem.getProductId());
-                    orderItem.setProductName(cartItem.getProductName());
-                    orderItem.setUnitPrice(cartItem.getUnitPrice());
-                    orderItem.setQuantity(cartItem.getQuantity());
+                    OrderItem orderItem = new OrderItem(order.getOrderId(), cartItem.getProduct(),
+                            cartItem.getQuantity(), cartItem.getUnitPrice());
 
                     orderItems[itemCount] = orderItem;
                     orderItemDao.insert(orderItems[itemCount]);
@@ -315,9 +311,9 @@ public class Order {
             // First, check if all products are in stock
             for (OrderItem item : order.getItems()) {
                 if (item != null) {
-                    Product product = productDao.findById(item.getProductId());
+                    Product product = productDao.findById(item.getProduct().getProductID());
                     if (product == null || product.getCurrentQuantity() < item.getQuantity()) {
-                        throw new IllegalStateException("Product " + item.getProductId() + " is out of stock or does not exist");
+                        throw new IllegalStateException("Product " + item.getProduct().getProductID() + " is out of stock or does not exist");
                     }
                 }
             }
@@ -325,7 +321,7 @@ public class Order {
             // Update product quantities
             for (OrderItem item : order.getItems()) {
                 if (item != null) {
-                    Product product = productDao.findById(item.getProductId());
+                    Product product = item.getProduct();
                     product.setCurrentQuantity(product.getCurrentQuantity() - item.getQuantity());
                     if (!productDao.update(product)) {
                         throw new RuntimeException("Failed to update product quantity");

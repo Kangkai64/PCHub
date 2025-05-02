@@ -1,6 +1,7 @@
 package pchub.dao;
 
 import pchub.model.CartItem;
+import pchub.model.Product;
 import pchub.utils.DatabaseConnection;
 
 import java.sql.Connection;
@@ -83,7 +84,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, item.getCartId());
-            preparedStatement.setString(2, item.getProductId());
+            preparedStatement.setString(2, item.getProduct().getProductID());
             preparedStatement.setInt(3, item.getQuantity());
             preparedStatement.setDouble(4, item.getUnitPrice());
 
@@ -94,7 +95,7 @@ public class CartItemDao extends DaoTemplate<CartItem> {
                 String getLastIdSql = "SELECT cartItemID FROM cart_item WHERE cartID = ? AND productID = ? ORDER BY cartItemID DESC LIMIT 1";
                 try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
                     getLastIdStmt.setString(1, item.getCartId());
-                    getLastIdStmt.setString(2, item.getProductId());
+                    getLastIdStmt.setString(2, item.getProduct().getProductID());
 
                     try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
                         if (resultSet.next()) {
@@ -173,13 +174,19 @@ public class CartItemDao extends DaoTemplate<CartItem> {
 
     @Override
     protected CartItem mapResultSet(ResultSet resultSet) throws SQLException {
-        CartItem item = new CartItem();
-        item.setCartItemId(resultSet.getString("cartItemID"));
-        item.setCartId(resultSet.getString("cartID"));
-        item.setProductId(resultSet.getString("productID"));
-        item.setProductName(resultSet.getString("productName"));
-        item.setQuantity(resultSet.getInt("quantity"));
-        item.setUnitPrice(resultSet.getDouble("price"));
+        ProductDao productDao = new ProductDao();
+
+        String productId = resultSet.getString("productID");
+        Product product = productDao.findById(productId);
+
+        String cartItemId = resultSet.getString("cartItemId");
+        String cartId = resultSet.getString("cartID");
+        int quantity = resultSet.getInt("quantity");
+        double price = resultSet.getDouble("price");
+
+        CartItem item = new CartItem(cartId, product, quantity, price);
+        item.setCartItemId(cartItemId);
+
         return item;
     }
 }

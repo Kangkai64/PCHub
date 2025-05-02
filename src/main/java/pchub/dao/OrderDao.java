@@ -1,9 +1,6 @@
 package pchub.dao;
 
-import pchub.model.Address;
-import pchub.model.Order;
-import pchub.model.OrderItem;
-import pchub.model.PaymentMethod;
+import pchub.model.*;
 import pchub.model.enums.OrderStatus;
 import pchub.utils.DatabaseConnection;
 
@@ -282,13 +279,18 @@ public class OrderDao extends DaoTemplate<Order> {
             int index = 0;
 
             while (resultSet.next() && index < itemCount) {
-                OrderItem item = new OrderItem();
-                item.setOrderItemId(resultSet.getString("orderItemID"));
-                item.setOrderId(resultSet.getString("orderID"));
-                item.setProductId(resultSet.getString("productID"));
-                item.setProductName(resultSet.getString("productName"));
-                item.setUnitPrice(resultSet.getDouble("price"));
-                item.setQuantity(resultSet.getInt("quantity"));
+                ProductDao productDao = new ProductDao();
+
+                String productId = resultSet.getString("productID");
+                Product product = productDao.findById(productId);
+
+                String orderItemId = resultSet.getString("orderItemID");
+                String orderId = resultSet.getString("orderID");
+                int quantity = resultSet.getInt("quantity");
+                double price = resultSet.getDouble("price");
+
+                OrderItem item = new OrderItem(orderId, product, quantity, price);
+                item.setOrderItemId(orderItemId);
 
                 items[index] = item;
                 index++;
@@ -306,7 +308,7 @@ public class OrderDao extends DaoTemplate<Order> {
                 if (item == null) continue;
 
                 preparedStatement.setString(1, order.getOrderId());
-                preparedStatement.setString(2, item.getProductId());
+                preparedStatement.setString(2, item.getProduct().getProductID());
                 preparedStatement.setInt(3, item.getQuantity());
                 preparedStatement.setDouble(4, item.getUnitPrice());
                 preparedStatement.addBatch();

@@ -1,12 +1,17 @@
 package pchub.model;
 
-public class CartItem {
+public class CartItem extends LineItem {
     private String cartItemId;
     private String cartId;
-    private String productId;
-    private String productName;
-    private double unitPrice;
-    private int quantity;
+
+    public CartItem(String cartId, Product product, int quantity, double unitPrice) {
+        super(product, quantity, unitPrice);
+        this.cartId = cartId;
+    }
+
+    public CartItem(){
+
+    }
 
     // Getters and setters
     public String getCartItemId() {
@@ -25,39 +30,7 @@ public class CartItem {
         this.cartId = cartId;
     }
 
-    public String getProductId() {
-        return productId;
-    }
-
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public double getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(double unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
     public double getSubtotal() {
-        return unitPrice * quantity;
+        return this.getUnitPrice() * this.getQuantity();
     }
 }

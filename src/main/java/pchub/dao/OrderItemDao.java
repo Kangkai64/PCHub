@@ -1,6 +1,7 @@
 package pchub.dao;
 
 import pchub.model.OrderItem;
+import pchub.model.Product;
 import pchub.utils.DatabaseConnection;
 
 import java.sql.Connection;
@@ -81,7 +82,7 @@ public class OrderItemDao extends DaoTemplate<OrderItem> {
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, item.getOrderId());
-            preparedStatement.setString(2, item.getProductId());
+            preparedStatement.setString(2, item.getProduct().getProductID());
             preparedStatement.setInt(3, item.getQuantity());
             preparedStatement.setDouble(4, item.getUnitPrice());
 
@@ -92,7 +93,7 @@ public class OrderItemDao extends DaoTemplate<OrderItem> {
                 String getLastIdSql = "SELECT orderItemID FROM order_item WHERE orderID = ? AND productID = ? ORDER BY orderItemID DESC LIMIT 1";
                 try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
                     getLastIdStmt.setString(1, item.getOrderId());
-                    getLastIdStmt.setString(2, item.getProductId());
+                    getLastIdStmt.setString(2, item.getProduct().getProductID());
 
                     try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
                         if (resultSet.next()) {
@@ -130,7 +131,7 @@ public class OrderItemDao extends DaoTemplate<OrderItem> {
                 for (OrderItem item : items) {
                     if (item != null) {
                         preparedStatement.setString(1, item.getOrderId());
-                        preparedStatement.setString(2, item.getProductId());
+                        preparedStatement.setString(2, item.getProduct().getProductID());
                         preparedStatement.setInt(3, item.getQuantity());
                         preparedStatement.setDouble(4, item.getUnitPrice());
                         preparedStatement.addBatch();
@@ -146,7 +147,7 @@ public class OrderItemDao extends DaoTemplate<OrderItem> {
                         String getLastIdSql = "SELECT orderItemID FROM order_item WHERE orderID = ? AND productID = ? ORDER BY orderItemID DESC LIMIT 1";
                         try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
                             getLastIdStmt.setString(1, item.getOrderId());
-                            getLastIdStmt.setString(2, item.getProductId());
+                            getLastIdStmt.setString(2, item.getProduct().getProductID());
 
                             try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
                                 if (resultSet.next()) {
@@ -204,13 +205,20 @@ public class OrderItemDao extends DaoTemplate<OrderItem> {
 
     @Override
     protected OrderItem mapResultSet(ResultSet resultSet) throws SQLException {
-        OrderItem item = new OrderItem();
-        item.setOrderItemId(resultSet.getString("orderItemID"));
-        item.setOrderId(resultSet.getString("orderID"));
-        item.setProductId(resultSet.getString("productID"));
-        item.setProductName(resultSet.getString("productName"));
-        item.setQuantity(resultSet.getInt("quantity"));
-        item.setUnitPrice(resultSet.getDouble("price"));
+        ProductDao productDao = new ProductDao();
+
+        // Get the Product object
+        String productId = resultSet.getString("productID");
+        Product product = productDao.findById(productId);
+
+        String orderItemId = resultSet.getString("orderItemID");
+        String orderId = resultSet.getString("orderID");
+        int quantity = resultSet.getInt("quantity");
+        double unitPrice = resultSet.getDouble("price");
+
+        OrderItem item = new OrderItem(orderId, product, quantity, unitPrice);
+        item.setOrderItemId(orderItemId);
+
         return item;
     }
 

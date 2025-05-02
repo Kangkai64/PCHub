@@ -1,14 +1,14 @@
 package pchub.model;
 
-public class OrderItem {
+public class OrderItem extends LineItem{
     private String orderItemId;
     private String orderId;
-    private String productId;
-    private String productName;
-    private int quantity;
-    private double unitPrice;
 
-    // Getters and setters
+    public OrderItem(String orderId, Product product, int quantity, double unitPrice){
+        super(product, quantity, unitPrice);
+        this.orderId = orderId;
+    }
+
     public String getOrderItemId() {
         return orderItemId;
     }
@@ -25,39 +25,7 @@ public class OrderItem {
         this.orderId = orderId;
     }
 
-    public String getProductId() {
-        return productId;
-    }
-
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(double unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-
     public double getSubtotal() {
-        return unitPrice * quantity;
+        return this.getUnitPrice() * this.getQuantity();
     }
 }

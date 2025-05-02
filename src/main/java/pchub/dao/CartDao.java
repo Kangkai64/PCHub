@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 import pchub.model.Cart;
 import pchub.model.CartItem;
+import pchub.model.Product;
 import pchub.utils.DatabaseConnection;
 
 public class CartDao extends DaoTemplate<Cart> {
@@ -245,16 +246,14 @@ public class CartDao extends DaoTemplate<Cart> {
 
                 CartItem[] items = new CartItem[itemCount];
                 int index = 0;
+                ProductDao productDao = new ProductDao();
+                CartItemDao cartItemDao = new CartItemDao();
 
                 // Process the first row (we've already moved to it)
                 do {
-                    CartItem item = new CartItem();
-                    item.setCartItemId(resultSet.getString("cartItemID"));
-                    item.setCartId(resultSet.getString("cartID"));
-                    item.setProductId(resultSet.getString("productID"));
-                    item.setProductName(resultSet.getString("productName"));
-                    item.setUnitPrice(resultSet.getDouble("price"));
-                    item.setQuantity(resultSet.getInt("quantity"));
+                    CartItem item = cartItemDao.mapResultSet(resultSet);;
+                    String cartItemId = resultSet.getString("cartItemId");
+                    item.setCartItemId(cartItemId);
 
                     items[index] = item;
                     index++;

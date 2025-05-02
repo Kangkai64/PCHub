@@ -9,8 +9,9 @@ public class Customer extends User {
     Address address;
     private static final Scanner scanner = new Scanner(System.in);
     public Customer(User user) {
-        super(user.getUserId(), user.getUsername(), user.getEmail(), user.getPassword(), user.getRegistrationDate(),
-                user.getLastLogin(), user.getStatus(), user.getFullName(), user.getPhone(), user.getRole());
+        super(user.getUserId(), user.getUsername(), user.getEmail(), user.getPassword(),
+                user.getRegistrationDate(), user.getLastLogin(), user.getStatus(),
+                user.getFullName(), user.getPhone(), user.getRole());
     }
 
     public Customer(Address address) {
@@ -63,7 +64,7 @@ public class Customer extends User {
         System.out.println("------------------------------------------");
         for (OrderItem item : bill.getItems()) {
             System.out.printf("%-20s %2d x $%6.2f = $%7.2f\n",
-                    item.getProductName(),
+                    item.getProduct().getName(),
                     item.getQuantity(),
                     item.getUnitPrice(),
                     item.getSubtotal());

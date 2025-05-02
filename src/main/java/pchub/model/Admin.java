@@ -17,8 +17,9 @@ public class Admin extends User {
     private static Scanner scanner = new Scanner(System.in);
 
     public Admin(User user) {
-        super(user.getUserId(), user.getUsername(), user.getEmail(), user.getPassword(), user.getRegistrationDate(),
-                user.getLastLogin(), user.getStatus(), user.getFullName(), user.getPhone(), user.getRole());
+        super(user.getUserId(), user.getUsername(), user.getEmail(), user.getPassword(),
+                user.getRegistrationDate(), user.getLastLogin(), user.getStatus(), user.getFullName(),
+                user.getPhone(), user.getRole());
     }
 
     public static void manageProducts() {
@@ -871,14 +872,14 @@ public class Admin extends User {
                     for (OrderItem item : order.getItems()) {
                         // Count product sales
                         for (int i = 0; i < allProducts.length; i++) {
-                            if (allProducts[i] != null && allProducts[i].getProductID().equals(item.getProductId())) {
+                            if (allProducts[i] != null && allProducts[i].getProductID().equals(item.getProduct().getProductID())) {
                                 productSales[i] += item.getQuantity();
                                 break;
                             }
                         }
 
                         // Calculate category sales
-                        Product product = Product.getProduct(item.getProductId());
+                        Product product = item.getProduct();
                         if (product != null) {
                             String category = product.getCategory();
                             double itemTotal = item.getQuantity() * item.getUnitPrice();

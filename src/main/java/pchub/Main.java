@@ -360,21 +360,13 @@ public class Main {
         try {
             Product product = Product.getProduct(productId);
             if (product != null) {
-                // Create a new CartItem
-                CartItem item = new CartItem();
-                item.setCartId(currentCart.getCartId());
-                item.setProductId(product.getProductID());
-                item.setProductName(product.getName());
-                item.setUnitPrice(product.getUnitPrice());
-                item.setQuantity(quantity);
-
                 // Check if product already exists in cart and update quantity instead
                 boolean itemFound = false;
                 CartItem[] items = currentCart.getItems();
 
                 if (items != null) {
                     for (CartItem existingItem : items) {
-                        if (existingItem.getProductId().equals(product.getProductID())) {
+                        if (existingItem.getProduct().equals(product)) {
                             // Update quantity of existing product
                             existingItem.setQuantity(existingItem.getQuantity() + quantity);
                             itemFound = true;
@@ -385,6 +377,9 @@ public class Main {
                 }
 
                 // If it's a new product, add it to cart
+                // Create a new CartItem
+                CartItem item = new CartItem(currentCart.getCartId(), product, quantity, product.getUnitPrice());
+
                 if (!itemFound) {
                     // Initialize the array if it's null
                     if (items == null) {
@@ -394,6 +389,7 @@ public class Main {
                         // Create a new array with one more element
                         CartItem[] newItems = new CartItem[items.length + 1];
                         System.arraycopy(items, 0, newItems, 0, items.length);
+
                         newItems[items.length] = item;
                         items = newItems;
                     }
@@ -453,7 +449,7 @@ public class Main {
             if (item != null) {
                 double itemTotal = item.getQuantity() * item.getUnitPrice();
                 System.out.printf("%-40s | %-8d | RM%-12.2f | RM%-12.2f\n",
-                        item.getProductName(),
+                        item.getProduct().getName(),
                         item.getQuantity(),
                         item.getUnitPrice(),
                         itemTotal);
@@ -764,11 +760,7 @@ public class Main {
                     int quantity = ConsoleUtils.getIntInput(scanner, "Enter quantity: ", 1, 100);
 
                     // Create a new CartItem
-                    CartItem cartItem = new CartItem();
-                    cartItem.setProductId(item.getProduct().getProductID());
-                    cartItem.setProductName(item.getProduct().getName());
-                    cartItem.setUnitPrice(item.getSpecialPrice()); // Use special price from catalogue
-                    cartItem.setQuantity(quantity);
+                    CartItem cartItem = new CartItem(currentCart.getCartId(), item.getProduct(), quantity,item.getSpecialPrice());
 
                     // Add to cart
                     if (currentCart == null) {
@@ -815,7 +807,7 @@ public class Main {
             for (OrderItem item : order.getItems()) {
                 if (item != null) {
                     System.out.printf("%s - %d x $%.2f = $%.2f\n",
-                            item.getProductName(),
+                            item.getProduct().getName(),
                             item.getQuantity(),
                             item.getUnitPrice(),
                             item.getSubtotal());

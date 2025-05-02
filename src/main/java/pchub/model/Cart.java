@@ -198,13 +198,7 @@ public class Cart {
                 }
                 return updateItemQuantity(cart, product.getProductID(), newQuantity);
             } else {
-                CartItem newItem = new CartItem();
-                newItem.setCartId(cart.getCartId());
-                newItem.setProductId(product.getProductID());
-                newItem.setProductName(product.getName());
-                newItem.setUnitPrice(product.getUnitPrice());
-                newItem.setQuantity(quantity);
-
+                CartItem newItem = new CartItem(cart.getCartId(), product, quantity, product.getUnitPrice());
                 return cartItemDao.insert(newItem);
             }
         } catch (IllegalStateException e) {
