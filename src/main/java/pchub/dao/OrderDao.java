@@ -10,13 +10,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class OrderDao extends DaoTemplate<Order> {
     private static final int MAX_ITEMS = 30;
     private final PaymentMethodDao paymentMethodDao;
+    private final AddressDao addressDao;
 
     public OrderDao() {
         this.paymentMethodDao = new PaymentMethodDao();
+        this.addressDao = new AddressDao();
     }
 
     @Override
@@ -221,20 +224,22 @@ public class OrderDao extends DaoTemplate<Order> {
 
     @Override
     protected Order mapResultSet(ResultSet resultSet) throws SQLException {
-        Order order = new Order();
-        order.setOrderId(resultSet.getString("orderID"));
-        order.setCustomerId(resultSet.getString("customerID"));
-        
-        // Get customer name from user table
-        String customerId = order.getCustomerId();
+        String orderId = resultSet.getString("orderID");
+        String customerId = resultSet.getString("customerID");
         String customerName = getUserName(customerId);
-        order.setCustomerName(customerName);
+        Date orderDate = resultSet.getTimestamp("orderDate");
+        OrderStatus status = OrderStatus.valueOf(resultSet.getString("orderStatus").toUpperCase());
+        double totalAmount = resultSet.getDouble("totalAmount");
         
-        order.setOrderDate(resultSet.getTimestamp("orderDate"));
-        order.setStatus(OrderStatus.valueOf(resultSet.getString("orderStatus").toUpperCase()));
-        order.setTotalAmount(resultSet.getDouble("totalAmount"));
-        order.setShippingAddress(convertStringToAddress(resultSet.getString("shipping_addressID")));
-        order.setPaymentMethod(lookupPaymentMethodById(resultSet.getString("payment_MethodID")));
+        // Get Address and PaymentMethod objects
+        String addressId = resultSet.getString("shipping_addressID");
+        String paymentMethodId = resultSet.getString("payment_MethodID");
+        Address shippingAddress = addressDao.findById(addressId);
+        PaymentMethod paymentMethod = paymentMethodDao.findById(paymentMethodId);
+
+        // Create and return the Order object
+        Order order = new Order(orderId, customerId, customerName, orderDate, status, totalAmount, 
+                              new OrderItem[0], shippingAddress, paymentMethod);
         return order;
     }
 

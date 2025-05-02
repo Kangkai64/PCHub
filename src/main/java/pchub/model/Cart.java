@@ -12,18 +12,39 @@ public class Cart {
     private String customerId;
     private LocalDateTime createdDate;
     private LocalDateTime lastUpdated;
-    private int itemCount = 0;
-    private double subtotal = 0.0;
+    private int itemCount;
+    private double subtotal;
     private CartItem[] items;
 
     private static final CartDao cartDao = new CartDao();
     private static final CartItemDao cartItemDao = new CartItemDao();
     private static final ProductDao productDao = new ProductDao();
 
+    // Default constructor
     public Cart() {
-        this.items = new CartItem[0];
         this.createdDate = LocalDateTime.now();
         this.lastUpdated = LocalDateTime.now();
+        this.itemCount = 0;
+        this.subtotal = 0.0;
+        this.items = new CartItem[0];
+    }
+
+    // Constructor with customer ID
+    public Cart(String customerId) {
+        this();
+        this.customerId = customerId;
+    }
+
+    // Full parameterized constructor
+    public Cart(String cartId, String customerId, LocalDateTime createdDate, LocalDateTime lastUpdated,
+               int itemCount, double subtotal, CartItem[] items) {
+        this.cartId = cartId;
+        this.customerId = customerId;
+        this.createdDate = createdDate;
+        this.lastUpdated = lastUpdated;
+        this.itemCount = itemCount;
+        this.subtotal = subtotal;
+        this.items = items;
     }
 
     // Getters and setters
@@ -88,6 +109,13 @@ public class Cart {
         itemCount = items != null ? items.length : 0;
     }
 
+    @Override
+    public String toString() {
+        return "Cart ID: " + cartId + ", Customer ID: " + customerId + 
+               ", Created Date: " + createdDate + ", Last Updated: " + lastUpdated +
+               ", Item Count: " + itemCount + ", Subtotal: " + subtotal;
+    }
+
     /**
      * Updates the cart totals based on the items
      */
@@ -129,6 +157,11 @@ public class Cart {
                     throw new SQLException("Failed to create new shopping cart");
                 }
             }
+            
+            // Load cart items
+            CartItem[] items = cartItemDao.getCartItems(cart.getCartId());
+            cart.setItems(items);
+            cart.updateCartTotals();
             
             return cart;
         } catch (SQLException e) {

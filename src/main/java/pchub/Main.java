@@ -366,7 +366,7 @@ public class Main {
 
                 if (items != null) {
                     for (CartItem existingItem : items) {
-                        if (existingItem.getProduct().equals(product)) {
+                        if (existingItem != null && existingItem.getProduct() != null && existingItem.getProduct().equals(product)) {
                             // Update quantity of existing product
                             existingItem.setQuantity(existingItem.getQuantity() + quantity);
                             itemFound = true;
@@ -395,6 +395,8 @@ public class Main {
                     }
                     currentCart.setItems(items);
                     System.out.println("Product added to cart successfully!");
+                    // Refresh the cart from database
+                    currentCart = Cart.getCart(currentCart.getCartId());
                 }
             } else {
                 System.out.println("Product not found.");
@@ -779,6 +781,8 @@ public class Main {
                     currentCart.setItems(items);
 
                     System.out.println("Product added to cart successfully!");
+                    // Refresh the cart from database
+                    currentCart = Cart.getCart(currentCart.getCartId());
                 } else {
                     System.out.println("Item not found in this catalogue.");
                 }
