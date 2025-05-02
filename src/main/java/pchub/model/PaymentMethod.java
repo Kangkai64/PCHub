@@ -8,6 +8,32 @@ public class PaymentMethod {
     private String description;
     private LocalDate addedDate;
 
+    // Default constructor
+    public PaymentMethod() {
+        this.addedDate = LocalDate.now();
+    }
+
+    // Default constructor
+    public PaymentMethod(String name) {
+        this.addedDate = LocalDate.now();
+        this.name = name;
+    }
+
+    // Parameterized constructor
+    public PaymentMethod( String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.addedDate = LocalDate.now();
+    }
+
+    // Full parameterized constructor
+    public PaymentMethod(String paymentMethodId, String name, String description, LocalDate addedDate) {
+        this.paymentMethodId = paymentMethodId;
+        this.name = name;
+        this.description = description;
+        this.addedDate = addedDate;
+    }
+
     // Getters and setters
     public String getPaymentMethodId() {
         return paymentMethodId;

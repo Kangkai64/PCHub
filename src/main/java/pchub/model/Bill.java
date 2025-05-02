@@ -1,16 +1,15 @@
 package pchub.model;
 
-import pchub.dao.BillDao;
-import pchub.dao.PaymentMethodDao;
-import pchub.dao.OrderDao;
-import pchub.model.enums.PaymentStatus;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
-import java.time.LocalDate;
+
+import pchub.dao.BillDao;
+import pchub.dao.OrderDao;
+import pchub.dao.PaymentMethodDao;
+import pchub.model.enums.PaymentStatus;
 
 /**
  * Represents a bill in the PC Hub system.
@@ -60,7 +59,7 @@ public class Bill {
         if (order == null) {
             throw new IllegalArgumentException("Order cannot be null");
         }
-        
+
         this.orderId = order.getOrderId();
         this.customerId = order.getCustomerId();
         this.customerName = order.getCustomerName();
@@ -69,7 +68,7 @@ public class Bill {
         this.paymentMethod = order.getPaymentMethod();
         this.issueDate = new Date();
         this.paymentStatus = PaymentStatus.PENDING;
-        
+
         // Calculate bill components
         this.subtotal = BigDecimal.valueOf(order.getTotalAmount());
         this.tax = this.subtotal.multiply(new BigDecimal("0.13")).setScale(2, RoundingMode.HALF_UP);
@@ -334,21 +333,14 @@ public class Bill {
      */
     public static boolean addPaymentMethod(String name, String description) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be null or empty");
+            throw new IllegalArgumentException("Payment method name cannot be null or empty");
         }
-        if (description == null) {
-            throw new IllegalArgumentException("Description cannot be null");
+        if (description == null || description.trim().isEmpty()) {
+            throw new IllegalArgumentException("Payment method description cannot be null or empty");
         }
 
-        try {
-            PaymentMethod paymentMethod = new PaymentMethod();
-            paymentMethod.setName(name.trim());
-            paymentMethod.setDescription(description.trim());
-            paymentMethod.setAddedDate(LocalDate.now());
-            return paymentMethodDao.insert(paymentMethod);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to add payment method: " + e.getMessage(), e);
-        }
+        PaymentMethod paymentMethod = new PaymentMethod(name.trim(), description.trim());
+        return paymentMethodDao.insert(paymentMethod);
     }
 
     /**
@@ -364,24 +356,24 @@ public class Bill {
             throw new IllegalArgumentException("Payment method ID cannot be null or empty");
         }
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be null or empty");
+            throw new IllegalArgumentException("Payment method name cannot be null or empty");
         }
-        if (description == null) {
-            throw new IllegalArgumentException("Description cannot be null");
+        if (description == null || description.trim().isEmpty()) {
+            throw new IllegalArgumentException("Payment method description cannot be null or empty");
         }
 
-        try {
-            PaymentMethod paymentMethod = paymentMethodDao.findById(paymentMethodId.trim());
-            if (paymentMethod == null) {
-                return false;
-            }
-
-            paymentMethod.setName(name.trim());
-            paymentMethod.setDescription(description.trim());
-            return paymentMethodDao.update(paymentMethod);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to update payment method: " + e.getMessage(), e);
+        PaymentMethod existingMethod = paymentMethodDao.findById(paymentMethodId.trim());
+        if (existingMethod == null) {
+            return false;
         }
+
+        PaymentMethod updatedMethod = new PaymentMethod(
+                paymentMethodId.trim(),
+                name.trim(),
+                description.trim(),
+                existingMethod.getAddedDate()
+        );
+        return paymentMethodDao.update(updatedMethod);
     }
 
     /**
