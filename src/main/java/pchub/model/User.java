@@ -2,6 +2,7 @@ package pchub.model;
 
 import pchub.model.enums.UserRole;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -123,7 +124,10 @@ public class User {
         if (password.length() < 8) {
             throw new IllegalArgumentException("Password must be at least 8 characters long");
         }
-        this.password = password.trim();
+
+        if (checkPasswordComplexity(password)) {
+            this.password = password.trim();
+        }
     }
 
     public Date getRegistrationDate() {
@@ -219,6 +223,41 @@ public class User {
     public int hashCode() {
         return Objects.hash(userId);
     }
+
+    public boolean checkPasswordComplexity(String password) {
+        boolean hasUpperCase = false;
+        boolean hasLowerCase = false;
+        boolean hasDigit = false;
+        boolean hasSpecialChar = false;
+        String specialChars = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                hasUpperCase = true;
+            } else if (Character.isLowerCase(c)) {
+                hasLowerCase = true;
+            } else if (Character.isDigit(c)) {
+                hasDigit = true;
+            } else if (specialChars.contains(String.valueOf(c))) {
+                hasSpecialChar = true;
+            }
+        }
+
+        if (!hasUpperCase) {
+            throw new IllegalArgumentException("Password must contain at least one uppercase letter");
+        }
+        if (!hasLowerCase) {
+            throw new IllegalArgumentException("Password must contain at least one lowercase letter");
+        }
+        if (!hasDigit) {
+            throw new IllegalArgumentException("Password must contain at least one digit");
+        }
+        if (!hasSpecialChar) {
+            throw new IllegalArgumentException("Password must contain at least one special character");
+        }
+
+        return true;
+    }
     
     /**
      * Authenticates a user with username and password
@@ -257,7 +296,15 @@ public class User {
             if (loginAttempts >= 3 && firstAttempt != null) {
                 long hoursSinceFirstAttempt = (System.currentTimeMillis() - firstAttempt.getTime()) / (60 * 60 * 1000);
                 if (hoursSinceFirstAttempt < 5) {
-                    System.out.println("Account temporarily blocked due to multiple failed attempts. Please try again at " + (firstAttempt.getTime() + 5 * 60 * 60 * 1000) + ".");
+                    // Calculate unlock timestamp in milliseconds
+                    long unlockTimeMillis = firstAttempt.getTime() + 5 * 60 * 60 * 1000;
+                    // Convert to readable date/time format
+                    Date unlockTimestamp = new Date(unlockTimeMillis);
+                    // Format the date using SimpleDateFormat
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                    String formattedUnlockTime = dateFormat.format(unlockTimestamp);
+
+                    System.out.println("Account temporarily blocked due to multiple failed attempts. Please try again at " + formattedUnlockTime + ".");
                     return null;
                 } else {
                     // Reset attempts if 5 hours have passed
@@ -404,6 +451,10 @@ public class User {
         }
         if (newPassword == null || newPassword.trim().isEmpty()) {
             throw new IllegalArgumentException("New password cannot be null or empty");
+        }
+
+        if (oldPassword.equals(newPassword)) {
+            throw new IllegalArgumentException("Old password and new password cannot be the same");
         }
 
         try {

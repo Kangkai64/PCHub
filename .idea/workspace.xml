@@ -5,17 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a8cace0c-3eb5-48f1-aae0-75fbd2f15355" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/TransactionDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/a42cce08-2129-494a-b963-ea63ed09d912.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/a42cce08-2129-494a-b963-ea63ed09d912.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/a42cce08-2129-494a-b963-ea63ed09d912/storage_v2/_src_/schema/pchub.It5YBg.zip" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/a42cce08-2129-494a-b963-ea63ed09d912/storage_v2/_src_/schema/pchub.It5YBg.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/BillDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/BillDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Bill.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Bill.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/CartItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/CartItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/LineItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/LineItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Admin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/ProductCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/ProductCategory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/User.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,22 +50,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.uml&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.uml",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="pchub" />
@@ -150,6 +143,8 @@
       <workItem from="1746265806002" duration="23000" />
       <workItem from="1746265857183" duration="2464000" />
       <workItem from="1746269664783" duration="710000" />
+      <workItem from="1746270487133" duration="355000" />
+      <workItem from="1746272993025" duration="3010000" />
     </task>
     <task id="LOCAL-00001" summary="Removed unnecessary interfaces and impls">
       <option name="closed" value="true" />
