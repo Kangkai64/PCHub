@@ -510,7 +510,7 @@ DROP TRIGGER IF EXISTS `before_insert_product_category`;
 DELIMITER $$
 CREATE TRIGGER `before_insert_product_category` BEFORE INSERT ON `product_category` FOR EACH ROW BEGIN
     DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(categoryID, 4)), 0) + 1 FROM product_category);
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(product_categoryID, 4)), 0) + 1 FROM product_category);
     SET NEW.product_categoryID = CONCAT('CAT', LPAD(next_id, 3, '0'));
 END
 $$

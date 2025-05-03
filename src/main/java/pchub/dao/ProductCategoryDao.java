@@ -19,29 +19,16 @@ public class ProductCategoryDao extends DaoTemplate<ProductCategory> {
 
     @Override
     public boolean insert(ProductCategory category) throws SQLException {
-        String sql = "INSERT INTO product_category (name, description, parent_category_id) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO product_category (product_categoryID, name, description, parent_category_id) VALUES (?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, category.getName());
-            preparedStatement.setString(2, category.getDescription());
-            preparedStatement.setString(3, category.getParentCategory());
+            preparedStatement.setString(1, category.getProduct_categoryID());
+            preparedStatement.setString(2, category.getName());
+            preparedStatement.setString(3, category.getDescription());
+            preparedStatement.setString(4, category.getParentCategory());
 
             int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows > 0) {
-                // Get the last inserted product category ID using a separate query
-                String getLastIdSql = "SELECT product_categoryID FROM product_category ORDER BY product_categoryID DESC LIMIT 1";
-                try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
-                    try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
-                        if (resultSet.next()) {
-                            String product_categoryID = resultSet.getString("product_categoryID");
-                            category.setProduct_categoryID(product_categoryID);
-                            return true;
-                        }
-                    }
-                }
-            }
+            return affectedRows > 0;
         }
-        return false;
     }
 
     @Override
