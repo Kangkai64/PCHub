@@ -966,29 +966,29 @@ public class Main {
     }
 
     private static void displayBill(Bill bill) {
-        ConsoleUtils.printHeader("                        PCHub RECEIPT                         ");
+        ConsoleUtils.printHeader("                         PCHub RECEIPT                          ");
         System.out.println("Order ID: " + bill.getOrder().getOrderId());
         System.out.println("Date: " + bill.getIssueDate());
         System.out.println("Customer: " + bill.getCustomer().getFullName());
 
         System.out.println("\nItems:");
-        ConsoleUtils.printDivider('-', 62);
+        ConsoleUtils.printDivider('-', 64);
         for (OrderItem item : bill.getOrder().getItems()) {
-            System.out.printf("%-34s %2d x RM%6.2f = RM%7.2f\n",
+            System.out.printf("%-34s %2d x RM%7.2f = RM%8.2f\n",
                     item.getProduct().getName(),
                     item.getQuantity(),
                     item.getUnitPrice(),
                     item.getSubtotal());
         }
-        ConsoleUtils.printDivider('-', 62); 
-        System.out.printf("Subtotal:                                          RM%7.2f\n", bill.getSubtotal());
-        System.out.printf("Tax:                                               RM%7.2f\n", bill.getTax());
-        ConsoleUtils.printDivider('-', 62);
-        System.out.printf("TOTAL:                                             RM%7.2f\n", bill.getTotalAmount());
-        ConsoleUtils.printDivider('-', 62);
+        ConsoleUtils.printDivider('-', 64); 
+        System.out.printf("Subtotal:                                           RM%8.2f\n", bill.getSubtotal());
+        System.out.printf("Tax:                                                RM%8.2f\n", bill.getTax());
+        ConsoleUtils.printDivider('-', 64);
+        System.out.printf("TOTAL:                                              RM%8.2f\n", bill.getTotalAmount());
+        ConsoleUtils.printDivider('-', 64);
         System.out.println("Payment Method: " + bill.getPaymentMethod().getName());
         System.out.println("Payment Status: " + bill.getPaymentStatus());
         System.out.println("\nThank you for shopping at PCHub!");
-        ConsoleUtils.printDivider('=', 62);
+        ConsoleUtils.printDivider('=', 64);
     }
 }
