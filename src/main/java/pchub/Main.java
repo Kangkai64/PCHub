@@ -1,11 +1,28 @@
 package pchub;
 
 import java.sql.SQLException;
-import java.util.Scanner;
-import pchub.model.*;
-import pchub.model.enums.UserRole;
-import pchub.utils.*;
 import java.time.LocalDateTime;
+import java.util.Scanner;
+
+import pchub.model.Address;
+import pchub.model.Admin;
+import pchub.model.Bill;
+import pchub.model.Cart;
+import pchub.model.CartItem;
+import pchub.model.Customer;
+import pchub.model.Order;
+import pchub.model.OrderItem;
+import pchub.model.PaymentMethod;
+import pchub.model.Product;
+import pchub.model.ProductCatalogue;
+import pchub.model.ProductCatalogueItem;
+import pchub.model.Transaction;
+import pchub.model.User;
+import pchub.model.enums.UserRole;
+import pchub.utils.ConsoleUtils;
+import pchub.utils.EmailDeliveryService;
+import pchub.utils.GenerateOTP;
+import pchub.utils.ProductSorter;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
@@ -174,10 +191,12 @@ public class Main {
         switch (choice) {
             case 1: // Browse Products
                 displayAllProducts();
+                handleViewProductDetails();
                 handleProductSelection();
                 break;
             case 2: // Search Products
                 searchProducts();
+                handleViewProductDetails();
                 handleProductSelection();
                 break;
             case 3: // View Catalogues
@@ -321,6 +340,33 @@ public class Main {
                         product.getUnitPrice(),
                         product.getCurrentQuantity());
             }
+        }
+    }
+
+    public static void handleViewProductDetails() {
+        String productId = ConsoleUtils.getStringInput(scanner, "Enter product ID to view details (0 to skip): ");
+        if (productId.equals("0")) {
+            return;  // Early return if user wants to skip
+        }
+
+        try {
+            Product product = Product.getProduct(productId);
+            if (product != null) {
+                ConsoleUtils.printHeader("      Product Details      ");
+                System.out.println("ID: " + product.getProductID());
+                System.out.println("Name: " + product.getName());
+                System.out.println("Description: " + product.getDescription());
+                System.out.println("Price: RM" + String.format("%.2f", product.getUnitPrice()));
+                System.out.println("Stock: " + product.getCurrentQuantity());
+                System.out.println("Category: " + product.getCategory());
+                System.out.println("Brand: " + product.getBrand());
+                System.out.println("Specifications: " + product.getSpecifications());
+                ConsoleUtils.waitMessage();
+            } else {
+                System.out.println("Product not found.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error viewing product details: " + e.getMessage());
         }
     }
 

@@ -50,7 +50,7 @@ public class Admin extends User {
     public static void viewAllProducts() {
         ConsoleUtils.printHeader("      All Products     ");
         Main.displayAllProducts();
-        handleViewProductDetails();
+        Main.handleViewProductDetails();
     }
 
     public static void addNewProduct() {
@@ -60,6 +60,10 @@ public class Admin extends User {
         int stockQuantity = ConsoleUtils.getIntInput(scanner, "Enter stock quantity: ", 0, Integer.MAX_VALUE);
         String category = ConsoleUtils.getStringInput(scanner, "Enter product category: ");
         String description = ConsoleUtils.getStringInput(scanner, "Enter product description: ");
+        String brand = ConsoleUtils.getStringInput(scanner, "Enter product brand: ");
+        
+        // Collect specifications
+        String specs = collectSpecifications();
 
         try {
             Product product = new Product();
@@ -68,6 +72,8 @@ public class Admin extends User {
             product.setCurrentQuantity(stockQuantity);
             product.setCategory(category);
             product.setDescription(description);
+            product.setBrand(brand);
+            product.setSpecifications(specs);
 
             boolean success = Product.addProduct(product);
             if (success) {
@@ -78,6 +84,30 @@ public class Admin extends User {
         } catch (Exception e) {
             System.out.println("Error adding product: " + e.getMessage());
         }
+    }
+
+    private static String collectSpecifications() {
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("{");
+        
+        boolean first = true;
+        while (true) {
+            String key = ConsoleUtils.getStringInput(scanner, "Enter specification key (or press Enter to finish): ");
+            if (key.isEmpty()) {
+                break;
+            }
+            
+            String value = ConsoleUtils.getStringInput(scanner, "Enter specification value: ");
+            
+            if (!first) {
+                jsonBuilder.append(",");
+            }
+            jsonBuilder.append("\"").append(key).append("\":\"").append(value).append("\"");
+            first = false;
+        }
+        
+        jsonBuilder.append("}");
+        return jsonBuilder.toString();
     }
 
     public static void updateProduct() {
@@ -97,6 +127,8 @@ public class Admin extends User {
             System.out.println("Stock: " + product.getCurrentQuantity());
             System.out.println("Category: " + product.getCategory());
             System.out.println("Description: " + product.getDescription());
+            System.out.println("Brand: " + product.getBrand());
+            System.out.println("Specifications: " + product.getSpecifications());
 
             System.out.println("\nEnter new details (press Enter to keep current value):");
             String name = ConsoleUtils.getStringInput(scanner, "New name: ");
@@ -124,6 +156,18 @@ public class Admin extends User {
             String description = ConsoleUtils.getStringInput(scanner, "New description: ");
             if (!description.isEmpty()) {
                 product.setDescription(description);
+            }
+
+            String brand = ConsoleUtils.getStringInput(scanner, "New brand: ");
+            if (!brand.isEmpty()) {
+                product.setBrand(brand);
+            }
+
+            System.out.println("\nUpdate specifications? (y/n)");
+            String updateSpecs = ConsoleUtils.getStringInput(scanner, "Choice: ");
+            if (updateSpecs.equalsIgnoreCase("y")) {
+                String specs = collectSpecifications();
+                product.setSpecifications(specs);
             }
 
             boolean success = Product.updateProduct(product);
@@ -1190,23 +1234,6 @@ public class Admin extends User {
             System.out.println("Report generated successfully!");
         } catch (Exception e) {
             System.out.println("Error generating customer activity report: " + e.getMessage());
-        }
-    }
-
-    public static void handleViewProductDetails() {
-        ConsoleUtils.printHeader("      Products      ");
-        try {
-            String productId = ConsoleUtils.getStringInput(scanner, "Enter product ID to view details (or press Enter to go back): ");
-            if (!productId.isEmpty()) {
-                Product product = Product.getProduct(productId);
-                if (product != null) {
-                    displayProductDetails(product);
-                } else {
-                    System.out.println("Product not found.");
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error fetching products: " + e.getMessage());
         }
     }
 
