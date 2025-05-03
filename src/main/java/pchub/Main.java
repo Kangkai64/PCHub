@@ -126,13 +126,7 @@ public class Main {
         }
 
         try {
-            User newUser = new User();
-            newUser.setUsername(username);
-            newUser.setFullName(fullname);
-            newUser.setEmail(email);
-            newUser.setPhone(phone);
-            newUser.setPassword(password); // Will be hashed during insertion
-            newUser.setRole(UserRole.CUSTOMER); // Default role for new registrations
+            User newUser = new User(username,email,password,fullname,phone,UserRole.CUSTOMER);// Default role for new registrations
 
             boolean success = User.registerUser(newUser);
             if (success) {

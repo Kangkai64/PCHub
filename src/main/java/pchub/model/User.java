@@ -44,28 +44,24 @@ public class User {
         this.status = "ACTIVE";
     }
 
-    /**
-     * Parameterized constructor
-     *
-     * @param userId           The unique identifier for the user
-     * @param username         The username of the user
-     * @param email            The email address of the user
-     * @param password         The password of the user
-     * @param registrationDate The registration date of the user
-     * @param lastLogin        The last login time of the user
-     * @param status           The account status of the user (ACTIVE, INACTIVE, BANNED)
-     * @param fullName         The full name of the user
-     * @param phone            The phone number of the user
-     * @param role             The role of the user
-     * @throws IllegalArgumentException if any parameter is invalid
-     */
+    public User( String username, String email, String password, String fullName, String phone, UserRole role) {
+        this.username = username;
+        this.email = email;
+        this.setPassword(password);
+        this.fullName = fullName;
+        this.phone = phone;
+        this.role = role;
+        this.registrationDate = new Date();
+        this.status = "ACTIVE";
+    }
+
     public User(String userId, String username, String email, String password,
-               Date registrationDate, Date lastLogin, String status,
+                Date registrationDate, Date lastLogin, String status,
                 String fullName, String phone, UserRole role) {
         this.userId = userId;
         this.username = username;
         this.email = email;
-        this.password = password;
+        this.setPassword(password);
         this.registrationDate = registrationDate;
         this.lastLogin = lastLogin;
         this.status = status;
@@ -125,9 +121,14 @@ public class User {
             throw new IllegalArgumentException("Password must be at least 8 characters long");
         }
 
-        if (checkPasswordComplexity(password)) {
-            this.password = password.trim();
+        String complexityError = checkPasswordComplexity(password);
+
+        if (complexityError != null) {
+            System.out.println(complexityError);
+            return;
         }
+
+        this.password = password;
     }
 
     public Date getRegistrationDate() {
@@ -224,7 +225,16 @@ public class User {
         return Objects.hash(userId);
     }
 
-    public boolean checkPasswordComplexity(String password) {
+    /**
+     * Checks if a password meets complexity requirements
+     * @param password The password to check
+     * @return null if password meets all requirements, or an error message if it doesn't
+     */
+    public static String checkPasswordComplexity(String password) {
+        if (password.length() < 8) {
+            return "Password must be at least 8 characters long";
+        }
+
         boolean hasUpperCase = false;
         boolean hasLowerCase = false;
         boolean hasDigit = false;
@@ -244,21 +254,21 @@ public class User {
         }
 
         if (!hasUpperCase) {
-            throw new IllegalArgumentException("Password must contain at least one uppercase letter");
+            return "Password must contain at least one uppercase letter";
         }
         if (!hasLowerCase) {
-            throw new IllegalArgumentException("Password must contain at least one lowercase letter");
+            return "Password must contain at least one lowercase letter";
         }
         if (!hasDigit) {
-            throw new IllegalArgumentException("Password must contain at least one digit");
+            return "Password must contain at least one digit";
         }
         if (!hasSpecialChar) {
-            throw new IllegalArgumentException("Password must contain at least one special character");
+            return "Password must contain at least one special character";
         }
 
-        return true;
+        return null; // Password meets all requirements
     }
-    
+
     /**
      * Authenticates a user with username and password
      * @param username The username to authenticate
@@ -383,7 +393,7 @@ public class User {
 
     /**
      * Retrieves all users
-     * @return List of all users
+     * @return array of all users
      */
     public static User[] getAllUsers() throws SQLException {
         User[] users = USER_DAO.findAll();
@@ -439,22 +449,12 @@ public class User {
      * @param userId The ID of the user
      * @param oldPassword The current password
      * @param newPassword The new password
-     * @return true if password was updated successfully, false otherwise
+     * @return true if the password was updated successfully, false otherwise
      * @throws IllegalArgumentException if any parameter is null or empty
      */
     public static boolean updatePassword(String userId, String oldPassword, String newPassword) {
         if (userId == null || userId.trim().isEmpty()) {
             throw new IllegalArgumentException("User ID cannot be null or empty");
-        }
-        if (oldPassword == null || oldPassword.trim().isEmpty()) {
-            throw new IllegalArgumentException("Old password cannot be null or empty");
-        }
-        if (newPassword == null || newPassword.trim().isEmpty()) {
-            throw new IllegalArgumentException("New password cannot be null or empty");
-        }
-
-        if (oldPassword.equals(newPassword)) {
-            throw new IllegalArgumentException("Old password and new password cannot be the same");
         }
 
         try {

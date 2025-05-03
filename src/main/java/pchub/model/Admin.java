@@ -2,6 +2,7 @@ package pchub.model;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Scanner;
 
 import pchub.Main;
@@ -558,8 +559,10 @@ public class Admin extends User {
 
     public static void addUser() {
         ConsoleUtils.printHeader("      Add New User      ");
+        String fullname = ConsoleUtils.getStringInput(scanner, "Enter full name: ");
         String username = ConsoleUtils.getStringInput(scanner, "Username: ");
         String email = ConsoleUtils.getStringInput(scanner, "Email: ");
+        String phone = ConsoleUtils.getStringInput(scanner, "Enter phone number (format: 0XX-XXXXXXX): ");
         String password = ConsoleUtils.getStringInput(scanner, "Password: ");
 
         System.out.println("Select role:");
@@ -569,11 +572,7 @@ public class Admin extends User {
         UserRole role = (roleChoice == 1) ? UserRole.CUSTOMER : UserRole.ADMIN;
 
         try {
-            User user = new User();
-            user.setUsername(username);
-            user.setEmail(email);
-            user.setPassword(password); // Will be hashed in the service
-            user.setRole(role);
+            User user = new User(username,email,password,fullname,phone,role);
 
             boolean added = User.registerUser(user);
             if (added) {

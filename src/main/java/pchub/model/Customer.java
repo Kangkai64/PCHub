@@ -1,6 +1,7 @@
 package pchub.model;
 
 import pchub.utils.ConsoleUtils;
+import pchub.utils.PasswordUtils;
 import pchub.Main;
 import java.util.Scanner;
 import java.sql.SQLException;
@@ -127,19 +128,88 @@ public class Customer extends User {
     }
 
     public void changePassword() {
-        ConsoleUtils.printHeader("      Change Password     ");
-        String oldPassword = ConsoleUtils.getStringInput(scanner, "Enter old password: ");
-        String newPassword = ConsoleUtils.getStringInput(scanner, "Enter new password: ");
+        ConsoleUtils.printHeader("Change Password");
+        boolean continueLoop = true;
 
-        try {
-            boolean changed = User.updatePassword(this.getUserId(), oldPassword, newPassword);
-            if (changed) {
-                System.out.println("Password changed successfully!");
+        while (continueLoop) {
+            System.out.println("\n1. Change password");
+            System.out.println("0. Exit to main menu");
+            System.out.print("\nSelect an option: ");
+
+            String choice = scanner.nextLine().trim();
+
+            if (choice.equals("0")) {
+                System.out.println("Password change cancelled. Returning to main menu...");
+                return; // Exit with code 0
+            } else if (choice.equals("1")) {
+                // Verify old password
+                String oldPassword = ConsoleUtils.getPasswordInput(scanner, "Enter current password: ");
+                if (oldPassword == null || oldPassword.trim().isEmpty()) {
+                    System.out.println("Current password cannot be empty. Please try again.");
+                    continue;
+                }
+
+                // Check if old password is correct before proceeding
+                try {
+                    if (!PasswordUtils.verifyPassword(oldPassword, this.getPassword())) {
+                        System.out.println("Incorrect password. Please try again.");
+                        continue;
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error verifying password: " + e.getMessage());
+                    continue;
+                }
+
+                // Get new password
+                System.out.println("\nPassword requirements:");
+                System.out.println("- At least 8 characters long");
+                System.out.println("- Must contain uppercase and lowercase letters");
+                System.out.println("- Must contain at least one number");
+                System.out.println("- Must contain at least one special character");
+                System.out.println("- Must be different from your current password\n");
+
+                String newPassword = ConsoleUtils.getPasswordInput(scanner, "Enter new password: ");
+                if (newPassword == null || newPassword.trim().isEmpty()) {
+                    System.out.println("New password cannot be empty. Please try again.");
+                    continue;
+                }
+
+                // Validate password complexity
+                String complexityError = User.checkPasswordComplexity(newPassword);
+                if (complexityError != null) {
+                    System.out.println(complexityError);
+                    continue;
+                }
+
+                if (oldPassword.equals(newPassword)) {
+                    System.out.println("New password must be different from your current password.");
+                    continue;
+                }
+
+                // Confirm new password
+                String confirmPassword = ConsoleUtils.getPasswordInput(scanner, "Confirm new password: ");
+                if (!confirmPassword.equals(newPassword)) {
+                    System.out.println("Passwords don't match. Please try again.");
+                    continue;
+                }
+
+                // Update password
+                try {
+                    boolean changed = User.updatePassword(this.getUserId(), oldPassword, newPassword);
+                    if (changed) {
+                        System.out.println("Password successfully changed!");
+                        continueLoop = false; // Exit the loop after successful password change
+                    } else {
+                        System.out.println("Failed to change password. Please try again later.");
+                        continue;
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error changing password: " + e.getMessage());
+                    continue;
+                }
             } else {
-                System.out.println("Failed to change password. Old password may be incorrect.");
+                System.out.println("Invalid option. Please select 0 or 1.");
             }
-        } catch (Exception e) {
-            System.out.println("Error changing password: " + e.getMessage());
         }
     }
 
