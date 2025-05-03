@@ -610,7 +610,7 @@ public class Admin extends User {
             String phone = ConsoleUtils.getStringInput(scanner, "New Phone [" + user.getPhone() + "]: ");
             String fullName = ConsoleUtils.getStringInput(scanner, "New Full Name [" + user.getFullName() + "]: ");
             String username = ConsoleUtils.getStringInput(scanner, "New Username [" + user.getUsername() + "]: ");
-            String password = ConsoleUtils.getStringInput(scanner, "New Password [" + user.getPassword() + "]: ");
+            String password = ConsoleUtils.getStringInput(scanner, "New Password : ");
 
             System.out.println("Current role: " + user.getRole());
             System.out.println("Select new role (or press Enter to keep current):");
