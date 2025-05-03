@@ -603,10 +603,10 @@ public class Admin extends User {
 
     public static void addUser() {
         ConsoleUtils.printHeader("      Add New User      ");
-        String fullname = ConsoleUtils.getStringInput(scanner, "Enter full name: ");
+        String fullname = ConsoleUtils.getStringInput(scanner, "Full name: ");
         String username = ConsoleUtils.getStringInput(scanner, "Username: ");
         String email = ConsoleUtils.getStringInput(scanner, "Email: ");
-        String phone = ConsoleUtils.getStringInput(scanner, "Enter phone number (format: 0XX-XXXXXXX): ");
+        String phone = ConsoleUtils.getStringInput(scanner, "Phone number (format: 0XX-XXXXXXX): ");
         String password = ConsoleUtils.getStringInput(scanner, "Password: ");
 
         System.out.println("Select role:");
