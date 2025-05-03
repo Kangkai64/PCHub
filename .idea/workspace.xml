@@ -6,18 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a8cace0c-3eb5-48f1-aae0-75fbd2f15355" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/CartDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/CartDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/CartItemDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/CartItemDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/OrderDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/OrderDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/dao/OrderItemDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/dao/OrderItemDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Admin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Bill.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Bill.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/CartItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/CartItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Customer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Customer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/LineItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/LineItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Order.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/OrderItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/OrderItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Product.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,12 +31,12 @@
     &quot;assignee&quot;: &quot;Kangkai64&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Kangkai64/PCHub.git&quot;,
-    &quot;accountId&quot;: &quot;981f3d4b-7258-4454-895c-85a8706085c2&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Kangkai64/PCHub.git",
+    "accountId": "e5816fac-8808-487b-be09-3aa1c1de47da"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
@@ -64,6 +53,7 @@
     "Application.Main.executor": "Run",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -96,14 +86,6 @@
         <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.22562.218" />
-        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-IU-243.22562.218" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

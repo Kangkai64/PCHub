@@ -1,8 +1,9 @@
 package pchub.model;
 
-import pchub.dao.ProductDao;
 import java.util.Arrays;
 import java.util.Objects;
+
+import pchub.dao.ProductDao;
 
 /**
  * Represents a product in the PC Hub system.
@@ -41,14 +42,14 @@ public class Product {
      */
     public Product(String productID, String name, String description, String brand, 
                   String category, double unitPrice, int currentQuantity, String specifications) {
-        setProductID(productID);
-        setName(name);
-        setDescription(description);
-        setBrand(brand);
-        setCategory(category);
-        setUnitPrice(unitPrice);
-        setCurrentQuantity(currentQuantity);
-        setSpecifications(specifications);
+        this.productID = productID;
+        this.name = name;
+        this.description = description;
+        this.brand = brand;
+        this.category = category;
+        this.unitPrice = unitPrice;
+        this.currentQuantity = currentQuantity;
+        this.specifications = specifications;
     }
 
     public String getProductID() {
