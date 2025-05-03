@@ -124,7 +124,10 @@ public class User {
         if (password.length() < 8) {
             throw new IllegalArgumentException("Password must be at least 8 characters long");
         }
-        this.password = password.trim();
+
+        if (checkPasswordComplexity(password)) {
+            this.password = password.trim();
+        }
     }
 
     public Date getRegistrationDate() {
@@ -219,6 +222,41 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(userId);
+    }
+
+    public boolean checkPasswordComplexity(String password) {
+        boolean hasUpperCase = false;
+        boolean hasLowerCase = false;
+        boolean hasDigit = false;
+        boolean hasSpecialChar = false;
+        String specialChars = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                hasUpperCase = true;
+            } else if (Character.isLowerCase(c)) {
+                hasLowerCase = true;
+            } else if (Character.isDigit(c)) {
+                hasDigit = true;
+            } else if (specialChars.contains(String.valueOf(c))) {
+                hasSpecialChar = true;
+            }
+        }
+
+        if (!hasUpperCase) {
+            throw new IllegalArgumentException("Password must contain at least one uppercase letter");
+        }
+        if (!hasLowerCase) {
+            throw new IllegalArgumentException("Password must contain at least one lowercase letter");
+        }
+        if (!hasDigit) {
+            throw new IllegalArgumentException("Password must contain at least one digit");
+        }
+        if (!hasSpecialChar) {
+            throw new IllegalArgumentException("Password must contain at least one special character");
+        }
+
+        return true;
     }
     
     /**
@@ -413,6 +451,10 @@ public class User {
         }
         if (newPassword == null || newPassword.trim().isEmpty()) {
             throw new IllegalArgumentException("New password cannot be null or empty");
+        }
+
+        if (oldPassword.equals(newPassword)) {
+            throw new IllegalArgumentException("Old password and new password cannot be the same");
         }
 
         try {

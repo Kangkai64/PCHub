@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.Scanner;
 
 import pchub.Main;
-import pchub.dao.ProductCategoryDao;
 import pchub.model.enums.OrderStatus;
 import pchub.model.enums.UserRole;
 import pchub.utils.ConsoleUtils;
@@ -154,45 +153,40 @@ public class Admin extends User {
     }
 
     public static void manageCategories() {
-        ProductCategoryDao categoryDao = new ProductCategoryDao();
-        try {
-            ProductCategory[] categories = new ProductCategory[1000]; // Assuming max 100 categories
-            int count = 0;
+        ProductCategory[] categories = new ProductCategory[1000];
+        int count = 0;
 
-            // Get all categories and store in array
-            for (ProductCategory category : categoryDao.findAll()) {
-                if (category != null) {
-                    categories[count++] = category;
-                }
+        // Get all categories and store in array
+        for (ProductCategory category : ProductCategory.findAll()) {
+            if (category != null) {
+                categories[count++] = category;
             }
+        }
 
-            ConsoleUtils.printHeader("     Category Management     ");
-            System.out.println("1. View Categories");
-            System.out.println("2. Add Category");
-            System.out.println("3. Update Category");
-            System.out.println("4. Delete Category");
-            System.out.println("5. Back");
+        ConsoleUtils.printHeader("     Category Management     ");
+        System.out.println("1. View Categories");
+        System.out.println("2. Add Category");
+        System.out.println("3. Update Category");
+        System.out.println("4. Delete Category");
+        System.out.println("5. Back");
 
-            int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 5);
+        int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 5);
 
-            switch (choice) {
-                case 1:
-                    viewCategories(categories);
-                    break;
-                case 2:
-                    addCategory(categoryDao);
-                    break;
-                case 3:
-                    updateCategory(categoryDao, categories);
-                    break;
-                case 4:
-                    deleteCategory(categoryDao, categories);
-                    break;
-                case 5:
-                    return;
-            }
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+        switch (choice) {
+            case 1:
+                viewCategories(categories);
+                break;
+            case 2:
+                addCategory();
+                break;
+            case 3:
+                updateCategory(categories);
+                break;
+            case 4:
+                deleteCategory(categories);
+                break;
+            case 5:
+                return;
         }
     }
 
@@ -209,7 +203,7 @@ public class Admin extends User {
         }
     }
 
-    public static void addCategory(ProductCategoryDao categoryDao) {
+    public static void addCategory() {
         ConsoleUtils.printHeader("     Add New Category     ");
         String product_categoryID = ConsoleUtils.getStringInput(scanner, "Enter category ID: ");
         String name = ConsoleUtils.getStringInput(scanner, "Enter category name: ");
@@ -221,15 +215,14 @@ public class Admin extends User {
             category.setParentCategory(parentId);
         }
 
-        try {
-            categoryDao.insert(category);
+        if (ProductCategory.addProductCategory(category)){
             System.out.println("Category added successfully!");
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+        } else {
+            System.out.println("Failed to add category.");
         }
     }
 
-    public static void updateCategory(ProductCategoryDao categoryDao, ProductCategory[] categories) {
+    public static void updateCategory(ProductCategory[] categories) {
         ConsoleUtils.printHeader("     Update Category     ");
         String product_categoryID = ConsoleUtils.getStringInput(scanner, "Enter category ID to update: ");
 
@@ -260,15 +253,14 @@ public class Admin extends User {
             category.setParentCategory(parentId);
         }
 
-        try {
-            categoryDao.update(category);
+        if (ProductCategory.updateProductCategory(category)){
             System.out.println("Category updated successfully!");
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+        } else  {
+            System.out.println("Failed to update category.");
         }
     }
 
-    public static void deleteCategory(ProductCategoryDao categoryDao, ProductCategory[] categories) {
+    public static void deleteCategory(ProductCategory[] categories) {
         ConsoleUtils.printHeader("     Delete Category     ");
         String product_categoryID = ConsoleUtils.getStringInput(scanner, "Enter category ID to delete: ");
 
@@ -285,11 +277,10 @@ public class Admin extends User {
             return;
         }
 
-        try {
-            categoryDao.delete(product_categoryID);
+        if (ProductCategory.deleteProductCategory(product_categoryID)){
             System.out.println("Category deleted successfully!");
-        } catch (SQLException e) {
-            System.out.println("Error: " + e.getMessage());
+        } else {
+            System.out.println("Failed to delete category.");
         }
     }
 

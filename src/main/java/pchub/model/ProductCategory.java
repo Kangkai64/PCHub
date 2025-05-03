@@ -1,5 +1,9 @@
 package pchub.model;
 
+import pchub.dao.ProductCategoryDao;
+
+import java.sql.SQLException;
+
 /**
  * Represents a product category in the PC Hub system.
  * This class contains information about a product category including its ID, name,
@@ -11,6 +15,7 @@ public class ProductCategory {
     private String parentCategory;
     private String description;
     private ProductCategory[] subCategories;
+    private static final ProductCategoryDao productCategoryDao = new ProductCategoryDao();
 
     /**
      * Default constructor
@@ -80,6 +85,70 @@ public class ProductCategory {
                 break;
             }
         }
+    }
+
+    public static ProductCategory findById(String product_categoryID) {
+        if (product_categoryID == null) {
+            System.out.println("Product category ID cannot be null");
+        }
+
+        try{
+            return productCategoryDao.findById(product_categoryID);
+        } catch (SQLException e) {
+            System.out.println("Error retrieving product category by Id: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static ProductCategory[] findAll() {
+        try{
+            return productCategoryDao.findAll();
+        } catch(SQLException e){
+            System.out.println("Error retrieving all product category: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static boolean addProductCategory(ProductCategory productCategory) {
+        if (productCategory == null) {
+            System.out.println("Product category cannot be null");
+            return false;
+        }
+
+        try{
+            return productCategoryDao.insert(productCategory);
+        } catch(SQLException e){
+            System.out.println("Error adding product category: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public static boolean updateProductCategory(ProductCategory productCategory) {
+        if (productCategory == null) {
+            System.out.println("Product category cannot be null");
+            return false;
+        }
+
+        try{
+            return productCategoryDao.update(productCategory);
+        } catch(SQLException e){
+            System.out.println("Error updating product category: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public static boolean deleteProductCategory(String product_categoryID) {
+        if (product_categoryID == null) {
+            System.out.println("Product category ID cannot be null");
+            return false;
+        }
+
+        try{
+            return productCategoryDao.delete(product_categoryID);
+        } catch(SQLException e){
+            System.out.println("Error deleting product category: " + e.getMessage());
+        }
+        return false;
     }
 
     @Override

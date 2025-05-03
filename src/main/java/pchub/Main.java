@@ -150,9 +150,9 @@ public class Main {
         boolean back = false;
 
         while (!back) {
-            System.out.println("\n1. View All Products");
+            System.out.println("\n1. Browse Products");
             System.out.println("2. Search Products");
-            System.out.println("3. View Product Catalogues");
+            System.out.println("3. View Catalogues");
             System.out.println("4. Back to Main Menu");
 
             int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 4);
