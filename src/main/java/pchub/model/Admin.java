@@ -53,27 +53,8 @@ public class Admin extends User {
 
     public static void viewAllProducts() {
         ConsoleUtils.printHeader("      All Products     ");
-        try {
-            Product[] products = Product.getAllProducts();
-            if (products == null || products.length == 0) {
-                System.out.println("No products found.");
-            } else {
-                System.out.printf("\n%-6s | %-40s | %-15s | %-7s | %s\n", "ID", "Name", "Category", "Price", "Stock");
-                System.out.println("-----------------------------------------------------------------------------------------");
-                for (Product product : products) {
-                    if (product != null) {
-                        System.out.printf("%s | %-40s | %-15s | $%.2f | %d\n",
-                                product.getProductID(),
-                                product.getName(),
-                                product.getCategory(),
-                                product.getUnitPrice(),
-                                product.getCurrentQuantity());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error fetching products: " + e.getMessage());
-        }
+        Main.displayAllProducts();
+        handleViewProductDetails();
     }
 
     public static void addNewProduct() {
@@ -1154,77 +1135,9 @@ public class Admin extends User {
         }
     }
 
-    public static void displayProducts() {
+    public static void handleViewProductDetails() {
         ConsoleUtils.printHeader("      Products      ");
         try {
-            Product[] products = Product.getAllProducts();
-            if (products == null || products.length == 0) {
-                System.out.println("No products found.");
-                return;
-            }
-
-            // Display sorting options
-            System.out.println("\nSort by:");
-            System.out.println("1. Name (A-Z)");
-            System.out.println("2. Name (Z-A)");
-            System.out.println("3. Price (Low to High)");
-            System.out.println("4. Price (High to Low)");
-            System.out.println("5. Stock (Low to High)");
-            System.out.println("6. Stock (High to Low)");
-            System.out.println("7. Category (A-Z)");
-            System.out.println("8. Category (Z-A)");
-            System.out.println("9. No Sorting");
-
-            int sortChoice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 9);
-            ProductSorter.SortCriteria criteria = null;
-
-            switch (sortChoice) {
-                case 1:
-                    criteria = ProductSorter.SortCriteria.NAME_ASC;
-                    break;
-                case 2:
-                    criteria = ProductSorter.SortCriteria.NAME_DESC;
-                    break;
-                case 3:
-                    criteria = ProductSorter.SortCriteria.PRICE_ASC;
-                    break;
-                case 4:
-                    criteria = ProductSorter.SortCriteria.PRICE_DESC;
-                    break;
-                case 5:
-                    criteria = ProductSorter.SortCriteria.STOCK_ASC;
-                    break;
-                case 6:
-                    criteria = ProductSorter.SortCriteria.STOCK_DESC;
-                    break;
-                case 7:
-                    criteria = ProductSorter.SortCriteria.CATEGORY_ASC;
-                    break;
-                case 8:
-                    criteria = ProductSorter.SortCriteria.CATEGORY_DESC;
-                    break;
-                case 9:
-                    break;
-            }
-
-            // Sort products if a criteria was selected
-            if (criteria != null) {
-                products = ProductSorter.sortProducts(products, criteria);
-            }
-
-            System.out.printf("\n%-6s | %-40s | %-15s | %-7s | %s\n", "ID", "Name", "Category", "Price", "Stock");
-            System.out.println("-----------------------------------------------------------------------------------------");
-            for (Product product : products) {
-                if (product != null) {
-                    System.out.printf("%s | %-40s | %-15s | $%.2f | %d\n",
-                            product.getProductID(),
-                            product.getName(),
-                            product.getCategory(),
-                            product.getUnitPrice(),
-                            product.getCurrentQuantity());
-                }
-            }
-
             String productId = ConsoleUtils.getStringInput(scanner, "Enter product ID to view details (or press Enter to go back): ");
             if (!productId.isEmpty()) {
                 Product product = Product.getProduct(productId);
