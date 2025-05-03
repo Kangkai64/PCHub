@@ -9,7 +9,6 @@ import pchub.dao.ProductCategoryDao;
 import pchub.model.enums.OrderStatus;
 import pchub.model.enums.UserRole;
 import pchub.utils.ConsoleUtils;
-import pchub.utils.ProductSorter;
 
 public class Admin extends User {
     private static Scanner scanner = new Scanner(System.in);
@@ -517,9 +516,10 @@ public class Admin extends User {
         System.out.println("2. Add New User");
         System.out.println("3. Update User");
         System.out.println("4. Delete User");
-        System.out.println("5. Back to Admin Menu");
+        System.out.println("5. Block/Unblock User");
+        System.out.println("6. Back to Admin Menu");
 
-        int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 5);
+        int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 6);
 
         switch (choice) {
             case 1:
@@ -535,6 +535,9 @@ public class Admin extends User {
                 new Admin(this).deleteUser();
                 break;
             case 5:
+                manageUserBlocking();
+                break;
+            case 6:
                 break;
         }
     }
@@ -613,6 +616,10 @@ public class Admin extends User {
             System.out.println("(Leave fields blank to keep current values)");
 
             String email = ConsoleUtils.getStringInput(scanner, "New Email [" + user.getEmail() + "]: ");
+            String phone = ConsoleUtils.getStringInput(scanner, "New Phone [" + user.getPhone() + "]: ");
+            String fullName = ConsoleUtils.getStringInput(scanner, "New Full Name [" + user.getFullName() + "]: ");
+            String username = ConsoleUtils.getStringInput(scanner, "New Username [" + user.getUsername() + "]: ");
+            String password = ConsoleUtils.getStringInput(scanner, "New Password [" + user.getPassword() + "]: ");
 
             System.out.println("Current role: " + user.getRole());
             System.out.println("Select new role (or press Enter to keep current):");
@@ -621,6 +628,10 @@ public class Admin extends User {
             String roleChoiceStr = ConsoleUtils.getStringInput(scanner, "Choice: ");
 
             if (!email.isBlank()) user.setEmail(email);
+            if (!phone.isBlank()) user.setPhone(phone);
+            if (!fullName.isBlank()) user.setFullName(fullName);
+            if (!username.isBlank()) user.setUsername(username);
+            if (!password.isBlank()) user.setPassword(password);
 
             if (!roleChoiceStr.isBlank()) {
                 int roleChoice = Integer.parseInt(roleChoiceStr);
@@ -680,6 +691,59 @@ public class Admin extends User {
         }
     }
 
+    private void manageUserBlocking() {
+        ConsoleUtils.printHeader("      Block/Unblock User      ");
+        String userId = ConsoleUtils.getStringInput(scanner, "Enter user ID (format: C0001-C9999): ");
+
+        // Validate user ID format
+        if (!userId.matches("C\\d{4}")) {
+            System.out.println("Invalid user ID format. Please use format C0001-C9999.");
+            return;
+        }
+
+        try {
+            User user = User.getUserById(userId);
+            if (user == null) {
+                System.out.println("User not found.");
+                return;
+            }
+
+            // Prevent blocking/unblocking self
+            if (user.getUserId().equals(this.getUserId())) {
+                System.out.println("You cannot block/unblock your own account.");
+                return;
+            }
+
+            System.out.println("Current user status: " + user.getStatus());
+            System.out.println("1. Block User");
+            System.out.println("2. Unblock User");
+            System.out.println("3. Back");
+
+            int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 3);
+
+            switch (choice) {
+                case 1:
+                    if (userDao.blockUser(userId)) {
+                        System.out.println("User blocked successfully!");
+                    } else {
+                        System.out.println("Failed to block user.");
+                    }
+                    break;
+                case 2:
+                    if (userDao.unblockUser(userId)) {
+                        System.out.println("User unblocked successfully!");
+                    } else {
+                        System.out.println("Failed to unblock user.");
+                    }
+                    break;
+                case 3:
+                    return;
+            }
+        } catch (Exception e) {
+            System.out.println("Error managing user block status: " + e.getMessage());
+        }
+    }
+
     public static void viewAllOrders() {
         ConsoleUtils.printHeader("      All Orders      ");
         try {
@@ -687,13 +751,13 @@ public class Admin extends User {
             if (orders == null || orders.length == 0) {
                 System.out.println("No orders found.");
             } else {
-                System.out.println("Order ID | Customer | Date | Status | Total Amount");
+                System.out.printf("%-10s | %-20s | %-10s | %-10s | %-10s\n", "Order ID", "Customer", "Date", "Status", "Total Amount");
                 System.out.println("------------------------------------------");
                 for (Order order : orders) {
                     if (order != null) {
-                        System.out.printf("%s | %s | %s | %s | $%.2f\n",
+                        System.out.printf("%-10s | %-20s | %-10s | %-10s | RM%.2f\n",
                                 order.getOrderId(),
-                                order.getCustomer().getUsername(),
+                                order.getCustomer().getFullName(),
                                 order.getOrderDate(),
                                 order.getStatus(),
                                 order.getTotalAmount());
@@ -1242,6 +1306,129 @@ public class Admin extends User {
             }
         } catch (Exception e) {
             System.out.println("Error checking stock status: " + e.getMessage());
+        }
+    }
+
+    public static void managePaymentMethod() {
+        ConsoleUtils.printHeader("      Manage Payment Methods      ");
+        System.out.println("1. View All Payment Methods");
+        System.out.println("2. Add New Payment Method");
+        System.out.println("3. Update Payment Method");
+        System.out.println("4. Delete Payment Method");
+        System.out.println("5. Back to Admin Menu");
+
+        int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 5);
+
+        switch (choice) {
+            case 1:
+                viewAllPaymentMethods();
+                break;
+            case 2:
+                addPaymentMethod();
+                break;
+            case 3:
+                updatePaymentMethod();
+                break;
+            case 4:
+                deletePaymentMethod();
+                break;
+            case 5:
+                return;
+        }
+    }
+
+    private static void viewAllPaymentMethods() {
+        ConsoleUtils.printHeader("      All Payment Methods      ");
+        try {
+            PaymentMethod[] methods = Bill.getAllPaymentMethods();
+            if (methods == null || methods.length == 0) {
+                System.out.println("No payment methods found.");
+                return;
+            }
+
+            System.out.printf("%-10s | %-20s | %-20s | %-20s\n", "ID", "Name", "Description", "Added Date");
+            System.out.println("------------------------------------------");
+            for (PaymentMethod method : methods) {
+                if (method != null) {
+                    System.out.printf("%-10s | %-20s | %-20s | %-20s\n",
+                            method.getPaymentMethodId(),
+                            method.getName(),
+                            method.getDescription(),
+                            method.getAddedDate());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error retrieving payment methods: " + e.getMessage());
+        }
+    }
+
+    private static void addPaymentMethod() {
+        ConsoleUtils.printHeader("      Add New Payment Method      ");
+        String name = ConsoleUtils.getStringInput(scanner, "Enter payment method name: ");
+        String description = ConsoleUtils.getStringInput(scanner, "Enter description: ");
+
+        try {
+            boolean success = Bill.addPaymentMethod(name, description);
+            if (success) {
+                System.out.println("Payment method added successfully!");
+            } else {
+                System.out.println("Failed to add payment method.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error adding payment method: " + e.getMessage());
+        }
+    }
+
+    private static void updatePaymentMethod() {
+        ConsoleUtils.printHeader("      Update Payment Method      ");
+        String methodId = ConsoleUtils.getStringInput(scanner, "Enter payment method ID to update: ");
+
+        try {
+            PaymentMethod method = Bill.getPaymentMethodById(methodId);
+            if (method == null) {
+                System.out.println("Payment method not found.");
+                return;
+            }
+
+            System.out.println("Current payment method details:");
+            System.out.println("Name: " + method.getName());
+            System.out.println("Description: " + method.getDescription());
+
+            System.out.println("\nEnter new details (press Enter to keep current value):");
+            String name = ConsoleUtils.getStringInput(scanner, "New name: ");
+            if (!name.isEmpty()) {
+                method.setName(name);
+            }
+
+            String description = ConsoleUtils.getStringInput(scanner, "New description: ");
+            if (!description.isEmpty()) {
+                method.setDescription(description);
+            }
+
+            boolean success = Bill.updatePaymentMethod(methodId, method.getName(), method.getDescription());
+            if (success) {
+                System.out.println("Payment method updated successfully!");
+            } else {
+                System.out.println("Failed to update payment method.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error updating payment method: " + e.getMessage());
+        }
+    }
+
+    private static void deletePaymentMethod() {
+        ConsoleUtils.printHeader("      Delete Payment Method      ");
+        String methodId = ConsoleUtils.getStringInput(scanner, "Enter payment method ID to delete: ");
+
+        try {
+            boolean success = Bill.deletePaymentMethod(methodId);
+            if (success) {
+                System.out.println("Payment method deleted successfully!");
+            } else {
+                System.out.println("Failed to delete payment method.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error deleting payment method: " + e.getMessage());
         }
     }
 }

@@ -4,10 +4,12 @@ import pchub.utils.ConsoleUtils;
 import pchub.Main;
 import java.util.Scanner;
 import java.sql.SQLException;
+import pchub.model.enums.OrderStatus;
 
 public class Customer extends User {
-    Address address;
+    private Address address;
     private static final Scanner scanner = new Scanner(System.in);
+    
     public Customer(User user) {
         super(user.getUserId(), user.getUsername(), user.getEmail(), user.getPassword(),
                 user.getRegistrationDate(), user.getLastLogin(), user.getStatus(),
@@ -20,6 +22,14 @@ public class Customer extends User {
     }
 
     public Customer(){
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public void viewOrderHistory() {
@@ -38,6 +48,13 @@ public class Customer extends User {
                 return;
             }
             Main.displayOrderDetails(orderId);
+
+            // Option to cancel order
+            String cancel = ConsoleUtils.getStringInput(scanner, "Do you want to cancel this order? (y/n): ");
+            if (cancel.equalsIgnoreCase("y")) {
+                Order.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+                System.out.println("Order cancelled successfully!");
+            }
         } catch (Exception e) {
             System.out.println("Error fetching order history: " + e.getMessage());
         }
@@ -48,40 +65,13 @@ public class Customer extends User {
         System.out.println("------------------------------------------");
         for (Order order : orders) {
             if (order != null) {
-                System.out.printf("%-8s | %s | %-10s | $%12.2f\n",
+                System.out.printf("%-8s | %s | %-10s | RM%.2f\n",
                         order.getOrderId(),
                         order.getOrderDate(),
                         order.getStatus(),
                         order.getTotalAmount());
             }
         }
-    }
-
-    public void displayBill(Bill bill) {
-        ConsoleUtils.printHeader("             PCHub RECEIPT             ");
-        System.out.println("Order ID: " + bill.getOrder().getOrderId());
-        System.out.println("Date: " + bill.getIssueDate());
-        System.out.println("Customer: " + bill.getCustomer().getUsername());
-
-        System.out.println("\nItems:");
-        System.out.println("------------------------------------------");
-        for (OrderItem item : bill.getOrder().getItems()) {
-            System.out.printf("%-20s %2d x $%6.2f = $%7.2f\n",
-                    item.getProduct().getName(),
-                    item.getQuantity(),
-                    item.getUnitPrice(),
-                    item.getSubtotal());
-        }
-        System.out.println("------------------------------------------");
-        System.out.printf("Subtotal:                      $%7.2f\n", bill.getSubtotal());
-        System.out.printf("Tax:                           $%7.2f\n", bill.getTax());
-        System.out.println("------------------------------------------");
-        System.out.printf("TOTAL:                         $%7.2f\n", bill.getTotalAmount());
-        System.out.println("------------------------------------------");
-        System.out.println("Payment Method: " + bill.getPaymentMethod());
-        System.out.println("Payment Status: " + bill.getPaymentStatus());
-        System.out.println("\nThank you for shopping at PCHub!");
-        System.out.println("========================================");
     }
 
     public void manageProfile() {

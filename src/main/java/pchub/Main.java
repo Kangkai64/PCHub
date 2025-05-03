@@ -4,9 +4,8 @@ import java.sql.SQLException;
 import java.util.Scanner;
 import pchub.model.*;
 import pchub.model.enums.UserRole;
-import pchub.utils.ConsoleUtils;
-import pchub.utils.DatabaseConnection;
-import pchub.utils.ProductSorter;
+import pchub.utils.*;
+import java.time.LocalDateTime;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
@@ -87,9 +86,10 @@ public class Main {
         System.out.println("2. Manage Product Categories");
         System.out.println("3. Manage Product Catalogues");
         System.out.println("4. Manage Users");
-        System.out.println("5. View All Orders");
-        System.out.println("6. Generate Reports");
-        System.out.println("7. Logout");
+        System.out.println("5. Manage Payment Methods");
+        System.out.println("6. View All Orders");
+        System.out.println("7. Generate Reports");
+        System.out.println("8. Logout");
     }
 
     private static void login() {
@@ -105,10 +105,7 @@ public class Main {
                 if (currentUser.getRole() == UserRole.CUSTOMER) {
                     currentCart = Cart.getCartForUser(currentUser);
                 }
-            } else {
-                System.out.println("Invalid username or password. Please try again.");
-                ConsoleUtils.waitMessage();
-            }
+            } 
         } catch (Exception e) {
             System.out.println("Error during login: " + e.getMessage());
         }
@@ -208,7 +205,7 @@ public class Main {
     }
 
     private static void handleAdminChoice() {
-        int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 7);
+        int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 8);
 
         switch (choice) {
             case 1: // Manage Products
@@ -223,13 +220,16 @@ public class Main {
             case 4: // Manage Users, is not static to prevent deleting admin own account
                 admin.manageUsers();
                 break;
-            case 5: // View All Orders
+            case 5: // Manage Payment Methods
+                Admin.managePaymentMethod();
+                break;
+            case 6: // View All Orders
                 Admin.viewAllOrders();
                 break;
-            case 6: // Generate Reports
+            case 7: // Generate Reports
                 Admin.generateReports();
                 break;
-            case 7: // Logout
+            case 8: // Logout
                 logout();
                 break;
         }
@@ -428,14 +428,15 @@ public class Main {
     }
 
     private static void displayCart(Cart cart) {
-        System.out.printf("%-40s | %-8s | %-13s | %-13s\n", "Item", "Quantity", "Unit Price", "Total");
+        System.out.printf("%-10s | %-40s | %-8s | %-13s | %-13s\n", "Product ID", "Item", "Quantity", "Unit Price", "Total");
         System.out.println("-------------------------------------------------------------------------------------------");
 
         double total = 0;
         for (CartItem item : cart.getItems()) {
             if (item != null) {
                 double itemTotal = item.getQuantity() * item.getUnitPrice();
-                System.out.printf("%-40s | %-8d | RM%-12.2f | RM%-12.2f\n",
+                System.out.printf("%-10s | %-40s | %-8d | RM%-12.2f | RM%-12.2f\n",
+                        item.getProduct().getProductID(),
                         item.getProduct().getName(),
                         item.getQuantity(),
                         item.getUnitPrice(),
@@ -445,7 +446,7 @@ public class Main {
         }
 
         System.out.println("-------------------------------------------------------------------------------------------");
-        System.out.printf("Total: %66s%.2f\n", "RM", total);
+        System.out.printf("Total: %80s%.2f\n", "RM", total);
     }
 
     private static void updateCartItemQuantity() {
@@ -473,8 +474,8 @@ public class Main {
             boolean removed = Cart.removeItemFromCart(currentCart, itemId);
             if (removed) {
                 currentCart = Cart.getCart(currentCart.getCartId()); // Refresh cart
-                System.out.println("Item removed from cart successfully!");
-                displayCart(currentCart);
+                System.out.println("Item removed from cart successfully!\n");
+                viewCart();
             } else {
                 System.out.println("Failed to remove item. Item may not exist.");
             }
@@ -512,28 +513,16 @@ public class Main {
             return; // User canceled checkout
         }
 
-        // TODO: Remember to uncomment this part before submission
-//        // Initialize OTP manager
-//        GenerateOTP otpManager = new GenerateOTP();
-//
-//        // Initialize delivery service (e.g., email)
-//        EmailDeliveryService emailService = new EmailDeliveryService(
-//            "smtp.gmail.com", 587, "lcheekang33@gmail.com", "pdeu tpau dihs xdxz"
-//        );
-//
-//        // Generate OTP and send it
-//        String otp = otpManager.generateOTP(customer.getEmail());
-//        emailService.sendOTP(customer.getEmail(), otp);
-//
-//        String userInputOtp = ConsoleUtils.getStringInput(scanner, "Enter OTP: ");
-//        // Verify OTP
-//        boolean isValid = otpManager.verifyOTP(customer.getEmail(), userInputOtp);
-//        if (!isValid) {
-//            return;
-//        }
-//        System.out.println("OTP verified successfully.");
+        // Process payment first
+        boolean paymentSuccessful = processPayment(paymentMethod, currentCart.getSubtotal());
+        if (!paymentSuccessful) {
+            System.out.println("Payment failed. Order has been cancelled.");
+            return;
+        }
 
-        // Process order
+        System.out.println("Payment processed successfully!");
+
+        // Process order after successful payment
         try {
             Order order = Order.createOrderFromCart(customer, currentCart, shippingAddress, paymentMethod);
             if (order != null) {
@@ -542,7 +531,7 @@ public class Main {
 
                 // Generate and display bill
                 Bill bill = Order.generateBill(order.getOrderId());
-                customer.displayBill(bill);
+                displayBill(bill);
 
                 // Clear cart after successful order
                 Cart.clearCart(currentCart);
@@ -624,9 +613,157 @@ public class Main {
         String cvv = ConsoleUtils.getStringInput(scanner, "Enter CVV: ");
         String cardholderName = ConsoleUtils.getStringInput(scanner, "Enter cardholder name: ");
 
-        // In a real system, we would validate and securely store these details
-        // Here we're just returning a masked version for demonstration
         return "Card ending with " + cardNumber.substring(cardNumber.length() - 4);
+    }
+
+    /**
+     * Process payment based on the selected payment method
+     * @param paymentMethod The payment method selected by the user
+     * @param totalAmount The total amount to be charged
+     * @return true if payment is successful, false otherwise
+     */
+    private static boolean processPayment(PaymentMethod paymentMethod, double totalAmount) {
+        ConsoleUtils.printHeader("      Payment Processing      ");
+        System.out.println("Processing payment of RM" + String.format("%.2f", totalAmount));
+
+        boolean success = false;
+
+        try {
+            switch (paymentMethod.getName()) {
+                case "Credit Card":
+                case "Debit Card":
+                    success = processCardPayment(paymentMethod, totalAmount);
+                    break;
+                case "Paypal":
+                    success = processPayPalPayment(totalAmount);
+                    break;
+                case "Maybank2U":
+                    success = processBankTransferPayment(totalAmount);
+                    break;
+                case "Cash":
+                    // For COD, we just mark it as successful since payment will be collected later
+                    System.out.println("Cash on Delivery selected. Payment will be collected upon delivery.");
+                    success = true;
+                    break;
+                default:
+                    // Initialize OTP manager
+                    GenerateOTP otpManager = new GenerateOTP();
+
+                    // Initialize delivery service (e.g., email)
+                    EmailDeliveryService emailService = new EmailDeliveryService(
+                        "smtp.gmail.com", 587, "lcheekang33@gmail.com", "pdeu tpau dihs xdxz"
+                    );
+
+                    // Generate OTP and send it
+                    String otp = otpManager.generateOTP(customer.getEmail());
+                    emailService.sendOTP(customer.getEmail(), otp);
+
+                    String userInputOtp = ConsoleUtils.getStringInput(scanner, "Enter OTP: ");
+                    // Verify OTP
+                    boolean isValid = otpManager.verifyOTP(customer.getEmail(), userInputOtp);
+                    if (!isValid) {
+                        return false;
+                    }
+                    System.out.println("OTP verified successfully.");
+                    success = true;
+            }
+
+            if (success) {
+                // Generate and store transaction record
+                String transactionId = generateTransactionId();
+                storeTransactionRecord(transactionId, paymentMethod, totalAmount);
+            }
+
+            return success;
+        } catch (Exception e) {
+            System.out.println("Payment processing error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Process credit/debit card payment
+     */
+    private static boolean processCardPayment(PaymentMethod paymentMethod, double amount) {
+        // Get the card details from the user
+        String cardDetails = processCardDetails();
+        System.out.println("Card details: " + cardDetails);
+
+        // Simulate payment processing
+        ConsoleUtils.simulateLoading("Connecting to payment gateway...", 2000);
+
+        // In a real system, this would connect to a payment gateway API
+        // For demonstration, we'll simulate success with a 90% chance
+        boolean success = Math.random() < 0.9;
+
+        if (success) {
+            System.out.println("Card payment authorized.");
+        } else {
+            System.out.println("Card payment declined. Please try another payment method.");
+        }
+
+        return success;
+    }
+
+    /**
+     * Process PayPal payment
+     */
+    private static boolean processPayPalPayment(double amount) {
+        System.out.println("Processing PayPal payment of RM" + String.format("%.2f", amount));
+
+        // In a real system, this would redirect to PayPal for authentication
+        String email = ConsoleUtils.getStringInput(scanner, "Enter PayPal email: ");
+
+        // Simulate PayPal authentication and processing
+        ConsoleUtils.simulateLoading("Connecting to PayPal...", 2000);
+
+        boolean success = Math.random() < 0.9;
+
+        if (success) {
+            System.out.println("PayPal payment completed successfully.");
+        } else {
+            System.out.println("PayPal payment failed. Please check your account details and try again.");
+        }
+
+        return success;
+    }
+
+    /**
+     * Process bank transfer payment
+     */
+    private static boolean processBankTransferPayment(double amount) {
+        System.out.println("Processing bank transfer of RM" + String.format("%.2f", amount));
+
+        // Display bank details for transfer
+        System.out.println("Please transfer to the following account:");
+        System.out.println("Bank: Maybank");
+        System.out.println("Account Name: PCHub");
+        System.out.println("Account Number: 1234567890");
+
+        // In a real system, we might wait for confirmation or check for the transfer
+        String confirmation = ConsoleUtils.getStringInput(scanner,
+                "Have you completed the transfer? (yes/no): ").toLowerCase();
+
+        return confirmation.equals("yes") || confirmation.equals("y");
+    }
+
+    /**
+     * Generate a unique transaction ID
+     */
+    private static String generateTransactionId() {
+        // Format: TXN-[timestamp]-[random 4 digits]
+        return "TXN-" + System.currentTimeMillis() + "-" +
+                String.format("%04d", (int)(Math.random() * 10000));
+    }
+
+    /**
+     * Store transaction record in the database
+     */
+    private static void storeTransactionRecord(String transactionId, PaymentMethod paymentMethod, double amount) {
+        System.out.println("Transaction recorded: " + transactionId);
+        System.out.println("Amount: RM" + String.format("%.2f", amount));
+        System.out.println("Method: " + paymentMethod.getName());
+        System.out.println("Date: " + LocalDateTime.now());
     }
 
     public static void displayAllCatalogues() throws SQLException {
@@ -792,7 +929,7 @@ public class Main {
             System.out.println("\nItems:");
             for (OrderItem item : order.getItems()) {
                 if (item != null) {
-                    System.out.printf("%s - %d x $%.2f = $%.2f\n",
+                    System.out.printf("%s - %d x RM%.2f = RM%.2f\n",
                             item.getProduct().getName(),
                             item.getQuantity(),
                             item.getUnitPrice(),
@@ -802,16 +939,47 @@ public class Main {
 
             System.out.println("\nShipping Address: " + order.getShippingAddress().getFormattedAddress());
             System.out.println("Payment Method: " + order.getPaymentMethod().getName());
-            System.out.printf("Total Amount: $%.2f\n", order.getTotalAmount());
+            System.out.printf("Total Amount: RM%.2f\n", order.getTotalAmount());
 
             // Option to view receipt/bill
             String choice = ConsoleUtils.getStringInput(scanner, "View receipt? (y/n): ");
             if (choice.equalsIgnoreCase("y")) {
                 Bill bill = Order.generateBill(orderId);
-                customer.displayBill(bill);
+                if (bill != null) {
+                    displayBill(bill);
+                } else {
+                    System.out.println("Failed to generate bill.");
+                }
             }
         } catch (Exception e) {
             System.out.println("Error displaying order details: " + e.getMessage());
         }
+    }
+
+    private static void displayBill(Bill bill) {
+        ConsoleUtils.printHeader("             PCHub RECEIPT             ");
+        System.out.println("Order ID: " + bill.getOrder().getOrderId());
+        System.out.println("Date: " + bill.getIssueDate());
+        System.out.println("Customer: " + bill.getCustomer().getFullName());
+
+        System.out.println("\nItems:");
+        System.out.println("------------------------------------------");
+        for (OrderItem item : bill.getOrder().getItems()) {
+            System.out.printf("%-20s %2d x RM%6.2f = RM%7.2f\n",
+                    item.getProduct().getName(),
+                    item.getQuantity(),
+                    item.getUnitPrice(),
+                    item.getSubtotal());
+        }
+        System.out.println("------------------------------------------");
+        System.out.printf("Subtotal:                      RM%7.2f\n", bill.getSubtotal());
+        System.out.printf("Tax:                           RM%7.2f\n", bill.getTax());
+        System.out.println("------------------------------------------");
+        System.out.printf("TOTAL:                         RM%7.2f\n", bill.getTotalAmount());
+        System.out.println("------------------------------------------");
+        System.out.println("Payment Method: " + bill.getPaymentMethod().getName());
+        System.out.println("Payment Status: " + bill.getPaymentStatus());
+        System.out.println("\nThank you for shopping at PCHub!");
+        System.out.println("========================================");
     }
 }

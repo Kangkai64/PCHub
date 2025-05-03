@@ -1,5 +1,6 @@
 package pchub.dao;
 
+import pchub.model.Address;
 import pchub.model.Customer;
 import pchub.model.User;
 import pchub.model.enums.UserRole;
@@ -79,11 +80,13 @@ public class UserDao extends DaoTemplate<User> {
      * @param customer The Customer object to load properties for
      */
     private void loadCustomerSpecificProperties(Customer customer) {
-        // If Customer has additional properties that are stored in a separate table,
-        // you would load them here using an additional query
-        // For example:
-        // String sql = "SELECT * FROM customer_details WHERE userID = ?";
-        // ...
+        AddressDao addressDao = new AddressDao();
+        try {
+            Address[] addresses = addressDao.findByUserId(customer.getUserId());
+            customer.setAddress(addresses[0]);
+        } catch (SQLException e) {
+            System.err.println("Error loading customer specific properties: " + e.getMessage());
+        }
     }
 
     public User findByUsername(String username) throws SQLException {
@@ -284,5 +287,95 @@ public class UserDao extends DaoTemplate<User> {
         user.setPhone(resultSet.getString("phone"));
         user.setFullName(resultSet.getString("fullName"));
         user.setRole(UserRole.valueOf(resultSet.getString("role")));
+    }
+
+    public boolean updateLoginAttempts(String userId, int attempts, Timestamp firstAttempt) throws SQLException {
+        String sql = "UPDATE user SET loginAttempt = ?, firstLoginAttemptTimestamp = ? WHERE userID = ?";
+        
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            
+            preparedStatement.setInt(1, attempts);
+            preparedStatement.setTimestamp(2, firstAttempt);
+            preparedStatement.setString(3, userId);
+            
+            int affectedRows = preparedStatement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.err.println("Error updating login attempts: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean resetLoginAttempts(String userId) throws SQLException {
+        return updateLoginAttempts(userId, 0, null);
+    }
+
+    public int getLoginAttempts(String userId) throws SQLException {
+        String sql = "SELECT loginAttempt FROM user WHERE userID = ?";
+        
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            
+            preparedStatement.setString(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            
+            if (resultSet.next()) {
+                return resultSet.getInt("loginAttempt");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting login attempts: " + e.getMessage());
+        }
+        
+        return 0;
+    }
+
+    public Timestamp getFirstLoginAttemptTimestamp(String userId) throws SQLException {
+        String sql = "SELECT firstLoginAttemptTimestamp FROM user WHERE userID = ?";
+        
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            
+            preparedStatement.setString(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            
+            if (resultSet.next()) {
+                return resultSet.getTimestamp("firstLoginAttemptTimestamp");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting first login attempt timestamp: " + e.getMessage());
+        }
+        
+        return null;
+    }
+
+    public boolean blockUser(String userId) throws SQLException {
+        String sql = "UPDATE user SET status = 'BANNED' WHERE userID = ?";
+        
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            
+            preparedStatement.setString(1, userId);
+            int affectedRows = preparedStatement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.err.println("Error blocking user: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean unblockUser(String userId) throws SQLException {
+        String sql = "UPDATE user SET status = 'ACTIVE' WHERE userID = ?";
+        
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            
+            preparedStatement.setString(1, userId);
+            int affectedRows = preparedStatement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.err.println("Error unblocking user: " + e.getMessage());
+            return false;
+        }
     }
 }

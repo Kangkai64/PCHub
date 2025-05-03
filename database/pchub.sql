@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 01, 2025 at 04:37 AM
+-- Generation Time: May 03, 2025 at 07:34 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,6 +41,14 @@ CREATE TABLE `bill` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `bill`
+--
+
+INSERT INTO `bill` (`billID`, `orderID`, `amount`, `payment_MethodID`, `transactionID`, `paymentStatus`, `issueDate`) VALUES
+('B000001', 'O0006', 1750.11, 'PM001', NULL, 'PENDING', '2025-05-03 12:24:13'),
+('B000002', 'O0005', 1750.11, 'PM001', NULL, 'PENDING', '2025-05-03 12:41:35');
+
+--
 -- Triggers `bill`
 --
 DROP TRIGGER IF EXISTS `before_insert_bill`;
@@ -75,7 +83,8 @@ CREATE TABLE `cart` (
 
 INSERT INTO `cart` (`cartID`, `customerID`, `createdDate`, `lastUpdated`, `itemCount`, `subtotal`) VALUES
 ('CA00001', 'C0027', '2025-05-01 03:14:29', '2025-05-01 03:14:29', 0, 0.00),
-('CA00002', 'C0001', '2025-05-01 10:36:17', '2025-05-01 10:36:17', 0, 0.00);
+('CA00002', 'C0001', '2025-05-01 10:36:17', '2025-05-01 10:36:17', 0, 0.00),
+('CA00003', 'C0028', '2025-05-01 17:41:07', '2025-05-01 17:41:07', 0, 0.00);
 
 --
 -- Triggers `cart`
@@ -105,6 +114,27 @@ CREATE TABLE `cart_item` (
   `price` decimal(10,2) NOT NULL,
   `subtotal` decimal(10,2) GENERATED ALWAYS AS (`price` * `quantity`) STORED
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cart_item`
+--
+
+INSERT INTO `cart_item` (`cartItemID`, `cartID`, `productID`, `quantity`, `price`) VALUES
+('CI000001', 'CA00003', 'P00001', 4, 599.99),
+('CI000002', 'CA00003', 'P00001', 5, 599.99),
+('CI000003', 'CA00003', 'P00001', 1, 599.99),
+('CI000004', 'CA00003', 'P00001', 4, 599.99),
+('CI000005', 'CA00003', 'P00001', 2, 599.99),
+('CI000006', 'CA00003', 'P00001', 3, 599.99),
+('CI000007', 'CA00003', 'P00002', 4, 549.99),
+('CI000008', 'CA00003', 'P00003', 4, 1599.99),
+('CI000009', 'CA00003', 'P00001', 5, 599.99),
+('CI000010', 'CA00003', 'P00005', 5, 199.99),
+('CI000011', 'CA00003', 'P00001', 6, 599.99),
+('CI000012', 'CA00003', 'P00001', 5, 599.99),
+('CI000013', 'CA00003', 'P00001', 20, 599.99),
+('CI000014', 'CA00003', 'P00003', 4, 1599.99),
+('CI000015', 'CA00003', 'P00001', 3, 599.99);
 
 --
 -- Triggers `cart_item`
@@ -137,6 +167,18 @@ CREATE TABLE `order` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `order`
+--
+
+INSERT INTO `order` (`orderID`, `customerID`, `orderDate`, `orderStatus`, `totalAmount`, `shipping_addressID`, `payment_MethodID`) VALUES
+('O0001', 'C0028', '2025-05-01 19:05:11', 'PENDING', 999.95, 'SA000027', 'PM001'),
+('O0002', 'C0028', '2025-05-01 19:14:07', 'PENDING', 2999.95, 'SA000027', 'PM001'),
+('O0003', 'C0028', '2025-05-01 19:34:06', 'PENDING', 11999.80, 'SA000027', 'PM001'),
+('O0004', 'C0028', '2025-05-01 19:43:33', 'PENDING', 6399.96, 'SA000027', 'PM001'),
+('O0005', 'C0001', '2025-05-03 12:03:15', 'PENDING', 1539.93, 'SA000021', 'PM001'),
+('O0006', 'C0001', '2025-05-03 12:24:13', 'PENDING', 1539.93, 'SA000021', 'PM001');
+
+--
 -- Triggers `order`
 --
 DROP TRIGGER IF EXISTS `before_insert_order`;
@@ -163,6 +205,18 @@ CREATE TABLE `order_item` (
   `quantity` int(11) NOT NULL,
   `price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `order_item`
+--
+
+INSERT INTO `order_item` (`orderItemID`, `orderID`, `productID`, `quantity`, `price`) VALUES
+('OI0000001', 'O0001', 'P00005', 5, 199.99),
+('OI0000002', 'O0002', 'P00001', 5, 599.99),
+('OI0000003', 'O0003', 'P00001', 20, 599.99),
+('OI0000004', 'O0004', 'P00003', 4, 1599.99),
+('OI0000005', 'O0005', 'P00033', 7, 219.99),
+('OI0000006', 'O0006', 'P00033', 7, 219.99);
 
 --
 -- Triggers `order_item`
@@ -192,6 +246,27 @@ CREATE TABLE `payment_method` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `payment_method`
+--
+
+INSERT INTO `payment_method` (`payment_methodID`, `name`, `description`, `addedDate`) VALUES
+('PM001', 'Cash', 'Traditional cash payment upon delivery or collection', '2025-05-01 09:40:05'),
+('PM002', 'Credit Card', 'Payment using major credit cards including Visa, Mastercard, and American Express', '2025-05-01 09:40:05'),
+('PM003', 'Debit Card', 'Direct payment from customer bank account using debit cards', '2025-05-01 09:40:05'),
+('PM004', 'TouchNGo eWallet', 'Malaysia\'s popular digital wallet for contactless payments', '2025-05-01 09:40:05'),
+('PM005', 'Maybank2U', 'Online banking platform for Maybank customers', '2025-05-01 09:40:05'),
+('PM006', 'CIMB Clicks', 'Internet banking service for CIMB Bank customers', '2025-05-01 09:40:05'),
+('PM007', 'GrabPay', 'Mobile wallet by Grab for cashless transactions', '2025-05-01 09:40:05'),
+('PM008', 'Boost', 'Homegrown Malaysian e-wallet with cashback rewards', '2025-05-01 09:40:05'),
+('PM009', 'FPX (Financial Process Exchange)', 'Secure online payment gateway linking financial institutions', '2025-05-01 09:40:05'),
+('PM010', 'PayPal', 'International online payment system supporting multiple currencies', '2025-05-01 09:40:05'),
+('PM011', 'Apple Pay', 'Digital wallet platform and mobile payment service by Apple', '2025-05-01 09:40:05'),
+('PM012', 'Google Pay', 'Mobile payment service by Google for contactless payments', '2025-05-01 09:40:05'),
+('PM013', 'Samsung Pay', 'Mobile payment and digital wallet service by Samsung', '2025-05-01 09:40:05'),
+('PM014', 'Bank Transfer', 'Direct transfer between bank accounts via ATM, online or mobile banking', '2025-05-01 09:40:05'),
+('PM015', 'DuitNow QR', 'National QR standard payment method in Malaysia', '2025-05-01 09:40:05');
+
+--
 -- Triggers `payment_method`
 --
 DROP TRIGGER IF EXISTS `before_insert_payment_method`;
@@ -203,24 +278,6 @@ CREATE TRIGGER `before_insert_payment_method` BEFORE INSERT ON `payment_method` 
 END
 $$
 DELIMITER ;
-
--- Insert data into payment_method table
-INSERT INTO `payment_method` (`name`, `description`) VALUES
-('Cash', 'Traditional cash payment upon delivery or collection'),
-('Credit Card', 'Payment using major credit cards including Visa, Mastercard, and American Express'),
-('Debit Card', 'Direct payment from customer bank account using debit cards'),
-('TouchNGo eWallet', 'Malaysia\'s popular digital wallet for contactless payments'),
-('Maybank2U', 'Online banking platform for Maybank customers'),
-('CIMB Clicks', 'Internet banking service for CIMB Bank customers'),
-('GrabPay', 'Mobile wallet by Grab for cashless transactions'),
-('Boost', 'Homegrown Malaysian e-wallet with cashback rewards'),
-('FPX (Financial Process Exchange)', 'Secure online payment gateway linking financial institutions'),
-('PayPal', 'International online payment system supporting multiple currencies'),
-('Apple Pay', 'Digital wallet platform and mobile payment service by Apple'),
-('Google Pay', 'Mobile payment service by Google for contactless payments'),
-('Samsung Pay', 'Mobile payment and digital wallet service by Samsung'),
-('Bank Transfer', 'Direct transfer between bank accounts via ATM, online or mobile banking'),
-('DuitNow QR', 'National QR standard payment method in Malaysia');
 
 -- --------------------------------------------------------
 
@@ -440,7 +497,7 @@ DROP TRIGGER IF EXISTS `before_insert_product_category`;
 DELIMITER $$
 CREATE TRIGGER `before_insert_product_category` BEFORE INSERT ON `product_category` FOR EACH ROW BEGIN
     DECLARE next_id INT;
-    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(product_categoryID, 4)), 0) + 1 FROM product_category);
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(categoryID, 4)), 0) + 1 FROM product_category);
     SET NEW.product_categoryID = CONCAT('CAT', LPAD(next_id, 3, '0'));
 END
 $$
@@ -494,7 +551,8 @@ INSERT INTO `shipping_address` (`shipping_addressID`, `customerID`, `street`, `c
 ('SA000023', 'C0006', '303 Second Home', 'Vacation Spot', 'HI', '67891', 'USA', 0),
 ('SA000024', 'C0010', '707 Secondary Address', 'Nearby', 'MI', '01235', 'USA', 0),
 ('SA000025', 'C0014', '1112 Work Place', 'Business Park', 'CO', '45679', 'USA', 0),
-('SA000026', 'C0018', '1516 PO Box', 'Mail Center', 'IN', '89013', 'USA', 0);
+('SA000026', 'C0018', '1516 PO Box', 'Mail Center', 'IN', '89013', 'USA', 0),
+('SA000027', 'C0028', '123, Main Street', 'Morioh Cho', 'Duwang', '60000', 'Japan', 0);
 
 --
 -- Triggers `shipping_address`
@@ -526,46 +584,49 @@ CREATE TABLE `user` (
   `status` enum('ACTIVE','INACTIVE','BANNED') DEFAULT 'ACTIVE',
   `phone` varchar(20) DEFAULT NULL,
   `fullName` varchar(255) DEFAULT NULL,
-  `role` varchar(50) DEFAULT NULL
+  `role` varchar(50) DEFAULT NULL,
+  `loginAttempt` tinyint(1) NOT NULL DEFAULT 0,
+  `firstLoginAttemptTimestamp` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`userID`, `username`, `email`, `password`, `registrationDate`, `lastLogin`, `status`, `phone`, `fullName`, `role`) VALUES
-('A0001', 'admin_jones', 'admin.j@pchub.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 08:00:00', '2025-03-22 18:00:00', 'ACTIVE', '012-2345678', 'Alex Jones', 'ADMIN'),
-('A0002', 'admin_smith', 'admin.s@pchub.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 08:15:00', '2025-03-22 17:45:00', 'ACTIVE', '012-2345678', 'Sam Smith', 'ADMIN'),
-('A0003', 'admin_johnson', 'admin.j2@pchub.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 08:30:00', '2025-03-21 18:30:00', 'ACTIVE', '012-2345678', 'Jordan Johnson', 'ADMIN'),
-('A0004', 'admin_brown', 'admin.b@pchub.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 08:45:00', '2025-03-22 16:15:00', 'ACTIVE', '012-2345678', 'Blake Brown', 'ADMIN'),
-('A0005', 'admin_garcia', 'admin.g@pchub.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 09:00:00', '2025-03-20 15:30:00', 'ACTIVE', '012-2345678', 'Gabriel Garcia', 'ADMIN'),
-('C0001', 'john_doe', 'john.doe@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 08:30:00', '2025-03-22 14:22:00', 'ACTIVE', '012-2345678', 'John Doe', 'CUSTOMER'),
-('C0002', 'jane_smith', 'jane.smith@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-02 09:45:00', '2025-03-21 16:10:00', 'ACTIVE', '012-2345678', 'Jane Smith', 'CUSTOMER'),
-('C0003', 'mike_johnson', 'mike.j@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-03 10:15:00', '2025-03-22 09:05:00', 'ACTIVE', '012-2345678', 'Michael Johnson', 'CUSTOMER'),
-('C0004', 'sarah_williams', 'sarah.w@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-04 11:30:00', '2025-03-20 11:40:00', 'ACTIVE', '012-2345678', 'Sarah Williams', 'CUSTOMER'),
-('C0005', 'david_brown', 'david.b@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-05 12:45:00', '2025-03-19 15:35:00', 'ACTIVE', '012-2345678', 'David Brown', 'CUSTOMER'),
-('C0006', 'lisa_taylor', 'lisa.t@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-06 13:15:00', '2025-03-22 17:15:00', 'ACTIVE', '012-2345678', 'Lisa Taylor', 'CUSTOMER'),
-('C0007', 'kevin_davis', 'kevin.d@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-07 14:30:00', '2025-03-21 10:25:00', 'ACTIVE', '012-2345678', 'Kevin Davis', 'CUSTOMER'),
-('C0008', 'amy_miller', 'amy.m@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-08 15:45:00', '2025-03-20 14:50:00', 'ACTIVE', '012-2345678', 'Amy Miller', 'CUSTOMER'),
-('C0009', 'brian_wilson', 'brian.w@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-09 16:15:00', '2025-03-18 12:30:00', 'ACTIVE', '012-2345678', 'Brian Wilson', 'CUSTOMER'),
-('C0010', 'jessica_moore', 'jessica.m@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-10 17:30:00', '2025-03-22 08:45:00', 'ACTIVE', '012-2345678', 'Jessica Moore', 'CUSTOMER'),
-('C0011', 'chris_taylor', 'chris.t@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-11 09:00:00', '2025-03-21 15:20:00', 'ACTIVE', '012-2345678', 'Christopher Taylor', 'CUSTOMER'),
-('C0012', 'rachel_anderson', 'rachel.a@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-12 10:30:00', '2025-03-19 13:10:00', 'ACTIVE', '012-2345678', 'Rachel Anderson', 'CUSTOMER'),
-('C0013', 'mark_thomas', 'mark.t@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-13 11:45:00', '2025-03-22 11:50:00', 'ACTIVE', '012-2345678', 'Mark Thomas', 'CUSTOMER'),
-('C0014', 'emily_jackson', 'emily.j@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-14 12:15:00', '2025-03-20 17:35:00', 'ACTIVE', '012-2345678', 'Emily Jackson', 'CUSTOMER'),
-('C0015', 'steven_white', 'steven.w@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-15 13:30:00', '2025-03-17 09:40:00', 'ACTIVE', '012-2345678', 'Steven White', 'CUSTOMER'),
-('C0016', 'laura_harris', 'laura.h@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-16 14:45:00', '2025-03-22 16:25:00', 'ACTIVE', '012-2345678', 'Laura Harris', 'CUSTOMER'),
-('C0017', 'daniel_martin', 'daniel.m@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-17 15:15:00', '2025-03-21 12:55:00', 'ACTIVE', '012-2345678', 'Daniel Martin', 'CUSTOMER'),
-('C0018', 'michelle_garcia', 'michelle.g@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-18 16:30:00', '2025-03-18 14:20:00', 'ACTIVE', '012-2345678', 'Michelle Garcia', 'CUSTOMER'),
-('C0019', 'robert_lee', 'robert.l@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-19 17:45:00', '2025-03-16 10:15:00', 'ACTIVE', '012-2345678', 'Robert Lee', 'CUSTOMER'),
-('C0020', 'jennifer_king', 'jennifer.k@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-20 09:15:00', '2025-03-22 13:05:00', 'ACTIVE', '012-2345678', 'Jennifer King', 'CUSTOMER'),
-('C0021', 'ryan_scott', 'ryan.s@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-21 10:30:00', '2025-03-20 09:50:00', 'ACTIVE', '012-2345678', 'Ryan Scott', 'CUSTOMER'),
-('C0022', 'nicole_adams', 'nicole.a@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-22 11:45:00', '2025-03-19 15:30:00', 'ACTIVE', '012-2345678', 'Nicole Adams', 'CUSTOMER'),
-('C0023', 'tyler_baker', 'tyler.b@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-23 12:15:00', '2025-03-21 17:15:00', 'ACTIVE', '012-2345678', 'Tyler Baker', 'CUSTOMER'),
-('C0024', 'olivia_gonzalez', 'olivia.g@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-24 13:30:00', '2025-03-22 10:40:00', 'ACTIVE', '012-2345678', 'Olivia Gonzalez', 'CUSTOMER'),
-('C0025', 'eric_nelson', 'eric.n@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-25 14:45:00', '2025-03-18 13:25:00', 'ACTIVE', '012-2345678', 'Eric Nelson', 'CUSTOMER'),
-('C0026', 'Oni', 'lee@gmail.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2025-05-01 00:00:00', '2025-05-01 02:32:27', 'ACTIVE', '011-13109924', 'Lee', 'ADMIN'),
-('C0027', 'Lee', 'handsome@gmail.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2025-05-01 00:00:00', '2025-05-01 01:56:46', 'ACTIVE', '011-13109925', 'Handsome', 'CUSTOMER');
+INSERT INTO `user` (`userID`, `username`, `email`, `password`, `registrationDate`, `lastLogin`, `status`, `phone`, `fullName`, `role`, `loginAttempt`, `firstLoginAttemptTimestamp`) VALUES
+('A0001', 'admin_jones', 'admin.j@pchub.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 08:00:00', '2025-03-22 18:00:00', 'ACTIVE', '012-2345678', 'Alex Jones', 'ADMIN', 0, NULL),
+('A0002', 'admin_smith', 'admin.s@pchub.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 08:15:00', '2025-03-22 17:45:00', 'ACTIVE', '012-2345678', 'Sam Smith', 'ADMIN', 0, NULL),
+('A0003', 'admin_johnson', 'admin.j2@pchub.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 08:30:00', '2025-03-21 18:30:00', 'ACTIVE', '012-2345678', 'Jordan Johnson', 'ADMIN', 0, NULL),
+('A0004', 'admin_brown', 'admin.b@pchub.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 08:45:00', '2025-03-22 16:15:00', 'ACTIVE', '012-2345678', 'Blake Brown', 'ADMIN', 0, NULL),
+('A0005', 'admin_garcia', 'admin.g@pchub.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 09:00:00', '2025-03-20 15:30:00', 'ACTIVE', '012-2345678', 'Gabriel Garcia', 'ADMIN', 0, NULL),
+('C0001', 'john_doe', 'john.doe@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 08:30:00', '2025-03-22 14:22:00', 'ACTIVE', '012-2345678', 'John Doe', 'CUSTOMER', 0, NULL),
+('C0002', 'jane_smith', 'jane.smith@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-02 09:45:00', '2025-03-21 16:10:00', 'ACTIVE', '012-2345678', 'Jane Smith', 'CUSTOMER', 0, NULL),
+('C0003', 'mike_johnson', 'mike.j@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-03 10:15:00', '2025-03-22 09:05:00', 'ACTIVE', '012-2345678', 'Michael Johnson', 'CUSTOMER', 0, NULL),
+('C0004', 'sarah_williams', 'sarah.w@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-04 11:30:00', '2025-03-20 11:40:00', 'ACTIVE', '012-2345678', 'Sarah Williams', 'CUSTOMER', 0, NULL),
+('C0005', 'david_brown', 'david.b@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-05 12:45:00', '2025-03-19 15:35:00', 'ACTIVE', '012-2345678', 'David Brown', 'CUSTOMER', 0, NULL),
+('C0006', 'lisa_taylor', 'lisa.t@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-06 13:15:00', '2025-03-22 17:15:00', 'ACTIVE', '012-2345678', 'Lisa Taylor', 'CUSTOMER', 0, NULL),
+('C0007', 'kevin_davis', 'kevin.d@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-07 14:30:00', '2025-03-21 10:25:00', 'ACTIVE', '012-2345678', 'Kevin Davis', 'CUSTOMER', 0, NULL),
+('C0008', 'amy_miller', 'amy.m@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-08 15:45:00', '2025-03-20 14:50:00', 'ACTIVE', '012-2345678', 'Amy Miller', 'CUSTOMER', 0, NULL),
+('C0009', 'brian_wilson', 'brian.w@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-09 16:15:00', '2025-03-18 12:30:00', 'ACTIVE', '012-2345678', 'Brian Wilson', 'CUSTOMER', 0, NULL),
+('C0010', 'jessica_moore', 'jessica.m@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-10 17:30:00', '2025-03-22 08:45:00', 'ACTIVE', '012-2345678', 'Jessica Moore', 'CUSTOMER', 0, NULL),
+('C0011', 'chris_taylor', 'chris.t@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-11 09:00:00', '2025-03-21 15:20:00', 'ACTIVE', '012-2345678', 'Christopher Taylor', 'CUSTOMER', 0, NULL),
+('C0012', 'rachel_anderson', 'rachel.a@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-12 10:30:00', '2025-03-19 13:10:00', 'ACTIVE', '012-2345678', 'Rachel Anderson', 'CUSTOMER', 0, NULL),
+('C0013', 'mark_thomas', 'mark.t@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-13 11:45:00', '2025-03-22 11:50:00', 'ACTIVE', '012-2345678', 'Mark Thomas', 'CUSTOMER', 0, NULL),
+('C0014', 'emily_jackson', 'emily.j@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-14 12:15:00', '2025-03-20 17:35:00', 'ACTIVE', '012-2345678', 'Emily Jackson', 'CUSTOMER', 0, NULL),
+('C0015', 'steven_white', 'steven.w@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-15 13:30:00', '2025-03-17 09:40:00', 'ACTIVE', '012-2345678', 'Steven White', 'CUSTOMER', 0, NULL),
+('C0016', 'laura_harris', 'laura.h@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-16 14:45:00', '2025-03-22 16:25:00', 'ACTIVE', '012-2345678', 'Laura Harris', 'CUSTOMER', 0, NULL),
+('C0017', 'daniel_martin', 'daniel.m@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-17 15:15:00', '2025-03-21 12:55:00', 'ACTIVE', '012-2345678', 'Daniel Martin', 'CUSTOMER', 0, NULL),
+('C0018', 'michelle_garcia', 'michelle.g@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-18 16:30:00', '2025-03-18 14:20:00', 'ACTIVE', '012-2345678', 'Michelle Garcia', 'CUSTOMER', 0, NULL),
+('C0019', 'robert_lee', 'robert.l@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-19 17:45:00', '2025-03-16 10:15:00', 'ACTIVE', '012-2345678', 'Robert Lee', 'CUSTOMER', 0, NULL),
+('C0020', 'jennifer_king', 'jennifer.k@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-20 09:15:00', '2025-03-22 13:05:00', 'ACTIVE', '012-2345678', 'Jennifer King', 'CUSTOMER', 0, NULL),
+('C0021', 'ryan_scott', 'ryan.s@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-21 10:30:00', '2025-03-20 09:50:00', 'ACTIVE', '012-2345678', 'Ryan Scott', 'CUSTOMER', 0, NULL),
+('C0022', 'nicole_adams', 'nicole.a@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-22 11:45:00', '2025-03-19 15:30:00', 'ACTIVE', '012-2345678', 'Nicole Adams', 'CUSTOMER', 0, NULL),
+('C0023', 'tyler_baker', 'tyler.b@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-23 12:15:00', '2025-03-21 17:15:00', 'ACTIVE', '012-2345678', 'Tyler Baker', 'CUSTOMER', 0, NULL),
+('C0024', 'olivia_gonzalez', 'olivia.g@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-24 13:30:00', '2025-03-22 10:40:00', 'ACTIVE', '012-2345678', 'Olivia Gonzalez', 'CUSTOMER', 0, NULL),
+('C0025', 'eric_nelson', 'eric.n@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-25 14:45:00', '2025-03-18 13:25:00', 'ACTIVE', '012-2345678', 'Eric Nelson', 'CUSTOMER', 0, NULL),
+('C0026', 'Oni', 'lee@gmail.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2025-05-01 00:00:00', '2025-05-01 02:32:27', 'ACTIVE', '011-13109924', 'Lee', 'ADMIN', 0, NULL),
+('C0027', 'Lee', 'handsome@gmail.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2025-05-01 00:00:00', '2025-05-01 01:56:46', 'ACTIVE', '011-13109925', 'Handsome', 'CUSTOMER', 0, NULL),
+('C0028', 'john', 'xobod24228@bocapies.com', '$2a$12$SI21K0O4THl38jMHkC9Vi./.2dKM5pehxEpUnCYymMh.U3UmdRn5O', '2025-05-01 00:00:00', '2025-05-01 16:24:00', 'ACTIVE', '012-3345687', 'John China', 'CUSTOMER', 0, NULL);
 
 --
 -- Triggers `user`

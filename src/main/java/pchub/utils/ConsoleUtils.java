@@ -1,12 +1,10 @@
 package pchub.utils;
 
-
 import java.io.IOException;
 import java.util.Scanner;
 import java.io.Console;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.Scanner;
 
 public class ConsoleUtils {
     // ANSI code for color code
@@ -188,5 +186,32 @@ public class ConsoleUtils {
                 System.out.println();
             }
         }
+    }
+
+    /**
+     * Simulates a loading animation with dots
+     * @param message The message to display while loading
+     * @param duration The duration in milliseconds
+     */
+    public static void simulateLoading(String message, int duration) {
+        System.out.print(message);
+        long startTime = System.currentTimeMillis();
+        int dotCount = 0;
+        
+        while (System.currentTimeMillis() - startTime < duration) {
+            try {
+                Thread.sleep(500);
+                System.out.print(".");
+                dotCount++;
+                if (dotCount > 3) {
+                    System.out.print("\r" + message);
+                    dotCount = 0;
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        System.out.println();
     }
 }

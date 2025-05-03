@@ -154,7 +154,6 @@ public class ProductCatalogue {
     public static boolean updateCatalogue(ProductCatalogue catalogue) throws SQLException {
         return catalogueDao.update(catalogue);
     }
-
     public static boolean deleteCatalogue(String catalogueId) throws SQLException {
         return catalogueDao.delete(catalogueId);
     }

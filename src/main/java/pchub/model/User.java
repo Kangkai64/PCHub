@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 import pchub.dao.UserDao;
 import pchub.utils.PasswordUtils;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import pchub.utils.ConsoleUtils;
 
 /**
  * Represents a user in the PC Hub system.
@@ -25,7 +27,7 @@ public class User {
     private String fullName;
     private String phone;
     private UserRole role;
-    private static final UserDao userDao = new UserDao();
+    protected static final UserDao userDao = new UserDao();
 
     // Email validation pattern
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
@@ -235,10 +237,52 @@ public class User {
 
         try {
             User user = userDao.findByUsername(username.trim());
-            if (user != null && PasswordUtils.verifyPassword(password.trim(), user.getPassword())) {
-                return user;
+            if (user == null) {
+                System.out.println("Invalid username or password. Please try again.");
+                ConsoleUtils.waitMessage();
+                return null;
             }
-            return null;
+
+            // Check if user is blocked
+            if ("BLOCKED".equals(user.getStatus())) {
+                System.out.println("This account has been blocked. Please contact support.");
+                return null;
+            }
+
+            // Get login attempts
+            int loginAttempts = userDao.getLoginAttempts(user.getUserId());
+            Timestamp firstAttempt = userDao.getFirstLoginAttemptTimestamp(user.getUserId());
+
+            // Check if user is temporarily blocked
+            if (loginAttempts >= 3 && firstAttempt != null) {
+                long hoursSinceFirstAttempt = (System.currentTimeMillis() - firstAttempt.getTime()) / (60 * 60 * 1000);
+                if (hoursSinceFirstAttempt < 5) {
+                    System.out.println("Account temporarily blocked due to multiple failed attempts. Please try again at " + (firstAttempt.getTime() + 5 * 60 * 60 * 1000) + ".");
+                    return null;
+                } else {
+                    // Reset attempts if 5 hours have passed
+                    userDao.resetLoginAttempts(user.getUserId());
+                    loginAttempts = 0;
+                }
+            }
+
+            if (PasswordUtils.verifyPassword(password.trim(), user.getPassword())) {
+                // Successful login - reset attempts
+                userDao.resetLoginAttempts(user.getUserId());
+                return user;
+            } else {
+                // Failed login - increment attempts
+                loginAttempts++;
+                if (loginAttempts == 1) {
+                    // First failed attempt - set timestamp
+                    userDao.updateLoginAttempts(user.getUserId(), loginAttempts, new Timestamp(System.currentTimeMillis()));
+                } else {
+                    userDao.updateLoginAttempts(user.getUserId(), loginAttempts, firstAttempt);
+                }
+                System.out.println("Invalid username or password. You have " + (3 - loginAttempts) + " attempts left.");
+                ConsoleUtils.waitMessage();
+                return null;
+            }
         } catch (Exception e) {
             throw new RuntimeException("Failed to authenticate user: " + e.getMessage(), e);
         }
