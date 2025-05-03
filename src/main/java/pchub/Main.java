@@ -4,25 +4,9 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
-import pchub.model.Address;
-import pchub.model.Admin;
-import pchub.model.Bill;
-import pchub.model.Cart;
-import pchub.model.CartItem;
-import pchub.model.Customer;
-import pchub.model.Order;
-import pchub.model.OrderItem;
-import pchub.model.PaymentMethod;
-import pchub.model.Product;
-import pchub.model.ProductCatalogue;
-import pchub.model.ProductCatalogueItem;
-import pchub.model.Transaction;
-import pchub.model.User;
+import pchub.model.*;
 import pchub.model.enums.UserRole;
-import pchub.utils.ConsoleUtils;
-import pchub.utils.EmailDeliveryService;
-import pchub.utils.GenerateOTP;
-import pchub.utils.ProductSorter;
+import pchub.utils.*;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
