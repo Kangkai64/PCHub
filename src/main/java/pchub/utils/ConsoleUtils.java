@@ -179,7 +179,10 @@ public class ConsoleUtils {
     public static void waitMessage() {
         System.out.println("\n\n\nPress Enter to continue...");
         try {
-            System.in.read();
+            // Read until we get a newline character
+            while (System.in.read() != '\n') {
+                // Keep reading until we get a newline
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
