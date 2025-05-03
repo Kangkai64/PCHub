@@ -1,5 +1,9 @@
 package pchub.model;
 
+import pchub.dao.ProductCatalogueDao;
+import pchub.dao.ProductCatalogueItemDao;
+
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 /**
@@ -15,10 +19,30 @@ public class ProductCatalogue {
     private LocalDateTime endDate;
     private ProductCatalogueItem[] items;
 
+    private static final ProductCatalogueDao catalogueDao;
+
+    static {
+        try {
+            catalogueDao = new ProductCatalogueDao();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final ProductCatalogueItemDao itemDao;
+
+    static {
+        try {
+            itemDao = new ProductCatalogueItemDao();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Default constructor
      */
-    public ProductCatalogue() {
+    public ProductCatalogue() throws SQLException {
         this.items = new ProductCatalogueItem[30]; // Array size 30 as per project requirements
     }
 
@@ -30,7 +54,7 @@ public class ProductCatalogue {
      * @param startDate The start date of the catalogue
      * @param endDate The end date of the catalogue
      */
-    public ProductCatalogue(String catalogueID, String name, String description, LocalDateTime startDate, LocalDateTime endDate) {
+    public ProductCatalogue(String catalogueID, String name, String description, LocalDateTime startDate, LocalDateTime endDate) throws SQLException {
         this();
         this.catalogueID = catalogueID;
         this.name = name;
@@ -105,5 +129,45 @@ public class ProductCatalogue {
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 '}';
+    }
+
+    public static ProductCatalogue[] getAllCatalogues() throws SQLException {
+        return catalogueDao.findAll();
+    }
+
+    public static ProductCatalogue getCatalogueById(String catalogueId) throws SQLException {
+        return catalogueDao.findById(catalogueId);
+    }
+
+    public static ProductCatalogueItem[] getCatalogueItems(String catalogueId) throws SQLException {
+        return itemDao.findByCatalogue(catalogueId);
+    }
+
+    public static ProductCatalogueItem getCatalogueItemById(String itemId) throws SQLException {
+        return itemDao.findById(itemId);
+    }
+
+    public static boolean addCatalogue(ProductCatalogue catalogue) throws SQLException {
+        return catalogueDao.insert(catalogue);
+    }
+
+    public static boolean updateCatalogue(ProductCatalogue catalogue) throws SQLException {
+        return catalogueDao.update(catalogue);
+    }
+
+    public static boolean deleteCatalogue(String catalogueId) throws SQLException {
+        return catalogueDao.delete(catalogueId);
+    }
+
+    public static boolean addCatalogueItem(ProductCatalogueItem item) throws SQLException {
+        return itemDao.insert(item);
+    }
+
+    public static boolean updateCatalogueItem(ProductCatalogueItem item) throws SQLException {
+        return itemDao.update(item);
+    }
+
+    public static boolean deleteCatalogueItem(String itemId) throws SQLException {
+        return itemDao.delete(itemId);
     }
 } 

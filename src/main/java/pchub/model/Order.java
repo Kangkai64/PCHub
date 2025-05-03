@@ -52,23 +52,45 @@ public class Order {
 
     /**
      * Parameterized constructor
-     * @param orderId The unique identifier for the order
      * @param customerId The ID of the customer who placed the order
-     * @param userName The username of the customer
+     * @param customerName The username of the customer
      * @param shippingAddress The shipping address for the order
      * @param paymentMethod The payment method for the order
      * @throws IllegalArgumentException if any parameter is invalid
      */
-    public Order(String orderId, String customerId, String userName, 
-                Address shippingAddress, PaymentMethod paymentMethod) {
-        setOrderId(orderId);
-        setCustomerId(customerId);
-        setCustomerName(userName);
-        setShippingAddress(shippingAddress);
-        setPaymentMethod(paymentMethod);
-        this.orderDate = new Date();
-        this.status = OrderStatus.PENDING;
-        this.items = new OrderItem[MAX_ITEMS];
+    public Order(String customerId, String customerName, Address shippingAddress, PaymentMethod paymentMethod) {
+        this();
+        this.customerId = customerId;
+        this.customerName = customerName;
+        this.shippingAddress = shippingAddress;
+        this.paymentMethod = paymentMethod;
+    }
+
+    /**
+     * Full parameterized constructor
+     * @param orderId The unique identifier for the order
+     * @param customerId The ID of the customer who placed the order
+     * @param customerName The username of the customer
+     * @param orderDate The date the order was placed
+     * @param status The status of the order
+     * @param totalAmount The total amount of the order
+     * @param items The items in the order
+     * @param shippingAddress The shipping address for the order
+     * @param paymentMethod The payment method for the order
+     * @throws IllegalArgumentException if any parameter is invalid
+     */
+    public Order(String orderId, String customerId, String customerName, Date orderDate,
+                 OrderStatus status, double totalAmount, OrderItem[] items, Address shippingAddress,
+                 PaymentMethod paymentMethod) {
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.customerName = customerName;
+        this.orderDate = orderDate;
+        this.status = status;
+        this.totalAmount = totalAmount;
+        this.items = items;
+        this.shippingAddress = shippingAddress;
+        this.paymentMethod = paymentMethod;
     }
 
     // Getters and setters
@@ -100,7 +122,7 @@ public class Order {
 
     public void setCustomerName(String customerName) {
         if (customerName == null || customerName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Username cannot be null or empty");
+            throw new IllegalArgumentException("Customer name cannot be null or empty");
         }
         this.customerName = customerName.trim();
     }
@@ -196,16 +218,9 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order{" +
-                "orderId='" + orderId + '\'' +
-                ", customerId='" + customerId + '\'' +
-                ", userName='" + customerName + '\'' +
-                ", orderDate=" + orderDate +
-                ", status=" + status +
-                ", totalAmount=" + totalAmount +
-                ", shippingAddress=" + shippingAddress +
-                ", paymentMethod=" + paymentMethod +
-                '}';
+        return "Order ID: " + orderId + ", Customer ID: " + customerId +
+                ", Customer Name: " + customerName + ", Order Date: " + orderDate +
+                ", Status: " + status + ", Total Amount: " + totalAmount;
     }
 
     @Override

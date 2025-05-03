@@ -1,5 +1,7 @@
 package pchub.utils;
 
+import pchub.dao.UserDao;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -12,6 +14,7 @@ public class DatabaseConnection {
     private static final String URL = "jdbc:mysql://localhost:3306/pchub";
     private static final String USER = "root";
     private static final String PASSWORD = "";
+    private static final UserDao userDao = new UserDao();
 
     /**
      * Establishes and returns a connection to the database
@@ -48,6 +51,15 @@ public class DatabaseConnection {
                 System.err.println("Error closing database connection");
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static void resetPassword(String password) {
+        try {
+            userDao.updateAllPasswords(password);
+            System.out.println("Password reset successfully.");
+        } catch (Exception e) {
+            System.out.println("Error initializing database: " + e.getMessage());
         }
     }
 }

@@ -4,11 +4,8 @@ import java.sql.SQLException;
 import java.util.Scanner;
 import pchub.model.*;
 import pchub.model.enums.UserRole;
-import pchub.service.CatalogueService;
-import pchub.service.UserService;
 import pchub.utils.ConsoleUtils;
-import pchub.utils.EmailDeliveryService;
-import pchub.utils.GenerateOTP;
+import pchub.utils.DatabaseConnection;
 import pchub.utils.ProductSorter;
 
 public class Main {
@@ -23,7 +20,7 @@ public class Main {
         ConsoleUtils.displayLogo();
 
         // TODO: Only run this if you want to reset the database
-        // resetPassword("123456");
+        // DatabaseConnection.resetPassword("123456");
 
         boolean exit = false;
         while (!exit) {
@@ -61,16 +58,6 @@ public class Main {
 
         System.out.println("Thank you for using PCHub Retail Management System. Goodbye!");
         scanner.close();
-    }
-
-    private static void resetPassword(String password) {
-        try {
-            UserService userService = new UserService();
-            userService.updateAllPasswords(password);
-            System.out.println("Password reset successfully.");
-        } catch (Exception e) {
-            System.out.println("Error initializing database: " + e.getMessage());
-        }
     }
 
     private static void displayMainMenu() {
@@ -111,8 +98,7 @@ public class Main {
         String password = ConsoleUtils.getPasswordInput(scanner, "Enter password: ");
 
         try {
-            UserService userService = new UserService();
-            currentUser = userService.authenticateUser(username, password);
+            currentUser = User.authenticateUser(username, password);
             if (currentUser != null) {
                 System.out.println("Login successful!");
                 ConsoleUtils.waitMessage();
@@ -151,8 +137,7 @@ public class Main {
             newUser.setPassword(password); // Will be hashed during insertion
             newUser.setRole(UserRole.CUSTOMER); // Default role for new registrations
 
-            UserService userService = new UserService();
-            boolean success = userService.registerUser(newUser);
+            boolean success = User.registerUser(newUser);
             if (success) {
                 System.out.println("Registration successful! You can now login.");
             } else {
@@ -366,7 +351,7 @@ public class Main {
 
                 if (items != null) {
                     for (CartItem existingItem : items) {
-                        if (existingItem.getProduct().equals(product)) {
+                        if (existingItem != null && existingItem.getProduct() != null && existingItem.getProduct().equals(product)) {
                             // Update quantity of existing product
                             existingItem.setQuantity(existingItem.getQuantity() + quantity);
                             itemFound = true;
@@ -395,6 +380,8 @@ public class Main {
                     }
                     currentCart.setItems(items);
                     System.out.println("Product added to cart successfully!");
+                    // Refresh the cart from database
+                    currentCart = Cart.getCart(currentCart.getCartId());
                 }
             } else {
                 System.out.println("Product not found.");
@@ -642,9 +629,9 @@ public class Main {
         return "Card ending with " + cardNumber.substring(cardNumber.length() - 4);
     }
 
-    public static void displayAllCatalogues(CatalogueService catalogueService) throws SQLException {
+    public static void displayAllCatalogues() throws SQLException {
         ConsoleUtils.printHeader("      All Product Catalogues      ");
-        ProductCatalogue[] catalogues = catalogueService.getAllCatalogues();
+        ProductCatalogue[] catalogues = ProductCatalogue.getAllCatalogues();
 
         if (catalogues == null || catalogues.length == 0) {
             System.out.println("No catalogues found.");
@@ -672,10 +659,10 @@ public class Main {
         }
     }
 
-    public static void displayCatalogueItems(ProductCatalogue catalogue, CatalogueService catalogueService) {
+    public static void displayCatalogueItems(ProductCatalogue catalogue) {
         ConsoleUtils.printHeader("      Catalogue Items      ");
         try {
-            ProductCatalogueItem[] items = catalogueService.getCatalogueItems(catalogue.getCatalogueID());
+            ProductCatalogueItem[] items = ProductCatalogue.getCatalogueItems(catalogue.getCatalogueID());
 
             if (items == null || items.length == 0) {
                 System.out.println("No items in this catalogue.");
@@ -711,8 +698,7 @@ public class Main {
     private static void viewCatalogues() {
         ConsoleUtils.printHeader("      Available Catalogues      ");
         try {
-            CatalogueService catalogueService = new CatalogueService();
-            ProductCatalogue[] catalogues = catalogueService.getAllCatalogues();
+            ProductCatalogue[] catalogues = ProductCatalogue.getAllCatalogues();
 
             if (catalogues == null || catalogues.length == 0) {
                 System.out.println("No catalogues available.");
@@ -735,10 +721,10 @@ public class Main {
 
             String catalogueID = ConsoleUtils.getStringInput(scanner, "\nEnter catalogue ID to view items (or press Enter to go back): ");
             if (!catalogueID.isEmpty()) {
-                ProductCatalogue selectedCatalogue = catalogueService.getCatalogueById(catalogueID);
+                ProductCatalogue selectedCatalogue = ProductCatalogue.getCatalogueById(catalogueID);
                 if (selectedCatalogue != null) {
-                    displayCatalogueItems(selectedCatalogue, catalogueService);
-                    handleCatalogueItemSelection(selectedCatalogue, catalogueService);
+                    displayCatalogueItems(selectedCatalogue);
+                    handleCatalogueItemSelection(selectedCatalogue);
                 } else {
                     System.out.println("Catalogue not found.");
                 }
@@ -748,11 +734,11 @@ public class Main {
         }
     }
 
-    private static void handleCatalogueItemSelection(ProductCatalogue catalogue, CatalogueService catalogueService) {
+    private static void handleCatalogueItemSelection(ProductCatalogue catalogue) {
         String itemID = ConsoleUtils.getStringInput(scanner, "Enter item ID to add to cart (or press Enter to go back): ");
         if (!itemID.isEmpty()) {
             try {
-                ProductCatalogueItem item = catalogueService.getCatalogueItemById(itemID);
+                ProductCatalogueItem item = ProductCatalogue.getCatalogueItemById(itemID);
 
                 if (item != null && item.getCatalogue().getCatalogueID().equals(catalogue.getCatalogueID())) {
                     int quantity = ConsoleUtils.getIntInput(scanner, "Enter quantity: ", 1, 100);
@@ -779,6 +765,8 @@ public class Main {
                     currentCart.setItems(items);
 
                     System.out.println("Product added to cart successfully!");
+                    // Refresh the cart from database
+                    currentCart = Cart.getCart(currentCart.getCartId());
                 } else {
                     System.out.println("Item not found in this catalogue.");
                 }

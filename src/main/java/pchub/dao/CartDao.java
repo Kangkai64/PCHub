@@ -219,13 +219,15 @@ public class CartDao extends DaoTemplate<Cart> {
 
     @Override
     protected Cart mapResultSet(ResultSet resultSet) throws SQLException {
-        Cart cart = new Cart();
-        cart.setCartId(resultSet.getString("cartID"));
-        cart.setCustomerId(resultSet.getString("customerID"));
-        cart.setCreatedDate(resultSet.getTimestamp("createdDate").toLocalDateTime());
-        cart.setLastUpdated(resultSet.getTimestamp("lastUpdated").toLocalDateTime());
-        cart.setItemCount(resultSet.getInt("itemCount"));
-        cart.setSubtotal(resultSet.getDouble("subtotal"));
+        String cartId = resultSet.getString("cartID");
+        String customerId = resultSet.getString("customerID");
+        LocalDateTime createdDate = resultSet.getTimestamp("createdDate").toLocalDateTime();
+        LocalDateTime lastUpdated = resultSet.getTimestamp("lastUpdated").toLocalDateTime();
+        int itemCount = resultSet.getInt("itemCount");
+        double subtotal = resultSet.getDouble("subtotal");
+
+        // Create and return the Cart object
+        Cart cart = new Cart(cartId, customerId, createdDate, lastUpdated, itemCount, subtotal, new CartItem[0]);
         return cart;
     }
 
