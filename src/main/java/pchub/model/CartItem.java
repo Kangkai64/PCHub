@@ -9,10 +9,6 @@ public class CartItem extends LineItem {
         this.cartId = cartId;
     }
 
-    public CartItem(){
-
-    }
-
     // Getters and setters
     public String getCartItemId() {
         return cartItemId;

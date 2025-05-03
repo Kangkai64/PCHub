@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 03, 2025 at 07:34 AM
+-- Generation Time: May 03, 2025 at 01:12 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -35,7 +35,6 @@ CREATE TABLE `bill` (
   `orderID` varchar(10) NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `payment_MethodID` varchar(10) NOT NULL,
-  `transactionID` varchar(50) DEFAULT NULL,
   `paymentStatus` enum('PENDING','AWAITING_PAYMENT','PAID','FAILED') NOT NULL DEFAULT 'PENDING',
   `issueDate` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -44,9 +43,19 @@ CREATE TABLE `bill` (
 -- Dumping data for table `bill`
 --
 
-INSERT INTO `bill` (`billID`, `orderID`, `amount`, `payment_MethodID`, `transactionID`, `paymentStatus`, `issueDate`) VALUES
-('B000001', 'O0006', 1750.11, 'PM001', NULL, 'PENDING', '2025-05-03 12:24:13'),
-('B000002', 'O0005', 1750.11, 'PM001', NULL, 'PENDING', '2025-05-03 12:41:35');
+INSERT INTO `bill` (`billID`, `orderID`, `amount`, `payment_MethodID`, `paymentStatus`, `issueDate`) VALUES
+('B000001', 'O0006', 1750.11, 'PM001', 'PENDING', '2025-05-03 12:24:13'),
+('B000002', 'O0005', 1750.11, 'PM001', 'PENDING', '2025-05-03 12:41:35'),
+('B000003', 'O0004', 7241.94, 'PM001', 'PENDING', '2025-05-03 14:19:03'),
+('B000004', 'O0006', 1750.11, 'PM001', 'PENDING', '2025-05-03 14:28:26'),
+('B000005', 'O0006', 1750.11, 'PM001', 'PENDING', '2025-05-03 14:28:52'),
+('B000006', 'O0006', 1750.11, 'PM001', 'PENDING', '2025-05-03 14:34:19'),
+('B000007', 'O0005', 1750.11, 'PM001', 'PENDING', '2025-05-03 14:37:05'),
+('B000008', 'O0007', 1139.93, 'PM001', 'PENDING', '2025-05-03 15:08:47'),
+('B000009', 'O0005', 1750.11, 'PM001', 'PENDING', '2025-05-03 17:39:50'),
+('B000010', 'O0008', 913.93, 'PM001', 'PENDING', '2025-05-03 19:05:02'),
+('B000011', 'O0009', 1230.34, 'PM001', 'PENDING', '2025-05-03 19:08:55'),
+('B000012', 'O0010', 518.46, 'PM001', 'PENDING', '2025-05-03 19:10:36');
 
 --
 -- Triggers `bill`
@@ -84,7 +93,8 @@ CREATE TABLE `cart` (
 INSERT INTO `cart` (`cartID`, `customerID`, `createdDate`, `lastUpdated`, `itemCount`, `subtotal`) VALUES
 ('CA00001', 'C0027', '2025-05-01 03:14:29', '2025-05-01 03:14:29', 0, 0.00),
 ('CA00002', 'C0001', '2025-05-01 10:36:17', '2025-05-01 10:36:17', 0, 0.00),
-('CA00003', 'C0028', '2025-05-01 17:41:07', '2025-05-01 17:41:07', 0, 0.00);
+('CA00003', 'C0028', '2025-05-01 17:41:07', '2025-05-01 17:41:07', 0, 0.00),
+('CA00004', 'C0002', '2025-05-03 19:04:44', '2025-05-03 19:04:44', 0, 0.00);
 
 --
 -- Triggers `cart`
@@ -134,7 +144,8 @@ INSERT INTO `cart_item` (`cartItemID`, `cartID`, `productID`, `quantity`, `price
 ('CI000012', 'CA00003', 'P00001', 5, 599.99),
 ('CI000013', 'CA00003', 'P00001', 20, 599.99),
 ('CI000014', 'CA00003', 'P00003', 4, 1599.99),
-('CI000015', 'CA00003', 'P00001', 3, 599.99);
+('CI000015', 'CA00003', 'P00001', 3, 599.99),
+('CI000016', 'CA00002', 'P00013', 5, 159.99);
 
 --
 -- Triggers `cart_item`
@@ -175,8 +186,10 @@ INSERT INTO `order` (`orderID`, `customerID`, `orderDate`, `orderStatus`, `total
 ('O0002', 'C0028', '2025-05-01 19:14:07', 'PENDING', 2999.95, 'SA000027', 'PM001'),
 ('O0003', 'C0028', '2025-05-01 19:34:06', 'PENDING', 11999.80, 'SA000027', 'PM001'),
 ('O0004', 'C0028', '2025-05-01 19:43:33', 'PENDING', 6399.96, 'SA000027', 'PM001'),
-('O0005', 'C0001', '2025-05-03 12:03:15', 'PENDING', 1539.93, 'SA000021', 'PM001'),
-('O0006', 'C0001', '2025-05-03 12:24:13', 'PENDING', 1539.93, 'SA000021', 'PM001');
+('O0005', 'C0001', '2025-05-03 12:03:15', 'CANCELLED', 1539.93, 'SA000021', 'PM001'),
+('O0006', 'C0001', '2025-05-03 12:24:13', 'PROCESSING', 1539.93, 'SA000021', 'PM001'),
+('O0007', 'C0001', '2025-05-03 15:08:47', 'PENDING', 999.95, 'SA000001', 'PM001'),
+('O0008', 'C0002', '2025-05-03 19:05:02', 'PENDING', 799.95, 'SA000002', 'PM001');
 
 --
 -- Triggers `order`
@@ -215,8 +228,10 @@ INSERT INTO `order_item` (`orderItemID`, `orderID`, `productID`, `quantity`, `pr
 ('OI0000002', 'O0002', 'P00001', 5, 599.99),
 ('OI0000003', 'O0003', 'P00001', 20, 599.99),
 ('OI0000004', 'O0004', 'P00003', 4, 1599.99),
-('OI0000005', 'O0005', 'P00033', 7, 219.99),
-('OI0000006', 'O0006', 'P00033', 7, 219.99);
+('OI0000006', 'O0006', 'P00033', 7, 219.99),
+('OI0000007', 'O0007', 'P00005', 5, 199.99),
+('OI0000008', 'O0005', 'P00033', 7, 219.99),
+('OI0000009', 'O0008', 'P00034', 5, 159.99);
 
 --
 -- Triggers `order_item`
@@ -570,6 +585,37 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `transaction`
+--
+
+DROP TABLE IF EXISTS `transaction`;
+CREATE TABLE `transaction` (
+  `transactionID` varchar(10) NOT NULL,
+  `billID` varchar(10) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `payment_methodID` varchar(10) NOT NULL,
+  `status` varchar(20) NOT NULL,
+  `transactionDate` timestamp NOT NULL DEFAULT current_timestamp(),
+  `lastModifiedDate` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `description` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `transaction`
+--
+DROP TRIGGER IF EXISTS `before_insert_transaction`;
+DELIMITER $$
+CREATE TRIGGER `before_insert_transaction` BEFORE INSERT ON `transaction` FOR EACH ROW BEGIN
+    DECLARE next_id INT;
+    SET next_id = (SELECT IFNULL(MAX(SUBSTRING(transactionID, 2)), 0) + 1 FROM transaction);
+    SET NEW.transactionID = CONCAT('T', LPAD(next_id, 6, '0'));
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `user`
 --
 
@@ -599,7 +645,7 @@ INSERT INTO `user` (`userID`, `username`, `email`, `password`, `registrationDate
 ('A0003', 'admin_johnson', 'admin.j2@pchub.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 08:30:00', '2025-03-21 18:30:00', 'ACTIVE', '012-2345678', 'Jordan Johnson', 'ADMIN', 0, NULL),
 ('A0004', 'admin_brown', 'admin.b@pchub.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 08:45:00', '2025-03-22 16:15:00', 'ACTIVE', '012-2345678', 'Blake Brown', 'ADMIN', 0, NULL),
 ('A0005', 'admin_garcia', 'admin.g@pchub.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 09:00:00', '2025-03-20 15:30:00', 'ACTIVE', '012-2345678', 'Gabriel Garcia', 'ADMIN', 0, NULL),
-('C0001', 'john_doe', 'john.doe@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-01 08:30:00', '2025-03-22 14:22:00', 'ACTIVE', '012-2345678', 'John Doe', 'CUSTOMER', 0, NULL),
+('C0001', 'john_doe', 'john.doe@email.com', '$2a$12$xyEsckfifgm/0Vtmesu/qOrA5I/AuKatJy33u4wZwNlO8E5EboQV2', '2024-10-01 08:30:00', '2025-05-03 17:40:19', 'ACTIVE', '012-2345678', 'John Doe', 'CUSTOMER', 2, '2025-05-03 11:04:23'),
 ('C0002', 'jane_smith', 'jane.smith@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-02 09:45:00', '2025-03-21 16:10:00', 'ACTIVE', '012-2345678', 'Jane Smith', 'CUSTOMER', 0, NULL),
 ('C0003', 'mike_johnson', 'mike.j@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-03 10:15:00', '2025-03-22 09:05:00', 'ACTIVE', '012-2345678', 'Michael Johnson', 'CUSTOMER', 0, NULL),
 ('C0004', 'sarah_williams', 'sarah.w@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-04 11:30:00', '2025-03-20 11:40:00', 'ACTIVE', '012-2345678', 'Sarah Williams', 'CUSTOMER', 0, NULL),
@@ -626,7 +672,7 @@ INSERT INTO `user` (`userID`, `username`, `email`, `password`, `registrationDate
 ('C0025', 'eric_nelson', 'eric.n@email.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2024-10-25 14:45:00', '2025-03-18 13:25:00', 'ACTIVE', '012-2345678', 'Eric Nelson', 'CUSTOMER', 0, NULL),
 ('C0026', 'Oni', 'lee@gmail.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2025-05-01 00:00:00', '2025-05-01 02:32:27', 'ACTIVE', '011-13109924', 'Lee', 'ADMIN', 0, NULL),
 ('C0027', 'Lee', 'handsome@gmail.com', '$2a$12$0d4qvcYBw2CoqnntE856AeAbp6USdb4yYVMyWQE4dXMi3wT5rkWV6', '2025-05-01 00:00:00', '2025-05-01 01:56:46', 'ACTIVE', '011-13109925', 'Handsome', 'CUSTOMER', 0, NULL),
-('C0028', 'john', 'xobod24228@bocapies.com', '$2a$12$SI21K0O4THl38jMHkC9Vi./.2dKM5pehxEpUnCYymMh.U3UmdRn5O', '2025-05-01 00:00:00', '2025-05-01 16:24:00', 'ACTIVE', '012-3345687', 'John China', 'CUSTOMER', 0, NULL);
+('C0028', 'john', 'xobod24228@bocapies.com', '$2a$12$SI21K0O4THl38jMHkC9Vi./.2dKM5pehxEpUnCYymMh.U3UmdRn5O', '2025-05-01 00:00:00', '2025-05-01 16:24:00', 'ACTIVE', '012-3345687', 'John China', 'CUSTOMER', 2, '2025-05-03 06:18:10');
 
 --
 -- Triggers `user`
@@ -746,6 +792,14 @@ ALTER TABLE `shipping_address`
   ADD KEY `customerID` (`customerID`);
 
 --
+-- Indexes for table `transaction`
+--
+ALTER TABLE `transaction`
+  ADD PRIMARY KEY (`transactionID`),
+  ADD KEY `billID` (`billID`),
+  ADD KEY `payment_methodID` (`payment_methodID`);
+
+--
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
@@ -808,6 +862,13 @@ ALTER TABLE `product_category`
 --
 ALTER TABLE `shipping_address`
   ADD CONSTRAINT `customer_ibfk_1` FOREIGN KEY (`customerID`) REFERENCES `user` (`userID`);
+
+--
+-- Constraints for table `transaction`
+--
+ALTER TABLE `transaction`
+  ADD CONSTRAINT `transaction_ibfk_1` FOREIGN KEY (`billID`) REFERENCES `bill` (`billID`),
+  ADD CONSTRAINT `transaction_ibfk_2` FOREIGN KEY (`payment_methodID`) REFERENCES `payment_method` (`payment_methodID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

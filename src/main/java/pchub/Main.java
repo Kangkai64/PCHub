@@ -8,7 +8,7 @@ import pchub.utils.*;
 import java.time.LocalDateTime;
 
 public class Main {
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
     private static User currentUser = null;
     private static Cart currentCart = null;
     private static Admin admin = null;
@@ -529,9 +529,19 @@ public class Main {
                 System.out.println("\nOrder created successfully!");
                 System.out.println("Order ID: " + order.getOrderId());
 
-                // Generate and display bill
+                // Generate and display the bill
                 Bill bill = Order.generateBill(order.getOrderId());
-                displayBill(bill);
+                if (bill != null) {
+                    displayBill(bill);
+
+                    // Create a transaction record for this successful payment
+                    Transaction transaction = new Transaction(bill);
+
+                    if (transaction != null) {
+                        System.out.println("Transaction recorded successfully.");
+                        System.out.println("Transaction ID: " + transaction.getTransactionId());
+                    }
+                }
 
                 // Clear cart after successful order
                 Cart.clearCart(currentCart);

@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.Objects;
 
 import pchub.dao.BillDao;
-import pchub.dao.OrderDao;
 import pchub.dao.PaymentMethodDao;
 import pchub.model.enums.PaymentStatus;
 
@@ -27,12 +26,9 @@ public class Bill {
     private PaymentMethod paymentMethod;
     private Date issueDate;
     private PaymentStatus paymentStatus;
-    private String transactionId;
 
-    private static final int MAX_ITEMS = 30;
     private static final BillDao billDao = new BillDao();
     private static final PaymentMethodDao paymentMethodDao = new PaymentMethodDao();
-    private static final OrderDao orderDao = new OrderDao();
 
     /**
      * Default constructor
@@ -190,14 +186,6 @@ public class Bill {
             throw new IllegalArgumentException("Payment status cannot be null or empty");
         }
         this.paymentStatus = paymentStatus;
-    }
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
     }
 
     /**

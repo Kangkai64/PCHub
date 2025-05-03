@@ -1,9 +1,6 @@
 package pchub.dao;
 
-import pchub.model.Bill;
-import pchub.model.Customer;
-import pchub.model.Order;
-import pchub.model.User;
+import pchub.model.*;
 import pchub.model.enums.PaymentStatus;
 import pchub.model.enums.UserRole;
 import pchub.utils.DatabaseConnection;
@@ -35,7 +32,7 @@ public class BillDao extends DaoTemplate<Bill> {
 
     @Override
     public boolean insert(Bill bill) throws SQLException {
-        String sql = "INSERT INTO bill (orderID, amount, payment_MethodID, transactionID, paymentStatus, issueDate) VALUES (?,?,?,?,?,?)";
+        String sql = "INSERT INTO bill (orderID, amount, payment_MethodID, paymentStatus, issueDate) VALUES (?,?,?,?,?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -43,9 +40,8 @@ public class BillDao extends DaoTemplate<Bill> {
             preparedStatement.setString(1, bill.getOrder().getOrderId());
             preparedStatement.setBigDecimal(2, bill.getTotalAmount());
             preparedStatement.setString(3, bill.getPaymentMethod().getPaymentMethodId());
-            preparedStatement.setString(4, bill.getTransactionId());
-            preparedStatement.setString(5, bill.getPaymentStatus().toString());
-            preparedStatement.setTimestamp(6, new Timestamp(bill.getIssueDate().getTime()));
+            preparedStatement.setString(4, bill.getPaymentStatus().toString());
+            preparedStatement.setTimestamp(5, new Timestamp(bill.getIssueDate().getTime()));
 
             int affectedRows = preparedStatement.executeUpdate();
 
@@ -113,7 +109,7 @@ public class BillDao extends DaoTemplate<Bill> {
 
     @Override
     public boolean update(Bill bill) throws SQLException {
-        String sql = "UPDATE bill SET orderID = ?, amount = ?, payment_MethodID = ?, transactionID = ?, paymentStatus = ?, issueDate = ? WHERE billID = ?";
+        String sql = "UPDATE bill SET orderID = ?, amount = ?, payment_MethodID = ?, paymentStatus = ?, issueDate = ? WHERE billID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -121,10 +117,9 @@ public class BillDao extends DaoTemplate<Bill> {
             preparedStatement.setString(1, bill.getOrder().getOrderId());
             preparedStatement.setBigDecimal(2, bill.getTotalAmount());
             preparedStatement.setString(3, bill.getPaymentMethod().getPaymentMethodId());
-            preparedStatement.setString(4, bill.getTransactionId());
-            preparedStatement.setString(5, bill.getPaymentStatus().toString());
-            preparedStatement.setTimestamp(6, new Timestamp(bill.getIssueDate().getTime()));
-            preparedStatement.setString(7, bill.getBillId());
+            preparedStatement.setString(4, bill.getPaymentStatus().toString());
+            preparedStatement.setTimestamp(5, new Timestamp(bill.getIssueDate().getTime()));
+            preparedStatement.setString(6, bill.getBillId());
 
             int affectedRows = preparedStatement.executeUpdate();
             return affectedRows > 0;
@@ -155,6 +150,7 @@ public class BillDao extends DaoTemplate<Bill> {
     protected Bill mapResultSet(ResultSet resultSet) throws SQLException {
         OrderDao orderDao = new OrderDao();
         UserDao userDao = new UserDao();
+        TransactionDao transactionDao = new TransactionDao();
 
         Bill bill = new Bill();
         bill.setBillId(resultSet.getString("billID"));
@@ -177,7 +173,6 @@ public class BillDao extends DaoTemplate<Bill> {
 
         bill.setTotalAmount(resultSet.getBigDecimal("amount"));
         bill.getPaymentMethod().setPaymentMethodId(resultSet.getString("payment_MethodID"));
-        bill.setTransactionId(resultSet.getString("transactionID"));
         bill.setPaymentStatus(PaymentStatus.valueOf(resultSet.getString("paymentStatus")));
 
         Timestamp timestamp = resultSet.getTimestamp("issueDate");

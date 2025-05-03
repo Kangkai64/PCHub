@@ -5,14 +5,10 @@ public abstract class LineItem {
     private int quantity;
     private double unitPrice;
 
-    public LineItem(Product product, int quantity, double unitPrice) {
+    LineItem(Product product, int quantity, double unitPrice) {
         this.product = product;
         this.unitPrice = unitPrice;
         this.quantity = quantity;
-    }
-
-    public LineItem(){
-
     }
 
     public Product getProduct() {

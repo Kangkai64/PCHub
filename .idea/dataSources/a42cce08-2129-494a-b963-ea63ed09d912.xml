@@ -1174,7 +1174,7 @@ test\\_%|schema||&apos;&apos;||UPDATE|G</Grants>
       <CollationName>utf8mb4_general_ci</CollationName>
     </schema>
     <schema id="335" parent="1" name="pchub">
-      <LastIntrospectionLocalTimestamp>2025-05-01.11:36:29</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-05-03.11:03:41</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_general_ci</CollationName>
     </schema>
     <schema id="336" parent="1" name="performance_schema">
@@ -1242,44 +1242,44 @@ test\\_%|schema||&apos;&apos;||UPDATE|G</Grants>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_general_ci</CollationName>
     </table>
-    <table id="354" parent="335" name="user">
+    <table id="354" parent="335" name="transaction">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_general_ci</CollationName>
     </table>
-    <column id="355" parent="343" name="billID">
+    <table id="355" parent="335" name="user">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_general_ci</CollationName>
+    </table>
+    <column id="356" parent="343" name="billID">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="356" parent="343" name="orderID">
+    <column id="357" parent="343" name="orderID">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="357" parent="343" name="amount">
+    <column id="358" parent="343" name="amount">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>decimal(10,2 digit)|0s</StoredType>
     </column>
-    <column id="358" parent="343" name="payment_MethodID">
+    <column id="359" parent="343" name="payment_MethodID">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="359" parent="343" name="transactionID">
-      <Position>5</Position>
-      <StoredType>varchar(50)|0s</StoredType>
-    </column>
     <column id="360" parent="343" name="paymentStatus">
       <DefaultExpression>&apos;PENDING&apos;</DefaultExpression>
       <NotNull>1</NotNull>
-      <Position>6</Position>
+      <Position>5</Position>
       <StoredType>enum(&apos;PENDING&apos;, &apos;AWAITING_PAYMENT&apos;, &apos;PAID&apos;, &apos;FAILED&apos;)|0e</StoredType>
     </column>
     <column id="361" parent="343" name="issueDate">
       <DefaultExpression>current_timestamp()</DefaultExpression>
       <NotNull>1</NotNull>
-      <Position>7</Position>
+      <Position>6</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
     <foreign-key id="362" parent="343" name="payment_ibfk_1">
@@ -1858,80 +1858,152 @@ test\\_%|schema||&apos;&apos;||UPDATE|G</Grants>
       <SourceTextLength>225</SourceTextLength>
       <Turn>before-row</Turn>
     </trigger>
-    <column id="479" parent="354" name="userID">
+    <column id="479" parent="354" name="billID">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>varchar(10)|0s</StoredType>
     </column>
-    <column id="480" parent="354" name="username">
+    <column id="480" parent="354" name="amount">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>decimal(10,2 digit)|0s</StoredType>
+    </column>
+    <column id="481" parent="354" name="payment_methodID">
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+      <StoredType>varchar(10)|0s</StoredType>
+    </column>
+    <column id="482" parent="354" name="status">
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <StoredType>varchar(20)|0s</StoredType>
+    </column>
+    <column id="483" parent="354" name="transactionDate">
+      <DefaultExpression>current_timestamp()</DefaultExpression>
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+      <StoredType>timestamp|0s</StoredType>
+    </column>
+    <column id="484" parent="354" name="lastModifiedDate">
+      <DefaultExpression>current_timestamp()</DefaultExpression>
+      <NotNull>1</NotNull>
+      <OnUpdate>current_timestamp()</OnUpdate>
+      <Position>6</Position>
+      <StoredType>timestamp|0s</StoredType>
+    </column>
+    <column id="485" parent="354" name="description">
+      <Position>7</Position>
+      <StoredType>text|0s</StoredType>
+    </column>
+    <foreign-key id="486" parent="354" name="transaction_ibfk_1">
+      <ColNames>billID</ColNames>
+      <RefColNames>billID</RefColNames>
+      <RefTableName>bill</RefTableName>
+    </foreign-key>
+    <foreign-key id="487" parent="354" name="transaction_ibfk_2">
+      <ColNames>payment_methodID</ColNames>
+      <RefColNames>payment_methodID</RefColNames>
+      <RefTableName>payment_method</RefTableName>
+    </foreign-key>
+    <index id="488" parent="354" name="billID">
+      <ColNames>billID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="489" parent="354" name="payment_methodID">
+      <ColNames>payment_methodID</ColNames>
+      <Type>btree</Type>
+    </index>
+    <trigger id="490" parent="354" name="before_insert_transaction">
+      <Definer>root@localhost</Definer>
+      <Events>I</Events>
+      <SourceTextLength>191</SourceTextLength>
+      <Turn>before-row</Turn>
+    </trigger>
+    <column id="491" parent="355" name="userID">
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>varchar(10)|0s</StoredType>
+    </column>
+    <column id="492" parent="355" name="username">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <column id="481" parent="354" name="email">
+    <column id="493" parent="355" name="email">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>varchar(100)|0s</StoredType>
     </column>
-    <column id="482" parent="354" name="password">
+    <column id="494" parent="355" name="password">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="483" parent="354" name="registrationDate">
+    <column id="495" parent="355" name="registrationDate">
       <DefaultExpression>current_timestamp()</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="484" parent="354" name="lastLogin">
+    <column id="496" parent="355" name="lastLogin">
       <Position>6</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="485" parent="354" name="status">
+    <column id="497" parent="355" name="status">
       <DefaultExpression>&apos;ACTIVE&apos;</DefaultExpression>
       <Position>7</Position>
       <StoredType>enum(&apos;ACTIVE&apos;, &apos;INACTIVE&apos;, &apos;BANNED&apos;)|0e</StoredType>
     </column>
-    <column id="486" parent="354" name="phone">
+    <column id="498" parent="355" name="phone">
       <Position>8</Position>
       <StoredType>varchar(20)|0s</StoredType>
     </column>
-    <column id="487" parent="354" name="fullName">
+    <column id="499" parent="355" name="fullName">
       <Position>9</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="488" parent="354" name="role">
+    <column id="500" parent="355" name="role">
       <Position>10</Position>
       <StoredType>varchar(50)|0s</StoredType>
     </column>
-    <index id="489" parent="354" name="PRIMARY">
+    <column id="501" parent="355" name="loginAttempt">
+      <DefaultExpression>0</DefaultExpression>
+      <NotNull>1</NotNull>
+      <Position>11</Position>
+      <StoredType>tinyint(1)|0s</StoredType>
+    </column>
+    <column id="502" parent="355" name="firstLoginAttemptTimestamp">
+      <OnUpdate>current_timestamp()</OnUpdate>
+      <Position>12</Position>
+      <StoredType>timestamp|0s</StoredType>
+    </column>
+    <index id="503" parent="355" name="PRIMARY">
       <ColNames>userID</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="490" parent="354" name="username">
+    <index id="504" parent="355" name="username">
       <ColNames>username</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="491" parent="354" name="email">
+    <index id="505" parent="355" name="email">
       <ColNames>email</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="492" parent="354" name="PRIMARY">
+    <key id="506" parent="355" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="493" parent="354" name="username">
+    <key id="507" parent="355" name="username">
       <UnderlyingIndexName>username</UnderlyingIndexName>
     </key>
-    <key id="494" parent="354" name="email">
+    <key id="508" parent="355" name="email">
       <UnderlyingIndexName>email</UnderlyingIndexName>
     </key>
-    <trigger id="495" parent="354" name="before_insert_user">
+    <trigger id="509" parent="355" name="before_insert_user">
       <Definer>root@localhost</Definer>
       <Events>I</Events>
       <SourceTextLength>828</SourceTextLength>
