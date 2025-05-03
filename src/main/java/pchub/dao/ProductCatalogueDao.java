@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 import pchub.model.ProductCatalogue;
 import pchub.utils.DatabaseConnection;
@@ -95,6 +93,7 @@ public class ProductCatalogueDao {
              ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
                 catalogues[index] = mapResultSetToCatalogue(resultSet);
+                index++;
             }
         }
         return catalogues;
