@@ -49,7 +49,7 @@ public class Admin extends User {
     public static void viewAllProducts() {
         ConsoleUtils.printHeader("      All Products     ");
         Main.displayAllProducts();
-        handleViewProductDetails();
+        Main.handleViewProductDetails();
     }
 
     public static void addNewProduct() {
@@ -1235,23 +1235,6 @@ public class Admin extends User {
             System.out.println("Report generated successfully!");
         } catch (Exception e) {
             System.out.println("Error generating customer activity report: " + e.getMessage());
-        }
-    }
-
-    public static void handleViewProductDetails() {
-        ConsoleUtils.printHeader("      Products      ");
-        try {
-            String productId = ConsoleUtils.getStringInput(scanner, "Enter product ID to view details (or press Enter to go back): ");
-            if (!productId.isEmpty()) {
-                Product product = Product.getProduct(productId);
-                if (product != null) {
-                    displayProductDetails(product);
-                } else {
-                    System.out.println("Product not found.");
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error fetching products: " + e.getMessage());
         }
     }
 
