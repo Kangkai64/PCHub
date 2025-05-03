@@ -392,7 +392,7 @@ public class Main {
     }
 
     private static void viewCart() {
-        ConsoleUtils.printHeader("                                 Your Shopping Cart                                       ");
+        ConsoleUtils.printHeader("                                  Your Shopping Cart                                       ");
         if (currentCart == null || currentCart.getItems() == null
                 || currentCart.getItems().length == 0 || currentCart.getItems()[0] == null) {
             System.out.println("Your cart is empty.");
@@ -429,7 +429,7 @@ public class Main {
 
     private static void displayCart(Cart cart) {
         System.out.printf("%-10s | %-40s | %-8s | %-13s | %-13s\n", "Product ID", "Item", "Quantity", "Unit Price", "Total");
-        System.out.println("-------------------------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------------------");
 
         double total = 0;
         for (CartItem item : cart.getItems()) {
@@ -445,8 +445,8 @@ public class Main {
             }
         }
 
-        System.out.println("-------------------------------------------------------------------------------------------");
-        System.out.printf("Total: %80s%.2f\n", "RM", total);
+        System.out.println("---------------------------------------------------------------------------------------------");
+        System.out.printf("Total: %79s%.2f\n", "RM", total);
     }
 
     private static void updateCartItemQuantity() {
@@ -598,7 +598,6 @@ public class Main {
             }
 
             PaymentMethod paymentMethod = paymentMethods[choice - 1];
-            paymentMethod.setName(customer.getUserId());
 
             return paymentMethod;
         } else {
@@ -629,7 +628,7 @@ public class Main {
         boolean success = false;
 
         try {
-            switch (paymentMethod.getName()) {
+            switch (paymentMethod.getName().trim()) {
                 case "Credit Card":
                 case "Debit Card":
                     success = processCardPayment(paymentMethod, totalAmount);
