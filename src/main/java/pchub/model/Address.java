@@ -12,7 +12,7 @@ public class Address {
     private String zipCode;
     private String country;
 
-    private static final AddressDao addressDao = new AddressDao();
+    private static final AddressDao ADDRESS_DAO = new AddressDao();
 
     public Address() {
     }
@@ -101,7 +101,7 @@ public class Address {
         }
 
         try {
-            return addressDao.findByUserId(userId.trim());
+            return ADDRESS_DAO.findByUserId(userId.trim());
         } catch (SQLException e) {
             throw new SQLException("Failed to retrieve addresses: " + e.getMessage(), e);
         }
@@ -120,7 +120,7 @@ public class Address {
         }
 
         try {
-            return addressDao.findById(addressId.trim());
+            return ADDRESS_DAO.findById(addressId.trim());
         } catch (SQLException e) {
             throw new SQLException("Failed to retrieve address: " + e.getMessage(), e);
         }
@@ -142,7 +142,7 @@ public class Address {
         }
 
         try {
-            return addressDao.insert(address);
+            return ADDRESS_DAO.insert(address);
         } catch (SQLException e) {
             throw new SQLException("Failed to add address: " + e.getMessage(), e);
         }
@@ -164,7 +164,7 @@ public class Address {
         }
 
         try {
-            return addressDao.update(address);
+            return ADDRESS_DAO.update(address);
         } catch (SQLException e) {
             throw new SQLException("Failed to update address: " + e.getMessage(), e);
         }
@@ -183,7 +183,7 @@ public class Address {
         }
 
         try {
-            return addressDao.delete(addressId.trim());
+            return ADDRESS_DAO.delete(addressId.trim());
         } catch (SQLException e) {
             throw new SQLException("Failed to delete address: " + e.getMessage(), e);
         }

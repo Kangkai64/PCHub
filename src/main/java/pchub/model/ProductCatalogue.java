@@ -19,11 +19,11 @@ public class ProductCatalogue {
     private LocalDateTime endDate;
     private ProductCatalogueItem[] items;
 
-    private static final ProductCatalogueDao catalogueDao;
+    private static final ProductCatalogueDao PRODUCT_CATALOGUE_DAO;
 
     static {
         try {
-            catalogueDao = new ProductCatalogueDao();
+            PRODUCT_CATALOGUE_DAO = new ProductCatalogueDao();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -132,11 +132,11 @@ public class ProductCatalogue {
     }
 
     public static ProductCatalogue[] getAllCatalogues() throws SQLException {
-        return catalogueDao.findAll();
+        return PRODUCT_CATALOGUE_DAO.findAll();
     }
 
     public static ProductCatalogue getCatalogueById(String catalogueId) throws SQLException {
-        return catalogueDao.findById(catalogueId);
+        return PRODUCT_CATALOGUE_DAO.findById(catalogueId);
     }
 
     public static ProductCatalogueItem[] getCatalogueItems(String catalogueId) throws SQLException {
@@ -148,14 +148,14 @@ public class ProductCatalogue {
     }
 
     public static boolean addCatalogue(ProductCatalogue catalogue) throws SQLException {
-        return catalogueDao.insert(catalogue);
+        return PRODUCT_CATALOGUE_DAO.insert(catalogue);
     }
 
     public static boolean updateCatalogue(ProductCatalogue catalogue) throws SQLException {
-        return catalogueDao.update(catalogue);
+        return PRODUCT_CATALOGUE_DAO.update(catalogue);
     }
     public static boolean deleteCatalogue(String catalogueId) throws SQLException {
-        return catalogueDao.delete(catalogueId);
+        return PRODUCT_CATALOGUE_DAO.delete(catalogueId);
     }
 
     public static boolean addCatalogueItem(ProductCatalogueItem item) throws SQLException {

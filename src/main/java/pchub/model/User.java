@@ -28,7 +28,7 @@ public class User {
     private String fullName;
     private String phone;
     private UserRole role;
-    protected static final UserDao userDao = new UserDao();
+    protected static final UserDao USER_DAO = new UserDao();
 
     // Email validation pattern
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
@@ -275,7 +275,7 @@ public class User {
         }
 
         try {
-            User user = userDao.findByUsername(username.trim());
+            User user = USER_DAO.findByUsername(username.trim());
             if (user == null) {
                 System.out.println("Invalid username or password. Please try again.");
                 ConsoleUtils.waitMessage();
@@ -289,8 +289,8 @@ public class User {
             }
 
             // Get login attempts
-            int loginAttempts = userDao.getLoginAttempts(user.getUserId());
-            Timestamp firstAttempt = userDao.getFirstLoginAttemptTimestamp(user.getUserId());
+            int loginAttempts = USER_DAO.getLoginAttempts(user.getUserId());
+            Timestamp firstAttempt = USER_DAO.getFirstLoginAttemptTimestamp(user.getUserId());
 
             // Check if user is temporarily blocked
             if (loginAttempts >= 3 && firstAttempt != null) {
@@ -308,23 +308,23 @@ public class User {
                     return null;
                 } else {
                     // Reset attempts if 5 hours have passed
-                    userDao.resetLoginAttempts(user.getUserId());
+                    USER_DAO.resetLoginAttempts(user.getUserId());
                     loginAttempts = 0;
                 }
             }
 
             if (PasswordUtils.verifyPassword(password.trim(), user.getPassword())) {
                 // Successful login - reset attempts
-                userDao.resetLoginAttempts(user.getUserId());
+                USER_DAO.resetLoginAttempts(user.getUserId());
                 return user;
             } else {
                 // Failed login - increment attempts
                 loginAttempts++;
                 if (loginAttempts == 1) {
                     // First failed attempt - set timestamp
-                    userDao.updateLoginAttempts(user.getUserId(), loginAttempts, new Timestamp(System.currentTimeMillis()));
+                    USER_DAO.updateLoginAttempts(user.getUserId(), loginAttempts, new Timestamp(System.currentTimeMillis()));
                 } else {
-                    userDao.updateLoginAttempts(user.getUserId(), loginAttempts, firstAttempt);
+                    USER_DAO.updateLoginAttempts(user.getUserId(), loginAttempts, firstAttempt);
                 }
                 System.out.println("Invalid username or password. You have " + (3 - loginAttempts) + " attempts left.");
                 ConsoleUtils.waitMessage();
@@ -348,14 +348,14 @@ public class User {
 
         try {
             // Check if username or email already exists
-            if (userDao.findByUsername(user.getUsername()) != null) {
+            if (USER_DAO.findByUsername(user.getUsername()) != null) {
                 throw new IllegalStateException("Username already exists");
             }
-            if (userDao.findByEmail(user.getEmail()) != null) {
+            if (USER_DAO.findByEmail(user.getEmail()) != null) {
                 throw new IllegalStateException("Email already exists");
             }
 
-            return userDao.insert(user);
+            return USER_DAO.insert(user);
         } catch (IllegalStateException e) {
             throw e;
         } catch (Exception e) {
@@ -375,7 +375,7 @@ public class User {
         }
 
         try {
-            return userDao.findById(userId.trim());
+            return USER_DAO.findById(userId.trim());
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve user: " + e.getMessage(), e);
         }
@@ -386,7 +386,7 @@ public class User {
      * @return List of all users
      */
     public static User[] getAllUsers() throws SQLException {
-        User[] users = userDao.findAll();
+        User[] users = USER_DAO.findAll();
         return users;
     }
 
@@ -403,12 +403,12 @@ public class User {
 
         try {
             // If updating email, check that it's not already in use
-            User existingUserWithEmail = userDao.findByEmail(user.getEmail());
+            User existingUserWithEmail = USER_DAO.findByEmail(user.getEmail());
             if (existingUserWithEmail != null && !Objects.equals(existingUserWithEmail.getUserId(), user.getUserId())) {
                 throw new IllegalStateException("Email already in use by another user");
             }
 
-            return userDao.update(user);
+            return USER_DAO.update(user);
         } catch (IllegalStateException e) {
             throw e;
         } catch (Exception e) {
@@ -428,7 +428,7 @@ public class User {
         }
 
         try {
-            return userDao.delete(userId.trim());
+            return USER_DAO.delete(userId.trim());
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete user: " + e.getMessage(), e);
         }
@@ -458,10 +458,10 @@ public class User {
         }
 
         try {
-            User user = userDao.findById(userId.trim());
+            User user = USER_DAO.findById(userId.trim());
             if (user != null && PasswordUtils.verifyPassword(oldPassword.trim(), user.getPassword())) {
                 user.setPassword(newPassword.trim());
-                return userDao.update(user);
+                return USER_DAO.update(user);
             }
             return false;
         } catch (Exception e) {

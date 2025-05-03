@@ -16,9 +16,9 @@ public class Cart {
     private double subtotal;
     private CartItem[] items;
 
-    private static final CartDao cartDao = new CartDao();
-    private static final CartItemDao cartItemDao = new CartItemDao();
-    private static final ProductDao productDao = new ProductDao();
+    private static final CartDao CART_DAO = new CartDao();
+    private static final CartItemDao CART_ITEM_DAO = new CartItemDao();
+    private static final ProductDao PRODUCT_DAO = new ProductDao();
 
     // Default constructor
     public Cart() {
@@ -104,7 +104,7 @@ public class Cart {
         this.items = items;
         updateCartTotals();
         if (items != null && items.length > 0 && items[items.length - 1] != null) {
-            cartItemDao.insert(items[items.length - 1]);
+            CART_ITEM_DAO.insert(items[items.length - 1]);
         }
         itemCount = items != null ? items.length : 0;
     }
@@ -143,15 +143,15 @@ public class Cart {
         }
 
         try {
-            Cart cart = cartDao.findByUserId(user.getUserId());
+            Cart cart = CART_DAO.findByUserId(user.getUserId());
             if (cart == null) {
                 // Create a new cart
                 cart = new Cart();
                 cart.setCustomerId(user.getUserId());
                 cart.setCreatedDate(LocalDateTime.now());
-                boolean cartFlag = cartDao.insert(cart);
+                boolean cartFlag = CART_DAO.insert(cart);
                 if (cartFlag) {
-                    Cart newCart = cartDao.findByUserId(user.getUserId());
+                    Cart newCart = CART_DAO.findByUserId(user.getUserId());
                     cart.setCartId(newCart.getCartId());
                 } else {
                     throw new SQLException("Failed to create new shopping cart");
@@ -159,7 +159,7 @@ public class Cart {
             }
 
             // Load cart items
-            CartItem[] items = cartItemDao.getCartItems(cart.getCartId());
+            CartItem[] items = CART_ITEM_DAO.getCartItems(cart.getCartId());
             cart.setItems(items);
             cart.updateCartTotals();
 
@@ -182,10 +182,10 @@ public class Cart {
         }
 
         try {
-            Cart cart = cartDao.findById(cartId.trim());
+            Cart cart = CART_DAO.findById(cartId.trim());
             if (cart != null) {
                 // Load cart items
-                CartItem[] items = cartItemDao.getCartItems(cartId.trim());
+                CartItem[] items = CART_ITEM_DAO.getCartItems(cartId.trim());
                 cart.setItems(items);
 
                 // Calculate totals
@@ -222,7 +222,7 @@ public class Cart {
 
         try {
             // Check if the product is already in the cart
-            CartItem existingItem = cartItemDao.findByProductId(cart.getCartId(), product.getProductID());
+            CartItem existingItem = CART_ITEM_DAO.findByProductId(cart.getCartId(), product.getProductID());
 
             if (existingItem != null) {
                 int newQuantity = existingItem.getQuantity() + quantity;
@@ -232,7 +232,7 @@ public class Cart {
                 return updateItemQuantity(cart, product.getProductID(), newQuantity);
             } else {
                 CartItem newItem = new CartItem(cart.getCartId(), product, quantity, product.getUnitPrice());
-                return cartItemDao.insert(newItem);
+                return CART_ITEM_DAO.insert(newItem);
             }
         } catch (IllegalStateException e) {
             throw e;
@@ -266,18 +266,18 @@ public class Cart {
                 return removeItemFromCart(cart, productId);
             }
 
-            CartItem item = cartItemDao.findByProductId(cart.getCartId(), productId.trim());
+            CartItem item = CART_ITEM_DAO.findByProductId(cart.getCartId(), productId.trim());
             if (item == null) {
                 return false;
             }
 
-            Product product = productDao.findById(productId.trim());
+            Product product = PRODUCT_DAO.findById(productId.trim());
             if (product == null || product.getCurrentQuantity() < quantity) {
                 throw new IllegalStateException("Not enough stock available");
             }
 
             item.setQuantity(quantity);
-            return cartItemDao.update(item);
+            return CART_ITEM_DAO.update(item);
         } catch (IllegalStateException e) {
             throw e;
         } catch (Exception e) {
@@ -302,12 +302,12 @@ public class Cart {
         }
 
         try {
-            CartItem item = cartItemDao.findByProductId(cart.getCartId(), productId.trim());
+            CartItem item = CART_ITEM_DAO.findByProductId(cart.getCartId(), productId.trim());
             if (item == null) {
                 return false;
             }
 
-            return cartItemDao.delete(item.getCartItemId());
+            return CART_ITEM_DAO.delete(item.getCartItemId());
         } catch (Exception e) {
             throw new SQLException("Failed to remove item from cart: " + e.getMessage(), e);
         }
@@ -325,7 +325,7 @@ public class Cart {
         }
 
         try {
-            cartItemDao.deleteAllCartItems(cart.getCartId());
+            CART_ITEM_DAO.deleteAllCartItems(cart.getCartId());
             cart.setItems(new CartItem[0]);
             cart.updateCartTotals();
         } catch (Exception e) {
@@ -346,7 +346,7 @@ public class Cart {
         }
 
         try {
-            return cartDao.update(cart);
+            return CART_DAO.update(cart);
         } catch (Exception e) {
             throw new SQLException("Failed to save cart: " + e.getMessage(), e);
         }
