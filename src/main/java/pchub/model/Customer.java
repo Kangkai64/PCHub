@@ -194,13 +194,54 @@ public class Customer extends User {
 
     public Address addNewAddress() {
         ConsoleUtils.printHeader("     Add New Address      ");
-        String street = ConsoleUtils.getStringInput(scanner, "Street: ");
-        String city = ConsoleUtils.getStringInput(scanner, "City: ");
-        String state = ConsoleUtils.getStringInput(scanner, "State: ");
-        String zipCode = ConsoleUtils.getStringInput(scanner, "Zip Code: ");
-        String country = ConsoleUtils.getStringInput(scanner, "Country: ");
+
+        // Get and validate street
+        String street = null;
+        while (street == null || street.trim().isEmpty()) {
+            street = ConsoleUtils.getStringInput(scanner, "Street: ");
+            if (street == null || street.trim().isEmpty()) {
+                System.out.println("Street cannot be empty. Please try again.");
+            }
+        }
+
+        // Get and validate city
+        String city = null;
+        while (city == null || city.trim().isEmpty()) {
+            city = ConsoleUtils.getStringInput(scanner, "City: ");
+            if (city == null || city.trim().isEmpty()) {
+                System.out.println("City cannot be empty. Please try again.");
+            }
+        }
+
+        // Get and validate state
+        String state = null;
+        while (state == null || state.trim().isEmpty()) {
+            state = ConsoleUtils.getStringInput(scanner, "State: ");
+            if (state == null || state.trim().isEmpty()) {
+                System.out.println("State cannot be empty. Please try again.");
+            }
+        }
+
+        // Get and validate zip code
+        String zipCode = null;
+        while (zipCode == null || zipCode.trim().isEmpty()) {
+            zipCode = ConsoleUtils.getStringInput(scanner, "Zip Code: ");
+            if (zipCode == null || zipCode.trim().isEmpty()) {
+                System.out.println("Zip Code cannot be empty. Please try again.");
+            }
+        }
+
+        // Get and validate country
+        String country = null;
+        while (country == null || country.trim().isEmpty()) {
+            country = ConsoleUtils.getStringInput(scanner, "Country: ");
+            if (country == null || country.trim().isEmpty()) {
+                System.out.println("Country cannot be empty. Please try again.");
+            }
+        }
 
         try {
+            // All fields are now validated and non-empty
             Address address = new Address(null, this.getUserId(), street, city, state, zipCode, country);
 
             boolean added = Address.addAddress(address);

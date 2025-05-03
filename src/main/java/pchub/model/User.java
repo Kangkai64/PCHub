@@ -2,6 +2,7 @@ package pchub.model;
 
 import pchub.model.enums.UserRole;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -257,7 +258,15 @@ public class User {
             if (loginAttempts >= 3 && firstAttempt != null) {
                 long hoursSinceFirstAttempt = (System.currentTimeMillis() - firstAttempt.getTime()) / (60 * 60 * 1000);
                 if (hoursSinceFirstAttempt < 5) {
-                    System.out.println("Account temporarily blocked due to multiple failed attempts. Please try again at " + (firstAttempt.getTime() + 5 * 60 * 60 * 1000) + ".");
+                    // Calculate unlock timestamp in milliseconds
+                    long unlockTimeMillis = firstAttempt.getTime() + 5 * 60 * 60 * 1000;
+                    // Convert to readable date/time format
+                    Date unlockTimestamp = new Date(unlockTimeMillis);
+                    // Format the date using SimpleDateFormat
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                    String formattedUnlockTime = dateFormat.format(unlockTimestamp);
+
+                    System.out.println("Account temporarily blocked due to multiple failed attempts. Please try again at " + formattedUnlockTime + ".");
                     return null;
                 } else {
                     // Reset attempts if 5 hours have passed

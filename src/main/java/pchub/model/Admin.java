@@ -717,7 +717,8 @@ public class Admin extends User {
             System.out.println("Current user status: " + user.getStatus());
             System.out.println("1. Block User");
             System.out.println("2. Unblock User");
-            System.out.println("3. Back");
+            System.out.println("3. Reset Login Attempt");
+            System.out.println("4. Back");
 
             int choice = ConsoleUtils.getIntInput(scanner, "Enter your choice: ", 1, 3);
 
@@ -737,6 +738,13 @@ public class Admin extends User {
                     }
                     break;
                 case 3:
+                    if (userDao.resetLoginAttempts(userId)) {
+                        System.out.println("Reset login attempt successful.");
+                    } else {
+                        System.out.println("Failed to reset login attempt.");
+                    }
+                    break;
+                case 4:
                     return;
             }
         } catch (Exception e) {
