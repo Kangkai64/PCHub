@@ -715,21 +715,21 @@ public class Admin extends User {
 
             switch (choice) {
                 case 1:
-                    if (userDao.blockUser(userId)) {
+                    if (USER_DAO.blockUser(userId)) {
                         System.out.println("User blocked successfully!");
                     } else {
                         System.out.println("Failed to block user.");
                     }
                     break;
                 case 2:
-                    if (userDao.unblockUser(userId)) {
+                    if (USER_DAO.unblockUser(userId)) {
                         System.out.println("User unblocked successfully!");
                     } else {
                         System.out.println("Failed to unblock user.");
                     }
                     break;
                 case 3:
-                    if (userDao.resetLoginAttempts(userId)) {
+                    if (USER_DAO.resetLoginAttempts(userId)) {
                         System.out.println("Reset login attempt successful.");
                     } else {
                         System.out.println("Failed to reset login attempt.");

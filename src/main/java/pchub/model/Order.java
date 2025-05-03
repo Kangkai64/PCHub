@@ -1,7 +1,6 @@
 package pchub.model;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Objects;
@@ -31,14 +30,10 @@ public class Order {
     private PaymentMethod paymentMethod;
 
     private static final int MAX_ITEMS = 30;
-    private static final OrderDao orderDao = new OrderDao();
-    private static final OrderItemDao orderItemDao = new OrderItemDao();
-    private static final ProductDao productDao = new ProductDao();
-    private static final BillDao billDao = new BillDao();
-    private static final AddressDao addressDao = new AddressDao();
-    private static final PaymentMethodDao paymentMethodDao = new PaymentMethodDao();
-    private static final BigDecimal TAX_RATE = new BigDecimal("0.13"); // 13% tax rate
-    private static final BigDecimal SHIPPING_RATE = new BigDecimal("9.99"); // Standard shipping cost
+    private static final OrderDao ORDER_DAO = new OrderDao();
+    private static final OrderItemDao ORDER_ITEM_DAO = new OrderItemDao();
+    private static final ProductDao PRODUCT_DAO = new ProductDao();
+    private static final BillDao BILL_DAO = new BillDao();
 
     /**
      * Default constructor
@@ -257,7 +252,7 @@ public class Order {
                     totalAmount, null, shippingAddress, paymentMethod);
 
             // Insert the order first
-            if (!orderDao.insert(order)) {
+            if (!ORDER_DAO.insert(order)) {
                 throw new SQLException("Failed to insert order");
             }
 
@@ -271,7 +266,7 @@ public class Order {
                             cartItem.getQuantity(), cartItem.getUnitPrice());
 
                     orderItems[itemCount] = orderItem;
-                    orderItemDao.insert(orderItems[itemCount]);
+                    ORDER_ITEM_DAO.insert(orderItems[itemCount]);
                     itemCount++;
                 }
             }
@@ -301,7 +296,7 @@ public class Order {
             // First, check if all products are in stock
             for (OrderItem item : order.getItems()) {
                 if (item != null) {
-                    Product product = productDao.findById(item.getProduct().getProductID());
+                    Product product = PRODUCT_DAO.findById(item.getProduct().getProductID());
                     if (product == null || product.getCurrentQuantity() < item.getQuantity()) {
                         throw new IllegalStateException("Product " + item.getProduct().getProductID() + " is out of stock or does not exist");
                     }
@@ -313,14 +308,14 @@ public class Order {
                 if (item != null) {
                     Product product = item.getProduct();
                     product.setCurrentQuantity(product.getCurrentQuantity() - item.getQuantity());
-                    if (!productDao.update(product)) {
+                    if (!PRODUCT_DAO.update(product)) {
                         throw new RuntimeException("Failed to update product quantity");
                     }
                 }
             }
 
             // Save the order
-            boolean orderSaved = orderDao.insert(order);
+            boolean orderSaved = ORDER_DAO.insert(order);
 
             // Clear the cart after successful order placement
             if (orderSaved) {
@@ -349,7 +344,7 @@ public class Order {
         }
 
         try {
-            Order order = orderDao.findById(orderId.trim());
+            Order order = ORDER_DAO.findById(orderId.trim());
             if (order == null) {
                 return null;
             }
@@ -357,7 +352,7 @@ public class Order {
             // Create bill using the new constructor
             Bill bill = new Bill(order);
 
-            if (billDao.insert(bill)) {
+            if (BILL_DAO.insert(bill)) {
                 bill.setBillId(bill.getBillId());
                 bill.setPaymentStatus(bill.getPaymentStatus());
             } else {
@@ -382,7 +377,7 @@ public class Order {
         }
 
         try {
-            return orderDao.findById(orderId.trim());
+            return ORDER_DAO.findById(orderId.trim());
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve order: " + e.getMessage(), e);
         }
@@ -400,7 +395,7 @@ public class Order {
         }
 
         try {
-            return orderDao.findByUserId(customerId.trim());
+            return ORDER_DAO.findByUserId(customerId.trim());
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve user orders: " + e.getMessage(), e);
         }
@@ -412,7 +407,7 @@ public class Order {
      */
     public static Order[] getAllOrders() {
         try {
-            return orderDao.findAll();
+            return ORDER_DAO.findAll();
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve all orders: " + e.getMessage(), e);
         }
@@ -434,13 +429,13 @@ public class Order {
         }
 
         try {
-            Order order = orderDao.findById(orderId.trim());
+            Order order = ORDER_DAO.findById(orderId.trim());
             if (order == null) {
                 return false;
             }
 
             order.setStatus(newStatus);
-            return orderDao.update(order);
+            return ORDER_DAO.update(order);
         } catch (Exception e) {
             throw new RuntimeException("Failed to update order status: " + e.getMessage(), e);
         }
@@ -462,18 +457,18 @@ public class Order {
         }
 
         try {
-            Bill bill = billDao.findById(billId.trim());
+            Bill bill = BILL_DAO.findById(billId.trim());
             if (bill == null) {
                 return false;
             }
 
             // Update transaction ID
-            if (!billDao.update(bill)) {
+            if (!BILL_DAO.update(bill)) {
                 return false;
             }
 
             // Update payment status to COMPLETED
-            return billDao.update(bill);
+            return BILL_DAO.update(bill);
         } catch (Exception e) {
             throw new RuntimeException("Failed to process payment: " + e.getMessage(), e);
         }

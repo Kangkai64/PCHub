@@ -15,7 +15,7 @@ public class ProductCategory {
     private String parentCategory;
     private String description;
     private ProductCategory[] subCategories;
-    private static final ProductCategoryDao productCategoryDao = new ProductCategoryDao();
+    private static final ProductCategoryDao PRODUCT_CATEGORY_DAO = new ProductCategoryDao();
 
     /**
      * Default constructor
@@ -93,7 +93,7 @@ public class ProductCategory {
         }
 
         try{
-            return productCategoryDao.findById(product_categoryID);
+            return PRODUCT_CATEGORY_DAO.findById(product_categoryID);
         } catch (SQLException e) {
             System.out.println("Error retrieving product category by Id: " + e.getMessage());
         }
@@ -102,7 +102,7 @@ public class ProductCategory {
 
     public static ProductCategory[] findAll() {
         try{
-            return productCategoryDao.findAll();
+            return PRODUCT_CATEGORY_DAO.findAll();
         } catch(SQLException e){
             System.out.println("Error retrieving all product category: " + e.getMessage());
         }
@@ -116,7 +116,7 @@ public class ProductCategory {
         }
 
         try{
-            return productCategoryDao.insert(productCategory);
+            return PRODUCT_CATEGORY_DAO.insert(productCategory);
         } catch(SQLException e){
             System.out.println("Error adding product category: " + e.getMessage());
         }
@@ -130,7 +130,7 @@ public class ProductCategory {
         }
 
         try{
-            return productCategoryDao.update(productCategory);
+            return PRODUCT_CATEGORY_DAO.update(productCategory);
         } catch(SQLException e){
             System.out.println("Error updating product category: " + e.getMessage());
         }
@@ -144,7 +144,7 @@ public class ProductCategory {
         }
 
         try{
-            return productCategoryDao.delete(product_categoryID);
+            return PRODUCT_CATEGORY_DAO.delete(product_categoryID);
         } catch(SQLException e){
             System.out.println("Error deleting product category: " + e.getMessage());
         }

@@ -27,8 +27,8 @@ public class Bill {
     private Date issueDate;
     private PaymentStatus paymentStatus;
 
-    private static final BillDao billDao = new BillDao();
-    private static final PaymentMethodDao paymentMethodDao = new PaymentMethodDao();
+    private static final BillDao BILL_DAO = new BillDao();
+    private static final PaymentMethodDao PAYMENT_METHOD_DAO = new PaymentMethodDao();
 
     /**
      * Default constructor
@@ -247,7 +247,7 @@ public class Bill {
      */
     public static PaymentMethod[] getAllPaymentMethods() {
         try {
-            return paymentMethodDao.findAll();
+            return PAYMENT_METHOD_DAO.findAll();
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve payment methods: " + e.getMessage(), e);
         }
@@ -265,7 +265,7 @@ public class Bill {
         }
 
         try {
-            return paymentMethodDao.findById(paymentMethodId.trim());
+            return PAYMENT_METHOD_DAO.findById(paymentMethodId.trim());
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve payment method: " + e.getMessage(), e);
         }
@@ -287,7 +287,7 @@ public class Bill {
         }
 
         PaymentMethod paymentMethod = new PaymentMethod(name.trim(), description.trim());
-        return paymentMethodDao.insert(paymentMethod);
+        return PAYMENT_METHOD_DAO.insert(paymentMethod);
     }
 
     /**
@@ -309,7 +309,7 @@ public class Bill {
             throw new IllegalArgumentException("Payment method description cannot be null or empty");
         }
 
-        PaymentMethod existingMethod = paymentMethodDao.findById(paymentMethodId.trim());
+        PaymentMethod existingMethod = PAYMENT_METHOD_DAO.findById(paymentMethodId.trim());
         if (existingMethod == null) {
             return false;
         }
@@ -320,7 +320,7 @@ public class Bill {
                 description.trim(),
                 existingMethod.getAddedDate()
         );
-        return paymentMethodDao.update(updatedMethod);
+        return PAYMENT_METHOD_DAO.update(updatedMethod);
     }
 
     /**
@@ -335,7 +335,7 @@ public class Bill {
         }
 
         try {
-            return paymentMethodDao.delete(paymentMethodId.trim());
+            return PAYMENT_METHOD_DAO.delete(paymentMethodId.trim());
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete payment method: " + e.getMessage(), e);
         }
@@ -353,7 +353,7 @@ public class Bill {
         }
 
         try {
-            return billDao.update(bill);
+            return BILL_DAO.update(bill);
         } catch (Exception e) {
             throw new RuntimeException("Failed to process bill: " + e.getMessage(), e);
         }
@@ -371,7 +371,7 @@ public class Bill {
         }
 
         try {
-            return billDao.update(bill);
+            return BILL_DAO.update(bill);
         } catch (Exception e) {
             throw new RuntimeException("Failed to refund payment: " + e.getMessage(), e);
         }

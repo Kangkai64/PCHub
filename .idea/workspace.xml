@@ -6,7 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="a8cace0c-3eb5-48f1-aae0-75fbd2f15355" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Address.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Address.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Admin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Bill.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Bill.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Cart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Cart.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Order.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/ProductCatalogue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/ProductCatalogue.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/ProductCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/ProductCategory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/pchub/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/pchub/model/User.java" afterDir="false" />
     </list>
@@ -144,7 +150,7 @@
       <workItem from="1746265857183" duration="2464000" />
       <workItem from="1746269664783" duration="710000" />
       <workItem from="1746270487133" duration="355000" />
-      <workItem from="1746272993025" duration="3010000" />
+      <workItem from="1746272993025" duration="4263000" />
     </task>
     <task id="LOCAL-00001" summary="Removed unnecessary interfaces and impls">
       <option name="closed" value="true" />

@@ -20,7 +20,7 @@ public class Product {
     private int currentQuantity;
     private String specifications;
 
-    private static final ProductDao productDao = new ProductDao();
+    private static final ProductDao PRODUCT_DAO = new ProductDao();
 
     /**
      * Default constructor
@@ -173,7 +173,7 @@ public class Product {
      */
     public static Product[] getAllProducts() {
         try {
-            return productDao.findAll();
+            return PRODUCT_DAO.findAll();
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve products: " + e.getMessage(), e);
         }
@@ -191,7 +191,7 @@ public class Product {
         }
 
         try {
-            Product[] allProducts = productDao.findAll();
+            Product[] allProducts = PRODUCT_DAO.findAll();
             String lowercaseKeyword = keyword.toLowerCase().trim();
 
             return Arrays.stream(allProducts)
@@ -216,7 +216,7 @@ public class Product {
         }
 
         try {
-            return productDao.findByCategory(category.trim());
+            return PRODUCT_DAO.findByCategory(category.trim());
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve products by category: " + e.getMessage(), e);
         }
@@ -234,7 +234,7 @@ public class Product {
         }
 
         try {
-            return productDao.findById(productId.trim());
+            return PRODUCT_DAO.findById(productId.trim());
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve product: " + e.getMessage(), e);
         }
@@ -252,7 +252,7 @@ public class Product {
         }
 
         try {
-            return productDao.insert(product);
+            return PRODUCT_DAO.insert(product);
         } catch (Exception e) {
             throw new RuntimeException("Failed to add product: " + e.getMessage(), e);
         }
@@ -270,7 +270,7 @@ public class Product {
         }
 
         try {
-            return productDao.update(product);
+            return PRODUCT_DAO.update(product);
         } catch (Exception e) {
             throw new RuntimeException("Failed to update product: " + e.getMessage(), e);
         }
@@ -288,7 +288,7 @@ public class Product {
         }
 
         try {
-            return productDao.delete(productId.trim());
+            return PRODUCT_DAO.delete(productId.trim());
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete product: " + e.getMessage(), e);
         }
