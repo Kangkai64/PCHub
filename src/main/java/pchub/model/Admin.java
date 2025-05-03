@@ -693,7 +693,7 @@ public class Admin extends User {
                     if (order != null) {
                         System.out.printf("%s | %s | %s | %s | $%.2f\n",
                                 order.getOrderId(),
-                                order.getCustomerName(),
+                                order.getCustomer().getUsername(),
                                 order.getOrderDate(),
                                 order.getStatus(),
                                 order.getTotalAmount());
@@ -1047,7 +1047,7 @@ public class Admin extends User {
             // Process orders
             for (Order order : orders) {
                 if (order != null && order.getStatus() != OrderStatus.CANCELLED) {
-                    String customerId = order.getCustomerId();
+                    String customerId = order.getCustomer().getUserId();
 
                     // Update customer spending and order count
                     for (int i = 0; i < customerCount; i++) {

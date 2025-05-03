@@ -1,5 +1,6 @@
 package pchub.dao;
 
+import pchub.model.Customer;
 import pchub.model.User;
 import pchub.model.enums.UserRole;
 import pchub.utils.DatabaseConnection;
@@ -34,6 +35,55 @@ public class UserDao extends DaoTemplate<User> {
         }
 
         return null;
+    }
+
+    /**
+     * Finds a customer by their user ID.
+     *
+     * @param userId The ID of the customer to find
+     * @return The Customer object or null if not found or if user is not a customer
+     * @throws SQLException If a database error occurs
+     */
+    public Customer findCustomerById(String userId) throws SQLException {
+        User user = findById(userId);
+        if (user != null && user.getRole() == UserRole.CUSTOMER) {
+            return convertToCustomer(user);
+        }
+        return null;
+    }
+
+    /**
+     * Converts a User object to a Customer object if the role is CUSTOMER.
+     * Uses the Customer(User) constructor to simplify conversion.
+     *
+     * @param user The User object to convert
+     * @return A Customer object with the User's properties
+     */
+    private Customer convertToCustomer(User user) {
+        if (user == null || user.getRole() != UserRole.CUSTOMER) {
+            return null;
+        }
+
+        // Create a new Customer instance using the constructor that takes a User
+        Customer customer = new Customer(user);
+
+        // Load any Customer-specific properties if needed
+        loadCustomerSpecificProperties(customer);
+
+        return customer;
+    }
+
+    /**
+     * Loads any additional Customer-specific properties from the database.
+     *
+     * @param customer The Customer object to load properties for
+     */
+    private void loadCustomerSpecificProperties(Customer customer) {
+        // If Customer has additional properties that are stored in a separate table,
+        // you would load them here using an additional query
+        // For example:
+        // String sql = "SELECT * FROM customer_details WHERE userID = ?";
+        // ...
     }
 
     public User findByUsername(String username) throws SQLException {
@@ -200,7 +250,30 @@ public class UserDao extends DaoTemplate<User> {
 
     @Override
     protected User mapResultSet(ResultSet resultSet) throws SQLException {
-        User user = new User();
+        String role = resultSet.getString("role");
+        UserRole userRole = UserRole.valueOf(role);
+
+        // For future flexibility, you can create different user types based on role
+        if (userRole == UserRole.CUSTOMER) {
+            Customer customer = new Customer();
+            mapBaseUserFields(customer, resultSet);
+            // Map any Customer-specific fields
+            return customer;
+        } else {
+            User user = new User();
+            mapBaseUserFields(user, resultSet);
+            return user;
+        }
+    }
+
+    /**
+     * Maps the common user fields from the result set to the User object
+     *
+     * @param user The User object to map fields to
+     * @param resultSet The ResultSet containing the user data
+     * @throws SQLException If a database error occurs
+     */
+    private void mapBaseUserFields(User user, ResultSet resultSet) throws SQLException {
         user.setUserId(resultSet.getString("userID"));
         user.setUsername(resultSet.getString("username"));
         user.setPassword(resultSet.getString("password"));
@@ -211,6 +284,5 @@ public class UserDao extends DaoTemplate<User> {
         user.setPhone(resultSet.getString("phone"));
         user.setFullName(resultSet.getString("fullName"));
         user.setRole(UserRole.valueOf(resultSet.getString("role")));
-        return user;
     }
 }

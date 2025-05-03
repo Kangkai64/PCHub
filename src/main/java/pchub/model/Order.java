@@ -22,9 +22,8 @@ import pchub.model.enums.PaymentStatus;
  */
 public class Order {
     private String orderId;
-    private String customerId;
-    private String customerName;
     private Date orderDate;
+    private Customer customer;
     private OrderStatus status;
     private double totalAmount;
     private OrderItem[] items;
@@ -52,16 +51,14 @@ public class Order {
 
     /**
      * Parameterized constructor
-     * @param customerId The ID of the customer who placed the order
-     * @param customerName The username of the customer
+     * @param customer The customer who placed the order
      * @param shippingAddress The shipping address for the order
      * @param paymentMethod The payment method for the order
      * @throws IllegalArgumentException if any parameter is invalid
      */
-    public Order(String customerId, String customerName, Address shippingAddress, PaymentMethod paymentMethod) {
+    public Order(Customer customer, Address shippingAddress, PaymentMethod paymentMethod) {
         this();
-        this.customerId = customerId;
-        this.customerName = customerName;
+        this.customer = customer;
         this.shippingAddress = shippingAddress;
         this.paymentMethod = paymentMethod;
     }
@@ -69,8 +66,7 @@ public class Order {
     /**
      * Full parameterized constructor
      * @param orderId The unique identifier for the order
-     * @param customerId The ID of the customer who placed the order
-     * @param customerName The username of the customer
+     * @param customer The customer who placed the order
      * @param orderDate The date the order was placed
      * @param status The status of the order
      * @param totalAmount The total amount of the order
@@ -79,12 +75,11 @@ public class Order {
      * @param paymentMethod The payment method for the order
      * @throws IllegalArgumentException if any parameter is invalid
      */
-    public Order(String orderId, String customerId, String customerName, Date orderDate,
+    public Order(String orderId, Customer customer, Date orderDate,
                  OrderStatus status, double totalAmount, OrderItem[] items, Address shippingAddress,
                  PaymentMethod paymentMethod) {
         this.orderId = orderId;
-        this.customerId = customerId;
-        this.customerName = customerName;
+        this.customer = customer;
         this.orderDate = orderDate;
         this.status = status;
         this.totalAmount = totalAmount;
@@ -105,28 +100,6 @@ public class Order {
         this.orderId = orderId.trim();
     }
 
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        if (customerId == null || customerId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Customer ID cannot be null or empty");
-        }
-        this.customerId = customerId.trim();
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        if (customerName == null || customerName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Customer name cannot be null or empty");
-        }
-        this.customerName = customerName.trim();
-    }
-
     public Date getOrderDate() {
         return orderDate;
     }
@@ -136,6 +109,14 @@ public class Order {
             throw new IllegalArgumentException("Order date cannot be null");
         }
         this.orderDate = orderDate;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public OrderStatus getStatus() {
@@ -218,8 +199,8 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order ID: " + orderId + ", Customer ID: " + customerId +
-                ", Customer Name: " + customerName + ", Order Date: " + orderDate +
+        return "Order ID: " + orderId + ", Customer ID: " + customer.getUserId() +
+                ", Customer Name: " + customer.getUsername() + ", Order Date: " + orderDate +
                 ", Status: " + status + ", Total Amount: " + totalAmount;
     }
 
@@ -238,16 +219,16 @@ public class Order {
 
     /**
      * Creates an order from a shopping cart
-     * @param user The user placing the order
+     * @param customer The user placing the order
      * @param cart The shopping cart containing items
      * @param shippingAddress The shipping address for the order
      * @param paymentMethod The payment method to be used
      * @return The created order, or null if cart is empty or invalid
      * @throws IllegalArgumentException if any parameter is null
      */
-    public static Order createOrderFromCart(User user, Cart cart, Address shippingAddress, PaymentMethod paymentMethod) throws SQLException {
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
+    public static Order createOrderFromCart(Customer customer, Cart cart, Address shippingAddress, PaymentMethod paymentMethod) throws SQLException {
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer cannot be null");
         }
         if (cart == null) {
             throw new IllegalArgumentException("Cart cannot be null");
@@ -272,14 +253,8 @@ public class Order {
             }
 
             // Create and populate the order
-            Order order = new Order();
-            order.setCustomerId(user.getUserId());
-            order.setCustomerName(user.getUsername());
-            order.setOrderDate(new Date()); // Set current date
-            order.setStatus(OrderStatus.PENDING); // Set initial status
-            order.setTotalAmount(totalAmount);
-            order.setShippingAddress(shippingAddress);
-            order.setPaymentMethod(paymentMethod);
+            Order order = new Order(null, customer, new Date(), OrderStatus.PENDING,
+                    totalAmount, null, shippingAddress, paymentMethod);
 
             // Insert the order first
             if (!orderDao.insert(order)) {
@@ -350,7 +325,7 @@ public class Order {
             // Clear the cart after successful order placement
             if (orderSaved) {
                 Cart cart = new Cart();
-                cart.setCustomerId(order.getCustomerId());
+                cart.setCustomerId(order.getCustomer().getUserId());
                 Cart.clearCart(cart);
             }
 

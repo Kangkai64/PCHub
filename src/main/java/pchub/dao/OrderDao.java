@@ -101,7 +101,7 @@ public class OrderDao extends DaoTemplate<Order> {
             connection.setAutoCommit(false);
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                preparedStatement.setString(1, order.getCustomerId());
+                preparedStatement.setString(1, order.getCustomer().getUserId());
                 preparedStatement.setTimestamp(2, new Timestamp(order.getOrderDate().getTime()));
                 preparedStatement.setString(3, order.getStatus().name().toUpperCase());
                 preparedStatement.setDouble(4, order.getTotalAmount());
@@ -112,7 +112,7 @@ public class OrderDao extends DaoTemplate<Order> {
 
                 if (affectedRows > 0) {
                     // Get the generated order ID using the same connection
-                    String orderId = getLastInsertId(connection, order.getCustomerId());
+                    String orderId = getLastInsertId(connection, order.getCustomer().getUserId());
                     if (orderId != null) {
                         order.setOrderId(orderId);
                         // Commit the transaction
@@ -224,9 +224,12 @@ public class OrderDao extends DaoTemplate<Order> {
 
     @Override
     protected Order mapResultSet(ResultSet resultSet) throws SQLException {
+        UserDao userDao = new UserDao();
+
         String orderId = resultSet.getString("orderID");
         String customerId = resultSet.getString("customerID");
-        String customerName = getUserName(customerId);
+        Customer customer = (Customer) userDao.findById(customerId);
+
         Date orderDate = resultSet.getTimestamp("orderDate");
         OrderStatus status = OrderStatus.valueOf(resultSet.getString("orderStatus").toUpperCase());
         double totalAmount = resultSet.getDouble("totalAmount");
@@ -238,22 +241,9 @@ public class OrderDao extends DaoTemplate<Order> {
         PaymentMethod paymentMethod = paymentMethodDao.findById(paymentMethodId);
 
         // Create and return the Order object
-        Order order = new Order(orderId, customerId, customerName, orderDate, status, totalAmount,
+        Order order = new Order(orderId, customer, orderDate, status, totalAmount,
                 new OrderItem[0], shippingAddress, paymentMethod);
         return order;
-    }
-
-    private String getUserName(String customerId) throws SQLException {
-        String sql = "SELECT username FROM user WHERE userID = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, customerId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getString("username");
-            }
-        }
-        return null;
     }
 
     private void loadOrderItems(Connection connection, Order order) throws SQLException {

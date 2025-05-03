@@ -1,7 +1,11 @@
 package pchub.dao;
 
 import pchub.model.Bill;
+import pchub.model.Customer;
+import pchub.model.Order;
+import pchub.model.User;
 import pchub.model.enums.PaymentStatus;
+import pchub.model.enums.UserRole;
 import pchub.utils.DatabaseConnection;
 
 import java.sql.*;
@@ -36,7 +40,7 @@ public class BillDao extends DaoTemplate<Bill> {
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            preparedStatement.setString(1, bill.getOrderId());
+            preparedStatement.setString(1, bill.getOrder().getOrderId());
             preparedStatement.setBigDecimal(2, bill.getTotalAmount());
             preparedStatement.setString(3, bill.getPaymentMethod().getPaymentMethodId());
             preparedStatement.setString(4, bill.getTransactionId());
@@ -49,7 +53,7 @@ public class BillDao extends DaoTemplate<Bill> {
                 // Get the last inserted bill ID using a separate query
                 String getLastIdSql = "SELECT billID FROM bill WHERE orderID = ? ORDER BY billID DESC LIMIT 1";
                 try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
-                    getLastIdStmt.setString(1, bill.getOrderId());
+                    getLastIdStmt.setString(1, bill.getOrder().getOrderId());
 
                     try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
                         if (resultSet.next()) {
@@ -114,7 +118,7 @@ public class BillDao extends DaoTemplate<Bill> {
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            preparedStatement.setString(1, bill.getOrderId());
+            preparedStatement.setString(1, bill.getOrder().getOrderId());
             preparedStatement.setBigDecimal(2, bill.getTotalAmount());
             preparedStatement.setString(3, bill.getPaymentMethod().getPaymentMethodId());
             preparedStatement.setString(4, bill.getTransactionId());
@@ -149,9 +153,28 @@ public class BillDao extends DaoTemplate<Bill> {
 
     @Override
     protected Bill mapResultSet(ResultSet resultSet) throws SQLException {
+        OrderDao orderDao = new OrderDao();
+        UserDao userDao = new UserDao();
+
         Bill bill = new Bill();
         bill.setBillId(resultSet.getString("billID"));
-        bill.setOrderId(resultSet.getString("orderID"));
+        String orderId = resultSet.getString("orderID");
+        Order order = orderDao.findById(orderId);
+        bill.setOrder(order);
+
+        // Get the user ID from the order
+        String customerId = order.getCustomer().getUserId();
+        User user = userDao.findById(customerId);
+
+        // Simple conversion using the Customer constructor
+        if (user != null && user.getRole() == UserRole.CUSTOMER) {
+            Customer customer = new Customer(user);
+            bill.setCustomer(customer);
+        } else {
+            // Handle the case where the user is not a Customer or doesn't exist
+            throw new IllegalStateException("User with ID " + customerId + " is not a Customer or doesn't exist");
+        }
+
         bill.setTotalAmount(resultSet.getBigDecimal("amount"));
         bill.getPaymentMethod().setPaymentMethodId(resultSet.getString("payment_MethodID"));
         bill.setTransactionId(resultSet.getString("transactionID"));

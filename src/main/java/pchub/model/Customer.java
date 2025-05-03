@@ -19,6 +19,9 @@ public class Customer extends User {
         this.address = address;
     }
 
+    public Customer(){
+    }
+
     public void viewOrderHistory() {
         ConsoleUtils.printHeader("      Order History      ");
         try {
@@ -56,13 +59,13 @@ public class Customer extends User {
 
     public void displayBill(Bill bill) {
         ConsoleUtils.printHeader("             PCHub RECEIPT             ");
-        System.out.println("Order ID: " + bill.getOrderId());
+        System.out.println("Order ID: " + bill.getOrder().getOrderId());
         System.out.println("Date: " + bill.getIssueDate());
-        System.out.println("Customer: " + bill.getCustomerName());
+        System.out.println("Customer: " + bill.getCustomer().getUsername());
 
         System.out.println("\nItems:");
         System.out.println("------------------------------------------");
-        for (OrderItem item : bill.getItems()) {
+        for (OrderItem item : bill.getOrder().getItems()) {
             System.out.printf("%-20s %2d x $%6.2f = $%7.2f\n",
                     item.getProduct().getName(),
                     item.getQuantity(),

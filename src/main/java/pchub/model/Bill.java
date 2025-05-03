@@ -18,11 +18,8 @@ import pchub.model.enums.PaymentStatus;
  */
 public class Bill {
     private String billId;
-    private String orderId;
-    private String customerId;
-    private String customerName;
-    private Address shippingAddress;
-    private OrderItem[] items;
+    private Order order;
+    private Customer customer;
     private BigDecimal subtotal;
     private BigDecimal tax;
     private BigDecimal shippingCost;
@@ -42,7 +39,7 @@ public class Bill {
      */
     public Bill() {
         this.issueDate = new Date();
-        this.items = new OrderItem[MAX_ITEMS];
+        this.order = new Order();
         this.subtotal = BigDecimal.ZERO;
         this.tax = BigDecimal.ZERO;
         this.shippingCost = BigDecimal.ZERO;
@@ -60,11 +57,8 @@ public class Bill {
             throw new IllegalArgumentException("Order cannot be null");
         }
 
-        this.orderId = order.getOrderId();
-        this.customerId = order.getCustomerId();
-        this.customerName = order.getCustomerName();
-        this.shippingAddress = order.getShippingAddress();
-        this.items = order.getItems();
+        this.order = order;
+        this.customer = order.getCustomer();
         this.paymentMethod = order.getPaymentMethod();
         this.issueDate = new Date();
         this.paymentStatus = PaymentStatus.PENDING;
@@ -87,62 +81,26 @@ public class Bill {
         this.billId = billId.trim();
     }
 
-    public String getOrderId() {
-        return orderId;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setOrderId(String orderId) {
-        if (orderId == null || orderId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Order ID cannot be null or empty");
+    public void setOrder(Order order) {
+        if (order == null) {
+            throw new IllegalArgumentException("Order cannot be null");
         }
-        this.orderId = orderId.trim();
+        this.order = order;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(String customerId) {
-        if (customerId == null || customerId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Customer ID cannot be null or empty");
+    public void setCustomer(Customer customer) {
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer cannot be null");
         }
-        this.customerId = customerId.trim();
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        if (customerName == null || customerName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Customer name cannot be null or empty");
-        }
-        this.customerName = customerName.trim();
-    }
-
-    public Address getShippingAddress() {
-        return shippingAddress;
-    }
-
-    public void setShippingAddress(Address shippingAddress) {
-        if (shippingAddress == null) {
-            throw new IllegalArgumentException("Shipping address cannot be null");
-        }
-        this.shippingAddress = shippingAddress;
-    }
-
-    public OrderItem[] getItems() {
-        return items;
-    }
-
-    public void setItems(OrderItem[] items) {
-        if (items == null) {
-            throw new IllegalArgumentException("Items array cannot be null");
-        }
-        if (items.length > MAX_ITEMS) {
-            throw new IllegalArgumentException("Items array cannot exceed " + MAX_ITEMS + " items");
-        }
-        this.items = items;
+        this.customer = customer;
     }
 
     public BigDecimal getSubtotal() {
@@ -253,6 +211,8 @@ public class Bill {
             throw new IllegalArgumentException("Order item cannot be null");
         }
 
+        OrderItem[] items = order.getItems();
+
         for (int i = 0; i < items.length; i++) {
             if (items[i] == null) {
                 items[i] = item;
@@ -266,11 +226,10 @@ public class Bill {
     public String toString() {
         return "Bill{" +
                 "billId='" + billId + '\'' +
-                ", orderId='" + orderId + '\'' +
-                ", customerId='" + customerId + '\'' +
-                ", customerName='" + customerName + '\'' +
-                ", shippingAddress=" + shippingAddress +
-                ", items=" + Arrays.toString(items) +
+                ", orderId='" + order.getOrderId() + '\'' +
+                ", customerId='" + customer.getUserId() + '\'' +
+                ", customerName='" + customer.getUsername() + '\'' +
+                ", items=" + Arrays.toString(order.getItems()) +
                 ", subtotal=" + subtotal +
                 ", tax=" + tax +
                 ", shippingCost=" + shippingCost +
