@@ -163,6 +163,19 @@ public class ConsoleUtils {
         System.out.println(separator.toString());
     }
 
+    /**
+     * Prints a divider line with the specified character and length
+     * @param character The character to use for the divider
+     * @param length The length of the divider
+     */
+    public static void printDivider(char character, int length) {
+        StringBuilder divider = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            divider.append(character);
+        }
+        System.out.println(divider.toString());
+    }
+
     public static void waitMessage() {
         System.out.println("\n\n\nPress Enter to continue...");
         try {

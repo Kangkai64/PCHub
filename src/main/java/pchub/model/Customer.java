@@ -33,7 +33,7 @@ public class Customer extends User {
     }
 
     public void viewOrderHistory() {
-        ConsoleUtils.printHeader("      Order History      ");
+        ConsoleUtils.printHeader("                        Order History                         ");
         try {
             Order[] orders = Order.getOrdersByUser(this.getUserId());
             if (orders == null || orders.length == 0) {
@@ -61,11 +61,11 @@ public class Customer extends User {
     }
 
     public static void displayOrderList(Order[] orders) {
-        System.out.println("\nOrder ID | Date | Status | Total Amount");
-        System.out.println("------------------------------------------");
+        System.out.printf("%-8s | %-23s | %-10s | %-10s\n", "Order ID", "Date", "Status", "Total Amount");
+        ConsoleUtils.printDivider('-', 62);
         for (Order order : orders) {
             if (order != null) {
-                System.out.printf("%-8s | %s | %-10s | RM%.2f\n",
+                System.out.printf("%-8s | %-23s | %-10s | RM%.2f\n",
                         order.getOrderId(),
                         order.getOrderDate(),
                         order.getStatus(),

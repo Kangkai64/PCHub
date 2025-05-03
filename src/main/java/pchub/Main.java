@@ -317,7 +317,7 @@ public class Main {
 
     private static void displayProductList(Product[] products) {
         System.out.printf("\n%-6s | %-40s | %-15s | %-7s | %s\n", "ID", "Name", "Category", "Price", "Stock");
-        System.out.println("-----------------------------------------------------------------------------------------");
+        ConsoleUtils.printDivider('-', 92);
         for (Product product : products) {
             if (product != null) {
                 System.out.printf("%s | %-40s | %-15s | $%.2f | %d\n",
@@ -392,7 +392,7 @@ public class Main {
     }
 
     private static void viewCart() {
-        ConsoleUtils.printHeader("                                  Your Shopping Cart                                       ");
+        ConsoleUtils.printHeader("                                   Your Shopping Cart                                        ");
         if (currentCart == null || currentCart.getItems() == null
                 || currentCart.getItems().length == 0 || currentCart.getItems()[0] == null) {
             System.out.println("Your cart is empty.");
@@ -429,7 +429,7 @@ public class Main {
 
     private static void displayCart(Cart cart) {
         System.out.printf("%-10s | %-40s | %-8s | %-13s | %-13s\n", "Product ID", "Item", "Quantity", "Unit Price", "Total");
-        System.out.println("---------------------------------------------------------------------------------------------");
+        ConsoleUtils.printDivider('-', 92);
 
         double total = 0;
         for (CartItem item : cart.getItems()) {
@@ -445,12 +445,12 @@ public class Main {
             }
         }
 
-        System.out.println("---------------------------------------------------------------------------------------------");
+        ConsoleUtils.printDivider('-', 92);
         System.out.printf("Total: %79s%.2f\n", "RM", total);
     }
 
     private static void updateCartItemQuantity() {
-        String itemId = ConsoleUtils.getStringInput(scanner, "Enter item ID to update: ");
+        String itemId = ConsoleUtils.getStringInput(scanner, "Enter product ID to update: ");
         int newQuantity = ConsoleUtils.getIntInput(scanner, "Enter new quantity: ", 1, 100);
 
         try {
@@ -956,29 +956,29 @@ public class Main {
     }
 
     private static void displayBill(Bill bill) {
-        ConsoleUtils.printHeader("             PCHub RECEIPT             ");
+        ConsoleUtils.printHeader("                        PCHub RECEIPT                         ");
         System.out.println("Order ID: " + bill.getOrder().getOrderId());
         System.out.println("Date: " + bill.getIssueDate());
         System.out.println("Customer: " + bill.getCustomer().getFullName());
 
         System.out.println("\nItems:");
-        System.out.println("------------------------------------------");
+        ConsoleUtils.printDivider('-', 62);
         for (OrderItem item : bill.getOrder().getItems()) {
-            System.out.printf("%-20s %2d x RM%6.2f = RM%7.2f\n",
+            System.out.printf("%-34s %2d x RM%6.2f = RM%7.2f\n",
                     item.getProduct().getName(),
                     item.getQuantity(),
                     item.getUnitPrice(),
                     item.getSubtotal());
         }
-        System.out.println("------------------------------------------");
-        System.out.printf("Subtotal:                      RM%7.2f\n", bill.getSubtotal());
-        System.out.printf("Tax:                           RM%7.2f\n", bill.getTax());
-        System.out.println("------------------------------------------");
-        System.out.printf("TOTAL:                         RM%7.2f\n", bill.getTotalAmount());
-        System.out.println("------------------------------------------");
+        ConsoleUtils.printDivider('-', 62); 
+        System.out.printf("Subtotal:                                          RM%7.2f\n", bill.getSubtotal());
+        System.out.printf("Tax:                                               RM%7.2f\n", bill.getTax());
+        ConsoleUtils.printDivider('-', 62);
+        System.out.printf("TOTAL:                                             RM%7.2f\n", bill.getTotalAmount());
+        ConsoleUtils.printDivider('-', 62);
         System.out.println("Payment Method: " + bill.getPaymentMethod().getName());
         System.out.println("Payment Status: " + bill.getPaymentStatus());
         System.out.println("\nThank you for shopping at PCHub!");
-        System.out.println("========================================");
+        ConsoleUtils.printDivider('=', 62);
     }
 }

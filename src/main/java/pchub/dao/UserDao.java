@@ -172,7 +172,7 @@ public class UserDao extends DaoTemplate<User> {
                 // Get the last inserted user ID using a separate query
                 String getLastIdSql = "SELECT userID FROM `user` WHERE role = ? ORDER BY registrationDate DESC LIMIT 1";
                 try (PreparedStatement getLastIdStmt = connection.prepareStatement(getLastIdSql)) {
-                    preparedStatement.setString(1, user.getRole().name());
+                    getLastIdStmt.setString(1, user.getRole().name());
                     try (ResultSet resultSet = getLastIdStmt.executeQuery()) {
                         if (resultSet.next()) {
                             String userId = resultSet.getString("userID");

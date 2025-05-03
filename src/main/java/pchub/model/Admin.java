@@ -204,7 +204,7 @@ public class Admin extends User {
                 System.out.println("Name: " + category.getName());
                 System.out.println("Description: " + category.getDescription());
                 System.out.println("Parent Category: " + category.getParentCategory());
-                System.out.println("-------------------");
+                ConsoleUtils.printDivider('-', 24);
             }
         }
     }
@@ -550,14 +550,14 @@ public class Admin extends User {
                 return;
             }
 
-            System.out.println("\n=== All Users ===");
+            ConsoleUtils.printHeader("      All Users      ");
             for (User user : users) {
                 if (user != null) {  // Add null check for each user
                     System.out.println("ID: " + (user.getUserId() != null ? user.getUserId() : "N/A"));
                     System.out.println("Username: " + (user.getUsername() != null ? user.getUsername() : "N/A"));
                     System.out.println("Email: " + (user.getEmail() != null ? user.getEmail() : "N/A"));
                     System.out.println("Role: " + (user.getRole() != null ? user.getRole() : "N/A"));
-                    System.out.println("-------------------");
+                    ConsoleUtils.printDivider('-', 21);
                 }
             }
         } catch (SQLException e) {
@@ -745,17 +745,17 @@ public class Admin extends User {
     }
 
     public static void viewAllOrders() {
-        ConsoleUtils.printHeader("      All Orders      ");
+        ConsoleUtils.printHeader("                                     All Orders                                    ");
         try {
             Order[] orders = Order.getAllOrders();
             if (orders == null || orders.length == 0) {
                 System.out.println("No orders found.");
             } else {
-                System.out.printf("%-10s | %-20s | %-10s | %-10s | %-10s\n", "Order ID", "Customer", "Date", "Status", "Total Amount");
-                System.out.println("------------------------------------------");
+                System.out.printf("%-8s | %-20s | %-23s | %-8s | %-10s\n", "Order ID", "Customer", "Date", "Status", "Total Amount");
+                ConsoleUtils.printDivider('-', 83);
                 for (Order order : orders) {
                     if (order != null) {
-                        System.out.printf("%-10s | %-20s | %-10s | %-10s | RM%.2f\n",
+                        System.out.printf("%-8s | %-20s | %-23s | %-8s | RM%.2f\n",
                                 order.getOrderId(),
                                 order.getCustomer().getFullName(),
                                 order.getOrderDate(),
@@ -1028,7 +1028,7 @@ public class Admin extends User {
             System.out.println("Total Inventory Value: $" + String.format("%.2f", totalInventoryValue));
 
             System.out.println("\nLow Stock Items (Less than 5 units):");
-            System.out.println("------------------------------------------");
+            ConsoleUtils.printDivider('-', 42);
             boolean hasLowStock = false;
             for (Product product : products) {
                 if (product != null && product.getCurrentQuantity() > 0 && product.getCurrentQuantity() < 5) {
@@ -1044,7 +1044,7 @@ public class Admin extends User {
             }
 
             System.out.println("\nOut of Stock Items:");
-            System.out.println("------------------------------------------");
+            ConsoleUtils.printDivider('-', 42);
             boolean hasOutOfStock = false;
             for (Product product : products) {
                 if (product != null && product.getCurrentQuantity() == 0) {
@@ -1058,7 +1058,7 @@ public class Admin extends User {
                 System.out.println("No out of stock items found.");
             }
 
-            System.out.println("========================================");
+            ConsoleUtils.printDivider('=', 42);
             System.out.println("Report generated successfully!");
         } catch (Exception e) {
             System.out.println("Error generating inventory report: " + e.getMessage());
@@ -1347,7 +1347,7 @@ public class Admin extends User {
             }
 
             System.out.printf("%-10s | %-20s | %-20s | %-20s\n", "ID", "Name", "Description", "Added Date");
-            System.out.println("------------------------------------------");
+            ConsoleUtils.printDivider('-', 42);
             for (PaymentMethod method : methods) {
                 if (method != null) {
                     System.out.printf("%-10s | %-20s | %-20s | %-20s\n",
